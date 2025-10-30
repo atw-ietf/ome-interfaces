@@ -1,0 +1,34 @@
+             registrant             hme
+                 |                   |
+(A) GEN_HHIT/HI  |                   |
+    (B) GEN_CSR  |                   |
+                 |-----(C) REG------>|
+                 |                   | (D) VALID_REG?
+                 |<-------FAIL-------|
+                 |                   | (E) DUPE_HI?
+                 |<-------FAIL-------|
+                 |                   | (F) DUPE_HHIT?
+                 |<-------FAIL-------|
+                 |                   | (G) GEN_CERTS
+                 |                   | (H) UPDATE_DATABASE
+                 |                   | (I) UPDATE_NS
+                 |<-----(J) RESP-----|
+    (K) ONBOARD  |                   |
+                 |                   |
+                                     |
+/////////////////////////////////////|/////////////////////
+                                     |
+              client                 |
+                 |                   |
+    (L) RX_HHIT  |                   |
+                 |<-----(M) DNS----->|
+   (N) RDAP_URI  |                   |
+                 |----(O) RDAP_Q---->|                 
+                 |                   | (P) ACCEPT_X509?
+                 |<------DENY--------| 
+                 |                   | (Q) POLICY_CHECK?
+                 |<------DENY--------|
+                 |                   | (R) ???
+                 |<---(S) RDAP_R-----|
+        (T) ACT  |                   |
+                 |                   |

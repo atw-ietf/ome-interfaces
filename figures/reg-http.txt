@@ -1,0 +1,7 @@
+POST /.well-known/register-hhit HTTP/1.1
+Host: uss.example.com
+Accept: application/cwt, application/jwt
+Content-Type: application/cwt
+Content-Length: <CWT length>
+
+[ Encrypted CWT from registrant ]

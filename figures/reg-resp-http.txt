@@ -1,0 +1,5 @@
+HTTP/1.1 200 OK
+Accept: application/cwt, application/jwt
+Content-Type: application/cwt
+
+[ CWT from HME ]

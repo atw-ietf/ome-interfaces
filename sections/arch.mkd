@@ -19,40 +19,7 @@ The specific interaction models and transports between all of these functions wh
 This document only details the interaction between a registering client (known as Registrant) and the Registrar (denoted as HME or DIME) through an HTTPS interface and the RDAP interaction by clients (such as Observers) and a Registrar as described in {{z-diagram}}. These interface can be either used by machines as an API or provided with a UI for humans to interact with such as on a web browser.
 
 ~~~ ascii-art
-             registrant             hme
-                 |                   |
-(A) GEN_HHIT/HI  |                   |
-    (B) GEN_CSR  |                   |
-                 |-----(C) REG------>|
-                 |                   | (D) VALID_REG?
-                 |<-------FAIL-------|
-                 |                   | (E) DUPE_HI?
-                 |<-------FAIL-------|
-                 |                   | (F) DUPE_HHIT?
-                 |<-------FAIL-------|
-                 |                   | (G) GEN_CERTS
-                 |                   | (H) UPDATE_DATABASE
-                 |                   | (I) UPDATE_NS
-                 |<-----(J) RESP-----|
-    (K) ONBOARD  |                   |
-                 |                   |
-                                     |
-/////////////////////////////////////|/////////////////////
-                                     |
-              client                 |
-                 |                   |
-    (L) RX_HHIT  |                   |
-                 |<-----(M) DNS----->|
-   (N) RDAP_URI  |                   |
-                 |----(O) RDAP_Q---->|                 
-                 |                   | (P) ACCEPT_X509?
-                 |<------DENY--------| 
-                 |                   | (Q) POLICY_CHECK?
-                 |<------DENY--------|
-                 |                   | (R) ???
-                 |<---(S) RDAP_R-----|
-        (T) ACT  |                   |
-                 |                   |
+{::include figures/arch.txt}
 ~~~
 {:fig #z-diagram title="Simplified Z-Diagram of Registration/Query Interactions"}
 

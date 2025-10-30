@@ -13,8 +13,7 @@ For DNS, a client performs a lookup using the nibble-reversed IPv6 address for a
 The query URL is constructed with the URI obtained in {{find-rdap-url}} appended with `/.well-known/query-hhit/<IP address>`. The query MUST use an HTTPS GET method and provide authentication using Mutual TLS using a PKIX compatible (i.e {{dkix}} for UAS/aviation ecosystem) certificate. The HME MUST redirect `/.well-known/query-hhit/` to their locally hosted path of {{Section 3.1.1 of RFC9082}}.
 
 ~~~ ascii-art
-GET /.well-known/query-hhit/<IP address> HTTP/1.1
-Host: uss.example.com
+{::include figures/query-http.txt}
 ~~~
 {: title="Example HHIT HTTP RDAP Query"}
 
@@ -57,10 +56,7 @@ This following data structure and elements that are required in every response. 
 An RDAP response from an HME MUST contain {{rdap-model}} under the key of `hme_resp`. The `rdapConformance` array of the response MUST include `hme_v0`. The HME MAY also include the standard expected response of {{Section 5.4 of RFC9083}} if applicable.
 
 ~~~ ascii-art
-HTTP/1.1 200 OK
-Content-Type: application/json
-
-[ RDAP JSON from HME ]
+{::include figures/query-resp-http.txt}
 ~~~
 {:fig title="HME RDAP Response"}
 

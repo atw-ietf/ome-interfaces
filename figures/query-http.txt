@@ -1,0 +1,2 @@
+GET /.well-known/query-hhit/<IP address> HTTP/1.1
+Host: uss.example.com

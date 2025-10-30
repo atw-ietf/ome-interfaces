@@ -12,28 +12,28 @@ This document standardizes the interfaces required to register and query a DRIP 
 
 --- middle
 
-{::include sections/intro.mkd}
+{::include-nested sections/intro.mkd}
 
-{::include sections/ietf/terms.mkd} 
+{::include-nested sections/ietf/terms.mkd} 
 
-{::include sections/arch.mkd}
+{::include-nested sections/arch.mkd}
 
-{::include sections/registration.mkd}
+{::include-nested sections/registration.mkd}
 
-{::include sections/query.mkd}
+{::include-nested sections/query.mkd}
 
-{::include sections/ietf/iana.mkd}
+{::include-nested sections/ietf/iana.mkd}
 
-{::include sections/ietf/security.mkd}
+{::include-nested sections/ietf/security.mkd}
 
-{::include sections/ietf/privacy.mkd}
+{::include-nested sections/ietf/privacy.mkd}
 
 --- back
 
-{::include sections/appendix/coap.mkd}
+{::include-nested sections/appendix/coap.mkd}
 
-{::include sections/appendix/oaas.mkd}
+{::include-nested sections/appendix/oaas.mkd}
 
-{::include sections/appendix/dkix.mkd}
+{::include-nested sections/appendix/dkix.mkd}
 
-{::include sections/appendix/cddl.mkd}
+{::include-nested sections/appendix/cddl.mkd}
