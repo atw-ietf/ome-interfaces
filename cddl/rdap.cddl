@@ -1,12 +1,12 @@
-hme-rdap-ext = {
+{
   csr: x509,
   canonical_cert: x509,
   hhit: [
     entity_type: uint, 
     ipv6: ip6
   ],
-  be_chain: [+ be: endorsement]
-  registrant: tstr, 
+  registrant: any, 
   ? raa_approval: x509,
+  ? be_chain: [+ be: endorsement]
   metadata
 }

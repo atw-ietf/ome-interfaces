@@ -1,0 +1,11 @@
+# Use of Constrained Application Protocol {#coap}
+
+This appendix is normative.
+
+CoAP defines a RESTful protocol as typically used in HTTP for UDP applications (such as Internet of Things). Drones, apart from being airborne and moving, have similar enough attributes to IoT devices that protocols and other solutions in IoT space could be harmonious. CoAP also has a variant to use Datagram Transport Layer Security (DTLS, {{RFC9147}})
+
+The use of DTLS-secured CoAP (CoAPS) for HHIT registration and onboarding is OPTIONAL. It is RECOMMENDED that CoAPS is used rather than CoAP as DTLS provides similar security guarantees as HTTPS. When using DTLS, it is RECOMMENDED that a Registrant following {{self-signed}} uses the `RawPublicKey` mode or uses `Certificate` when following {{proxy-signed}} as defined in {{Section 9 of RFC7252}}. When a X.509 certificate is in use it MAY be HKIX compliant.
+
+Keeping in theme with constrained environments, only CWTs MUST be used over a CoAPS endpoint during the registration process. This decision is also driven by the statement in {{Section 3 of RFC7252}} which says: "each CoAP message occupies the data section of one UDP datagram". Use of an encoding other than CBOR for the Web Token could easily exceed the limit of a single UDP datagram. 
+
+CoAPS can also be proxied to and from HTTPS applications, allowing a single HTTPS-based endpoint to be implemented by DIMEs. See {{Section 5.7 of RFC7252}} for details.

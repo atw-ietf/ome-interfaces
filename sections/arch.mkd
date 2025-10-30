@@ -1,0 +1,100 @@
+# Registration, Onboarding & Query Architecture
+
+To properly provide the necessary services identified in both {{RFC9153}} and {{RFC9434}} a DIME, or more generally a HHIT Management Entity (HME), requires four critical functions: Registrar, Registry, Authoritative Name Server and Certificate Authority as detailed below for this document.
+
+*Registrar*:
+: This document covers the client facing interface of the Registrar function used by Registrants. Interactions done by the Registrar with other HME functions are out of scope for this document.
+
+*Registry*:
+: This document covers the client facing interface of the Registry function used by Observers to query for additional details about the HHIT. Interactions done by the Registry with other HME functions are out of scope for this document. It should be noted that artifacts generated during the registration process specified in this document SHOULD end up in the Registry for audit purposes. For this document the term Registry is short-hand for Private Information Registry as defined in {{Section 4.2 of RFC9434}}.
+
+*Authoritative Name Server*:
+: The specific details of records hosted by the Authoritative Name Server as part of DNS is specified in {{DET-DNS}} and are out of scope for this document. It should be noted that artifacts generated during the registration process specified in this document do end up in RRTypes hosted in DNS. This function serves as the Public Information Registry as defined by {{Section 4.1 of RFC9434}}.
+
+*Certificate Authority*:
+: This document does not cover specific details of this function of an HME. However, it is expected to provide at least HHIT Key Infrastructure X.509 (HKIX) certificates used in other parts of the HME. These are {{RFC5280}} compliant certificates that support HHITs.
+
+The specific interaction models and transports between all of these functions when not co-located (i.e. as a distributed system of systems) is out of scope for this document. It should be noted a number of these functions are lifted from the DNS and the existing relationships and protocols between such entities in that domain also can apply here. For example, between Registrar and Registry is the Extensible Provisioning Protocol (EPP, {{STD69}}) or currently being developed and standardized equivalents such as RESTful Provision Protocol (RPP).
+
+This document only details the interaction between a registering client (known as Registrant) and the Registrar (denoted as HME or DIME) through an HTTPS interface and the RDAP interaction by clients (such as Observers) and a Registrar as described in {{z-diagram}}. These interface can be either used by machines as an API or provided with a UI for humans to interact with such as on a web browser.
+
+~~~ ascii-art
+             registrant             hme
+                 |                   |
+(A) GEN_HHIT/HI  |                   |
+    (B) GEN_CSR  |                   |
+                 |-----(C) REG------>|
+                 |                   | (D) VALID_REG?
+                 |<-------FAIL-------|
+                 |                   | (E) DUPE_HI?
+                 |<-------FAIL-------|
+                 |                   | (F) DUPE_HHIT?
+                 |<-------FAIL-------|
+                 |                   | (G) GEN_CERTS
+                 |                   | (H) UPDATE_DATABASE
+                 |                   | (I) UPDATE_NS
+                 |<-----(J) RESP-----|
+    (K) ONBOARD  |                   |
+                 |                   |
+                                     |
+/////////////////////////////////////|/////////////////////
+                                     |
+              client                 |
+                 |                   |
+    (L) RX_HHIT  |                   |
+                 |<-----(M) DNS----->|
+   (N) RDAP_URI  |                   |
+                 |----(O) RDAP_Q---->|                 
+                 |                   | (P) ACCEPT_X509?
+                 |<------DENY--------| 
+                 |                   | (Q) POLICY_CHECK?
+                 |<------DENY--------|
+                 |                   | (R) ???
+                 |<---(S) RDAP_R-----|
+        (T) ACT  |                   |
+                 |                   |
+~~~
+{:fig #z-diagram title="Simplified Z-Diagram of Registration/Query Interactions"}
+
+| Section | Applicable Z-Diagram Reference(s) |
+| ------- | --------------------------------- |
+| {{key-csr}} | (A) GEN_HHIT/HI, (B) GEN_CSR |
+| {{req-wt}} | (C) REG |
+| {{req-valid}} | (D) VALID_INPUT?, (E) DUPE_HI?, (F) DUPE_HHIT? |
+| {{req-approve}} | (G) GEN_CERTS, (H) UPDATE_DATABASE, (I) UPDATE_NS |
+| {{resp-wt}} | (J) RESP |
+| {{req-resp}} | (K) ONBOARD |
+| {{client-query}} | (L) RX_HHIT, (M) DNS, (N) RDAP_URI, (O) RDAP_Q |
+| {{rdap-process}} | (P) VALID_X509?, (Q) POLICY_CHK?, (R) ??? |
+| {{rdap-pass}} | (R) ???, (S) RDAP_R |
+| {{client-resp}} | (S) RDAP_R, (T) ACT |
+{: title="Registration & Query Table of Contents"}
+
+## Registrant Expectations
+
+Cryptographic materials SHOULD be on the device intending to use said material in operation. If the Registrant is acting as a proxy the methods of the generation and/or transfer of cryptographic materials to and from the other device is out of scope for this document.
+
+## HME Expectations
+
+### Registration Interface
+
+An HME MUST provide an HTTPS-based registration interface using this documents registered `/.well-known/register-hhit` entry. Data MUST be encapsulated using CBOR or JSON Web Tokens. It MAY provide other transport methods that carries the same data models. The Constrained Application Protocol (CoAP, {{RFC7252}}) is an OPTIONAL method that can re-use the contents of this document with caveats in {{coap}}.
+
+### Query Interface
+
+An HME MUST provide an HTTPS-based, GET method only, query interface following {{Section 3.1.1 of RFC9082}} (i.e. `ip/<IP address>`) and MUST be the destination of redirection from `/.well-known/query-hhit`. All other RDAP endpoints SHOULD NOT be implemented as specified in {{RFC9082}}. Other methods MAY be provided to enable differential access controlled queries of information pertaining to an HHIT but are out of scope for this document. It is RECOMMENDED that eXtensible Access Control Markup Language (XACML) with Security Assertion Markup Language (SAML) is used to exchange policy information.
+
+#### Authentication & Authorization
+
+Per REG-2 and REG-4 of {{Section 4.4.1 of RFC9153}}, RDAP queries to a Registry MUST be protected using fine-grained AAA policies in a both human- & machine-readable form for automated enforcement. RDAP supports only HTTP-based mechanisms for authentication as defined in {{Section 3.2 of RFC7481}}. A federated authentication mechanism, such as the examples in {{Section 3.2.1 of RFC7481}}, is RECOMMENDED.
+
+For international and/or global harmonization, this document standardizes the following RDAP behavior for authentication of clients and servers:
+
+- MUST support HTTP Digest Authentication Scheme ({{RFC7616}}) **AND**
+- SHOULD NOT support HTTP Basic Authentication Scheme ({{RFC7617}}) but MAY accept Basic if peer offers that and nothing stronger **AND**
+- MUST support Mutual TLS {{Section 7.4.6 of RFC5246}} for global and/or international queries **AND**
+- SHOULD use Mutual TLS {{Section 7.4.6 of RFC5246}} but MAY do any other RDAP compatible AAA for domestic queries
+
+An HME, when supporting Mutual TLS, MUST accept valid HKIX certificates and MAY accept other {{RFC5280}} (PKIX) compliant certificates.
+
+> Author Note: the selection of Mutual TLS is an initial down selection from OpenID Connect for RDAP ({{RFC9560}}), or Mutual TLS ({{Section 7.4.6 of RFC5246}}) or eXtensible Access Control Markup Language (XACML) with Security Assertion Markup Language (SAML). This is still a discussion point.

@@ -1,0 +1,29 @@
+# DRIP CDDL Definitions
+
+This appendix is normative.
+
+## Prelude
+
+The DRIP CDDL Prelude is built upon the prelude defined in {{Appendix E of RFC8610}} to allow interoperability with JSON encodings. The conversion of fields to/from CBOR and JSON MUST use the advice in {{Section 6 of RFC8949}}.
+
+~~~ ascii-art
+{::include cddl/prelude.cddl}
+~~~
+{:fig #drip-cddl-prelude title="DRIP CDDL Prelude"}
+
+## Metadata
+
+The `uas` key and its contents are lifted from {{Section 5.2.2 of DET-DNS}} with no modifications.
+
+~~~ ascii-art
+{::include cddl/metadata.cddl}
+~~~
+{:fig #metadata-cddl title="Metadata CDDL"}
+
+## Time Window
+
+The Registrant can select from a number of options to encode the values of valid not before (`vnb`) and valid not after (`vna`) for time of applicability of an individual CSR (`csr`). The use of the `time` or `tdate` types allow for absolute time references. The use of the `uint` type for `vna` specifies a positive offset in seconds from an absolute time. When `null` is used the Registrant is informing the HME that for `vnb` the HME MUST use the current time as `vnb` during registration and for `vna` the HME MUST set `vna` to a time such that the default HME policy for maximum delta between `vnb` and `vna` is not exceeded.
+
+> Implementation Note: due to not differentiating between integers and floats in its number type, implementations using JSON as the encoded format MUST check the value of `vna` to determine if its being used as an offset or absolute time.
+
+As an example of the use of `vnb` and `vna`, a Registrant may set `vnb=null` and `vna=3600`. The HME in this instance would use the current absolute time at receipt of the registration request for `vnb` and then apply the offset specified by `vna` to obtain an absolute time for `vna` that is 3600 seconds after `vnb`. These absolute times of `vnb` and `vna` are then used in an X.509 certificate being created by the HME to endorse the registration.

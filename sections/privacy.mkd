@@ -1,0 +1,5 @@
+# Privacy & Transparency Considerations {#ptc}
+
+The considerations discussed in {{RFC9153}} and {{Section 10 of RFC9434}} apply.
+
+> Author Note: do we copy/paste Section 10 of {{RFC9434}} and update here or is below sufficient?

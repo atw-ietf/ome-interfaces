@@ -1,0 +1,136 @@
+# IANA Considerations {#ic}
+
+## Well-Known URIs
+
+IANA is requested to add the following entries in the "Well-Known URIs" registry {{IANA.WellKnownURIs}}.
+
+| URI Suffix | Change Controller | Reference | Status | Related Information |
+| ---------- | ----------------- | --------- | ------ | ------------------- |
+| register-hhit | IETF | This RFC | permanent | N/A |
+| query-hhit | IETF | This RFC | permanent | N/A |
+| oaas-hhit | IETF | This RFC | permanent | N/A |
+{: title="Additions to Well-Known URIs Registry"}
+
+## CWT & JWT Claims {#claims}
+
+Claims defined for DRIP are compatible with those of CWT and JWT, so the CWT and JWT Claims registries, {{IANA.CWT.Claims}} and {{IANA.JWT.Claims}}, are reused. No new IANA registry is created.
+
+Per this specification, the following values are requested to be added to the "JSON Web Token Claims" registry established by {{RFC7519}} and the "CBOR Web Token (CWT) Claims" registry established by {{RFC8392}}. Each entry is requested to be added to both registries. The "Claim Description", "Change Controller", and "Reference" fields are common and equivalent for the JWT and CWT registries. The "Claim Key" and "Claim Value Type" fields are for the CWT registry only. The "Claim Name" field is as defined for the CWT registry, not the JWT registry. The "JWT Claim Name" field is equivalent to the "Claim Name" field in the JWT registry.
+
+~~~ ascii-text
+Claim Name: HHIT Registration Request
+Claim Description: HHIT Registration Request
+JWT Claim Name: hhit_req
+Claim Key: TBD1
+Claim Value Type: map
+Change Controller: IETF
+Reference: This RFC
+~~~
+{: title="HHIT Registration Request Claim: Registration Form"}
+
+~~~ ascii-text
+Claim Name: HHIT Registration Response
+Claim Description: HHIT Registration Response
+JWT Claim Name: hhit_resp
+Claim Key: TBD2
+Claim Value Type: map
+Change Controller: IETF
+Reference: This RFC
+~~~
+{: title="HHIT Registration Response Claim: Registration Form"}
+
+## RDAP Extensions Registry
+
+IANA is requested to register the following value in the "RDAP Extensions" registry {{IANA.RDAP.Extensions}}.
+
+~~~ ascii-art
+Extension Identifier: 
+  hme_v0
+Registry Operator:
+  Any
+Specification:
+  This specification
+Contact:
+  IETF <iesg@ietf.org>
+Intended Usage:
+  This extension is used to convey private information 
+  under an HHIT registration.
+~~~
+{: title="RDAP Extensions: Registration Form"}
+
+## HME Interchange Keys
+
+An HME is an ingress and egress for many different types of data. A common data model as specified in this document and a registry of available fields enables wide-spread interoperability of the implementations across various ecosystems.
+
+This document requests IANA create a new registry under {{IANA.DRIP}} called "HME Interchange Keys". This registry is to maintain a globally harmonized list of JSON keys (i.e. "Names") and CBOR map integer keys (i.e. "Labels") for use by HME's and their clients. The following ranges are defined based on the CBOR Label values:
+
+| Range | Registration Policy | Range Use | Comments |
+| ----- | ------------------- | --------- | -------- |
+| from -2^64 to -25 | Private Use ({{Section 4.1 of RFC8126}})            | HME Private Keys | - |
+| from -24 to 23    | TODO: TBD                                           | ASTM UAS/aviation Keys    | Keys found in UAS/aviation Standards such as {{ASTM.F3411}} |
+| from 24 to 2^64-1 | Specification Required ({{Section 4.6 of RFC8126}}) | Global Harmonization Keys | Reserved for future registrations to maintain global harmonization in various domains |
+{: #key-table title="HME Interchange Keys: Registry Policies"}
+
+Keys in the Private Use and Experimental ranges are RECOMMENDED to prepend a `_` to the Name to avoid namespace collisions with registered Names. 
+
+The HME Private Keys range in this registry provide code-points for any HME to define their own subset of elements in both registration and RDAP responses. HME Operators SHOULD provide specification for any Private Use values, but this may not be public due to policy.
+
+### Review Criteria
+
+For registrations, review should note if the Name field matches an existing entry, the request should be denied. A request should also be denied if the specification duplicates an existing entry both in syntax and semantics. For example, if an existing key called `whee` already exists with the specification of `[+ uint]` and a new request comes along to register `whee_but_mine` with specification `[+ uint]`, then the latter should be rejected on the grounds of being able to use `whee` instead. This denial can be overruled if shown that the new registration has clear justification, as part of the specification citing technical reasoning, to exist.
+
+### Registry Fields
+
+*Name (JSON Key Value)*:
+: A string value, to be used as a `key` in the `key: value` pair of a JSON object. No specific rules apply for syntax beyond being a valid JSON string for a object key, but it is recommended to use all lower-case and snake-case with underscores. Care should be given to the length of a Name to reduce wire size of JSON encodings for constrained environments.
+
+*Label (CBOR Integer Key Value)*:
+: A integer value, ranging from `-2^64` to `2^64 - 1`, to be used as a key in a CBOR map. Different ranges of values use different registration policies, see {{key-table}}.
+
+*Description*:
+: A short description of the entry providing an overview of its semantic meaning and its expected use-cases.
+
+*Reference*:
+: A link to a permanent and readily available specification defining the value syntax and semantics to be used for this key.
+
+### Registration Form
+
+~~~ ascii-art
+Requested Range: 
+Name (JSON Key Value):
+Description:
+Specification:
+~~~
+{: #key-form title="HME Interchange Keys: Registration Form"}
+
+### Initial Values
+
+| Name (JSON Key Value) | Label (CBOR Integer Key Value) | Description | Reference |
+| --------------------- | ------------------------------ | ----------- | --------- |
+| uas_type              | 0  | Enumeration of UAS Type                | {{DET-DNS}} |
+| uas_ids               | 1  | UAS IDs                                | {{DET-DNS}} |
+| auth                  | 2  | Authentication Data                    | {{DET-DNS}} |
+| self_id               | 3  | Self ID                                | {{DET-DNS}} |
+| classification        | 4  | UA Category & Class                    | {{DET-DNS}} |
+| area                  | 5  | Area Count, Radius, etc.               | {{DET-DNS}} |
+| operator_id           | 6  | Operator ID                            | {{DET-DNS}} |
+
+| raa                   | 23 | RAA                                    | This RFC    |
+| hda                   | 24 | HDA                                    | This RFC    |
+| uas                   | 26 | UAS Datum Map                          | This RFC    |
+| utm                   | 27 | UTM Operational Intent & Source        | This RFC    |
+| spec                  | 28 | HME Specification Code                 | This RFC    |
+
+| csr                   | 25 | DER Encoded X.509 CSR                  | This RFC    |
+| registrant            | 31 | Registrant Information                 | This RFC    |
+| uas_serial_number     | 34 | ANSI/CTA 2063-A UAS Serial Number      | This RFC    |
+| caa_assigned_id       | 35 | CAA Assigned ID                        | This RFC    |
+| pilot_license_id      | 36 | Pilot License Number                   | This RFC    |
+
+| canonical_cert        | 39 | DER Encoded X.509 Certificate          | This RFC    |
+| canonical_chain       | XX | List of DER Encoded X.509 Certificates | This RFC    |
+| be                    | XX | Broadcast Endorsement                  | This RFC    |
+| be_chain              | 30 | List of Broadcast Endorsements         | This RFC    |
+| hhit                  | 32 | Hierarchial Host Identity Tag          | This RFC    |
+| oracle_x509           | 33 | Oracle X.509 Certificate               | This RFC    |
+{: #pre-key-values title="HME Interchange Keys: Pre-Allocated Values"}

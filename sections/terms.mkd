@@ -1,0 +1,21 @@
+# Terminology
+
+{::boilerplate bcp14}
+
+## Additional Definitions & Abbreviations
+
+**Endorsement**:
+: A binary object defined in {{Section 4.2 of RFC9575}} constructed by an HME endorsing an HHIT/public key pairing in their authority of the hierarchy. Referred to as a Broadcast Endorsement in the UAS/aviation domain and Broadcast RID use-case.
+
+**HHIT Management Entity (HME)**:
+: A term to describe an entity providing various identity management functions (such as registration, query, etc.) to clients at a specific point in the hierarchy. HME's have four major functional components that can be co-located or distributed as a system of systems: Registrar, Registry, Authoritative Name Server and Certificate Authority. The DRIP Identity Management Entity (DIME) is a specialization of HME in support of the UAS/aviation ecosystem under the DKI.
+
+**HHIT Key Infrastructure (HKI)**:
+: A key infrastructure consisting of policies around entities using HHITs in a domain space. An example of an HKI is the DRIP Key Infrastructure (DKI) for UAS/aviation.
+
+**HHIT Key Infrastructure X.509 (HKIX)**:
+: A set of X.509 certificate profiles in compliance of Public Key Infrastructure X.509 (PKIX, {{RFC5280}}) that support an HKI. An example is of DKI X.509 (DKIX) for UAS/aviation.
+
+**Web Token**:
+
+: In the context of this specification; a Web Token can be either a Concise Binary Object Representation (CBOR, {{STD94}}) Web Token (CWT, {{RFC8392}}) or JavaScript Object Notation (JSON, {{STD90}}) Web Token (JWT, {{RFC7519}}).
