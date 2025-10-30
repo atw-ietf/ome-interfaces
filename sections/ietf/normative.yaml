@@ -1,0 +1,16 @@
+normative:
+    DET-DNS: I-D.ietf-drip-registries
+
+    RFC4108: # ???
+    RFC5246: # tls
+    RFC7519: # jwt
+    RFC7616: # http digest
+    RFC7617: # http basic
+    RFC8392: # cwt
+    RFC9153: # drip-requirements
+    RFC9374: # drip-det
+    RFC9434: # drip-arch
+    RFC9575: # drip-auth
+
+    STD95: # rdap
+

@@ -1,0 +1,74 @@
+informative:
+    RFC5280: # pkix
+    RFC7252: # coap
+    RFC8126: # iana-considerations
+    RFC8610: # cddl
+    RFC9147: # dtls v1.3
+    RFC9334: # rats-arch
+    RFC9560: # openid connect rdap
+
+    STD69: # epp
+    STD90: # json
+    STD94: # cbor
+
+    ASTM.F3411:
+      title: Standard Specification for Remote ID and Tracking
+      author:
+        -
+          org: ASTM International
+      target: https://www.astm.org/f3411-22a.html
+      date: July 2022
+      seriesinfo:
+        ASTM: F3411-22A
+        DOI: 10.1520/F3411-22A
+    ICAO.ACCP:
+      title: ICAO Aviation Common Certificate Policy
+      author:
+        -
+          org: International Civil Aviation Organization
+      date: July 2025
+    802.1AR:
+      title: IEEE Standard for Local and Metropolitan Area Networks - Secure Device Identity
+      author:
+        -
+          org: IEEE
+      target: https://doi.org/10.1109/ieeestd.2018.8423794
+      date: July 2025
+      seriesinfo:
+        DOI: 10.1109/ieeestd.2018.8423794
+
+    IANA.DRIP:
+      title: Drone Remote ID Protocol
+      author:
+        -
+          org: IANA
+      target: https://www.iana.org/assignments/drip/
+      date: Oct 2025
+    IANA.WellKnownURIs:
+      title: Well-Known URIs
+      author:
+        -
+          org: IANA
+      target: https://www.iana.org/assignments/well-known-uris/
+      date: July 2025
+    IANA.CWT.Claims:
+      title: CBOR Web Token (CWT) Claims
+      author:
+        -
+          org: IANA
+      target: https://www.iana.org/assignments/cwt/
+      date: November 2025
+    IANA.JWT.Claims:
+      title: JSON Web Token (JWT) Claims
+      author:
+        -
+          org: IANA
+      target: https://www.iana.org/assignments/jwt/
+      date: November 2025
+    IANA.RDAP.Extensions:
+      title: RDAP Extensions
+      author:
+        -
+          org: IANA
+      target: https://www.iana.org/assignments/rdap-extensions/
+      date: July 2025
