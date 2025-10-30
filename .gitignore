@@ -1,0 +1,7 @@
+.refcache
+*.txt
+*.html
+*.xml
+metadata.min.js
+!examples/*
+!*-template.txt

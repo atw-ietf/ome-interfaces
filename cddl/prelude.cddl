@@ -1,0 +1,43 @@
+; DRIP Type Definitions 
+; (follow STD94 Section 6 for CBOR/JSON conversion)
+x509 = bstr ; DER encoded X.509 object (CSR or Certificate)
+endorsement = bstr .size 136
+hash = bstr .size 8 ; generated with cSHAKE
+auth-data = bstr .size 1..362
+uas-id = bstr .size 20
+utc = tdate / time
+
+; DRIP Keys (JSON key = CBOR label)
+; private_use = -2^64 .. -25
+; astm = -24 .. 23
+uas_type = 0
+uas_ids = 1
+auth = 2
+self_id = 3
+area = 4
+classification = 5
+operator_id = 6
+; 7 - 22 Reserved
+raa = 23
+hda = 24
+csr = 25
+uas = 26
+utm = 27
+spec = 28
+canonical_cert = 29
+be_chain = 30
+registrant = 31 ; jcard or pointer (i.e. hhit of operator)?
+hhit = 32
+oracle_x509 = 33
+uas_serial_number = 34
+caa_assigned_id = 35
+pilot_license_id = 36
+
+; External Tags
+uuid = #6.37
+ip6 = #6.54
+position = #6.103([
+	latitude: number, 
+	longitude: number, 
+	altitude: number
+])

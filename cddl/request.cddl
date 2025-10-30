@@ -1,0 +1,11 @@
+request-claim = {
+  + &(entity-type): [+ request-data],
+  metadata,
+}
+request-data = [
+  unique_id: uint / hash / uuid,
+  csr: x509,
+  vnb: time / tdate / null,
+  vna: time / tdate / 1..15638400 / null,
+  meta: { metadata } / null
+]

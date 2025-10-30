@@ -1,0 +1,906 @@
+---
+coding: utf-8
+
+title: Registration & Query Interfaces for DRIP Identity Management Entities
+abbrev: hme-interfaces
+docname: draft-wiethuechter-drip-hme-interfaces-00
+category: std
+stream: IETF
+
+ipr: trust200902
+area: Internet
+wg: drip Working Group
+kw: Internet-Draft
+cat: std
+
+stand_alone: yes
+pi: [toc, sortrefs, symrefs, comments]
+
+author:
+-   ins: A. Wiethuechter
+    name: Adam Wiethuechter
+    org: AX Enterprize, LLC
+    street: 4947 Commercial Drive
+    city: Yorkville
+    region: NY
+    code: 13495
+    country: USA
+    email: adam.wiethuechter@axenterprize.com
+
+normative:
+    DET-DNS: I-D.ietf-drip-registries
+
+    RFC4108: # ???
+    RFC5246: # tls
+    RFC7519: # jwt
+    RFC7616: # http digest
+    RFC7617: # http basic
+    RFC8392: # cwt
+    RFC9153: # drip-requirements
+    RFC9374: # drip-det
+    RFC9434: # drip-arch
+    RFC9575: # drip-auth
+
+    STD95: # rdap
+
+informative:
+    RFC5280: # pkix
+    RFC7252: # coap
+    RFC8126: # iana-considerations
+    RFC8610: # cddl
+    RFC9147: # dtls v1.3
+    RFC9334: # rats-arch
+    RFC9560: # openid connect rdap
+
+    STD69: # epp
+    STD90: # json
+    STD94: # cbor
+
+    ASTM.F3411:
+      title: Standard Specification for Remote ID and Tracking
+      author:
+        -
+          org: ASTM International
+      target: https://www.astm.org/f3411-22a.html
+      date: July 2022
+      seriesinfo:
+        ASTM: F3411-22A
+        DOI: 10.1520/F3411-22A
+    ICAO.ACCP:
+      title: ICAO Aviation Common Certificate Policy
+      author:
+        -
+          org: International Civil Aviation Organization
+      date: July 2025
+    802.1AR:
+      title: IEEE Standard for Local and Metropolitan Area Networks - Secure Device Identity
+      author:
+        -
+          org: IEEE
+      target: https://doi.org/10.1109/ieeestd.2018.8423794
+      date: July 2025
+      seriesinfo:
+        DOI: 10.1109/ieeestd.2018.8423794
+
+    IANA.WellKnownURIs:
+      title: Well-Known URIs
+      author:
+        -
+          org: IANA
+      target: https://www.iana.org/assignments/well-known-uris/
+      date: July 2025
+    IANA.CWT.Claims:
+      title: CBOR Web Token (CWT) Claims
+      author:
+        -
+          org: IANA
+      target: https://www.iana.org/assignments/cwt/
+      date: November 2025
+    IANA.JWT.Claims:
+      title: JSON Web Token (JWT) Claims
+      author:
+        -
+          org: IANA
+      target: https://www.iana.org/assignments/jwt/
+      date: November 2025
+    IANA.RDAP.Extensions:
+      title: RDAP Extensions
+      author:
+        -
+          org: IANA
+      target: https://www.iana.org/assignments/rdap-extensions/
+      date: July 2025
+
+--- abstract
+
+This document standardizes the interfaces required to register and query a DRIP Entity Tag (DET) with a DRIP Identity Management Entity (DIME) for use in the UAS ecosystem. HTTPS carrying a CBOR or JSON Web Token (CWT or JWT) is selected for registration and RDAP with authentication using Mutual TLS is selected for query. The contents of this document can also be generally applied and expanded for other use cases of the Hierarchial Host Identity Tag (HHIT) in domains of interest.
+
+--- middle
+
+# Introduction
+
+## Purpose
+
+A common data model and process for registration and query of Hierarchial Host Identity Tags (HHITs, {{RFC9374}}) enables interoperability while the selection of existing standards and methods enables reuse and familiarity across ecosystems and domain vendors. The initial use case for the HHITs is for the fast growing sector of Unmanned Aircraft Systems (UAS) where the HHIT is referred to as a DRIP Entity Tag (DET) as is defined in {{RFC9374}}.
+
+The DRIP Identity Management Entity (DIME), introduced in {{RFC9434}}, is a node in a larger hierarchy that provides the critical function of registering and querying information for DETs and their associated public keys under a smaller scope to satisfy requirements of global uniqueness and other DRIP Requirements. This document provides a standardized way to provide these critical functions to clients (Registrants & Observers) that previous DRIP documents such as {{DET-DNS}} did not address.
+
+## Background
+
+TBD
+
+## Scope
+
+This document is defined in a general manner to be applied to any system providing HHIT identity services. However specific fields and provisions are defined in this document to support the initial use case of UAS. The term HHIT is used when discussing the general technology while DET is used with discussion around UAS specific elements when possible. Additional terms reinforcing this delineation are found in {{terminology}}. This document defines all data models in the Concise Data Definition Language (CDDL, {{RFC8610}}).
+
+DRIP does NOT provide protection against incorrect (e.g. fraudulent) data entered during registration or asserted subsequently. DRIP does protect against alteration (intentional or unintentional) of data subsequent to its assertion by the cryptographic signer. The signer might be the proximate sender (e.g. UA transmitting Broadcast RID) or might be an attestor far away and long ago (e.g. root Certificate Authority). It is the duty of the operator of each DIME, or the party on whose behalf the DIME is being operated, to validate the registration data. The RAA (e.g. CAA under DKI) SHOULD provide services to obtain this goal, see {{oaas}}.
+
+### Targeted DRIP Requirements
+
+The following requirements of {{RFC9153}} are satisfied when following this document: GEN-3, ID-4, REG-2, REG-4 and PRIV-2. 
+
+# Terminology
+
+{::boilerplate bcp14}
+
+## Additional Definitions & Abbreviations
+
+**Endorsement**:
+: A binary object defined in {{Section 4.2 of RFC9575}} constructed by an HME endorsing an HHIT/public key pairing in their authority of the hierarchy. Referred to as a Broadcast Endorsement in the UAS domain and Broadcast RID use-case.
+
+**HHIT Management Entity (HME)**:
+: A term to describe an entity providing various identity management functions (such as registration, query, etc.) to clients at a specific point in the hierarchy. HME's have four major functional components that can be co-located or distributed as a system of systems: Registrar, Registry, Authoritative Name Server and Certificate Authority. The DRIP Identity Management Entity (DIME) is a specialization of HME in support of the UAS ecosystem under the DKI.
+
+**HHIT Key Infrastructure (HKI)**:
+: A key infrastructure consisting of policies around entities using HHITs in a domain space. An example of an HKI is the DRIP Key Infrastructure (DKI) for UAS.
+
+**HHIT Key Infrastructure X.509 (HKIX)**:
+: A set of X.509 certificate profiles in compliance of Public Key Infrastructure X.509 (PKIX, {{RFC5280}}) that support an HKI. An example is of DKI X.509 (DKIX) for UAS.
+
+**Web Token**:
+
+: In the context of this specification; a Web Token can be either a Concise Binary Object Representation (CBOR, {{STD94}}) Web Token (CWT, {{RFC8392}}) or JavaScript Object Notation (JSON, {{STD90}}) Web Token (JWT, {{RFC7519}}).
+
+# Registration, Onboarding & Query Architecture
+
+To properly provide the necessary services identified in both {{RFC9153}} and {{RFC9434}} a DIME, or more generally a HHIT Management Entity (HME), requires four critical functions: Registrar, Registry, Authoritative Name Server and Certificate Authority as detailed below for this document.
+
+*Registrar*:
+: This document covers the client facing interface of the Registrar function used by Registrants. Interactions done by the Registrar with other HME functions are out of scope for this document.
+
+*Registry*:
+: This document covers the client facing interface of the Registry function used by Observers to query for additional details about the HHIT. Interactions done by the Registry with other HME functions are out of scope for this document. It should be noted that artifacts generated during the registration process specified in this document SHOULD end up in the Registry for audit purposes. For this document the term Registry is short-hand for Private Information Registry as defined in {{Section 4.2 of RFC9434}}.
+
+*Authoritative Name Server*:
+: The specific details of records hosted by the Authoritative Name Server as part of DNS is specified in {{DET-DNS}} and are out of scope for this document. It should be noted that artifacts generated during the registration process specified in this document do end up in RRTypes hosted in DNS. This function serves as the Public Information Registry as defined by {{Section 4.1 of RFC9434}}.
+
+*Certificate Authority*:
+: This document does not cover specific details of this function of an HME. However, it is expected to provide at least HHIT Key Infrastructure X.509 (HKIX) certificates used in other parts of the HME. These are {{RFC5280}} compliant certificates that support HHITs.
+
+The specific interaction models and transports between all of these functions when not co-located (i.e. as a distributed system of systems) is out of scope for this document. It should be noted a number of these functions are lifted from the DNS and the existing relationships and protocols between such entities in that domain also can apply here. For example, between Registrar and Registry is the Extensible Provisioning Protocol (EPP, {{STD69}}) or currently being developed and standardized equivalents such as RESTful Provision Protocol (RPP).
+
+This document only details the interaction between a registering client (known as Registrant) and the Registrar (denoted as HME or DIME) through an HTTPS interface and the RDAP interaction by clients (such as Observers) and a Registrar as described in {{z-diagram}}. These interface can be either used by machines as an API or provided with a UI for humans to interact with such as on a web browser.
+
+~~~ ascii-art
+             registrant             hme
+                 |                   |
+(A) GEN_HHIT/HI  |                   |
+    (B) GEN_CSR  |                   |
+                 |-----(C) REG------>|
+                 |                   | (D) VALID_REG?
+                 |<-------FAIL-------|
+                 |                   | (E) DUPE_HI?
+                 |<-------FAIL-------|
+                 |                   | (F) DUPE_HHIT?
+                 |<-------FAIL-------|
+                 |                   | (G) GEN_CERTS
+                 |                   | (H) UPDATE_DATABASE
+                 |                   | (I) UPDATE_NS
+                 |<-----(J) RESP-----|
+    (K) ONBOARD  |                   |
+                 |                   |
+                                     |
+/////////////////////////////////////|/////////////////////
+                                     |
+              client                 |
+                 |                   |
+    (L) RX_HHIT  |                   |
+                 |<-----(M) DNS----->|
+   (N) RDAP_URI  |                   |
+                 |----(O) RDAP_Q---->|                 
+                 |                   | (P) ACCEPT_X509?
+                 |<------DENY--------| 
+                 |                   | (Q) POLICY_CHECK?
+                 |<------DENY--------|
+                 |                   | (R) ???
+                 |<---(S) RDAP_R-----|
+        (T) ACT  |                   |
+                 |                   |
+~~~
+{:fig #z-diagram title="Simplified Z-Diagram of Registration/Query Interactions"}
+
+| Section | Applicable Z-Diagram Reference(s) |
+| ------- | --------------------------------- |
+| {{key-csr}} | (A) GEN_HHIT/HI, (B) GEN_CSR |
+| {{req-wt}} | (C) REG |
+| {{req-valid}} | (D) VALID_INPUT?, (E) DUPE_HI?, (F) DUPE_HHIT? |
+| {{req-approve}} | (G) GEN_CERTS, (H) UPDATE_DATABASE, (I) UPDATE_NS |
+| {{resp-wt}} | (J) RESP |
+| {{req-resp}} | (K) ONBOARD |
+| {{client-query}} | (L) RX_HHIT, (M) DNS, (N) RDAP_URI, (O) RDAP_Q |
+| {{rdap-process}} | (P) VALID_X509?, (Q) POLICY_CHK?, (R) ??? |
+| {{rdap-pass}} | (R) ???, (S) RDAP_R |
+| {{client-resp}} | (S) RDAP_R, (T) ACT |
+{: title="Registration & Query Table of Contents"}
+
+## Registrant Expectations
+
+Cryptographic materials SHOULD be on the device intending to use said material in operation. If the Registrant is acting as a proxy the methods of the generation and/or transfer of cryptographic materials to and from the other device is out of scope for this document.
+
+## HME Expectations
+
+### Registration Interface
+
+An HME MUST provide an HTTPS-based registration interface using this documents registered `/.well-known/register-hhit` entry. Data MUST be encapsulated using CBOR or JSON Web Tokens. It MAY provide other transport methods that carries the same data models. The Constrained Application Protocol (CoAP, {{RFC7252}}) is an OPTIONAL method that can re-use the contents of this document with caveats in {{coap}}.
+
+### Query Interface
+
+An HME MUST provide an HTTPS-based, GET method only, query interface following {{Section 3.1.1 of RFC9082}} (i.e. `ip/<IP address>`) and MUST be the destination of redirection from `/.well-known/query-hhit`. All other RDAP endpoints SHOULD NOT be implemented as specified in {{RFC9082}}. Other methods MAY be provided to enable differential access controlled queries of information pertaining to an HHIT but are out of scope for this document. It is RECOMMENDED that eXtensible Access Control Markup Language (XACML) with Security Assertion Markup Language (SAML) is used to exchange policy information.
+
+#### Authentication & Authorization
+
+Per REG-2 and REG-4 of {{Section 4.4.1 of RFC9153}}, RDAP queries to a Registry MUST be protected using fine-grained AAA policies in a both human- & machine-readable form for automated enforcement. RDAP supports only HTTP-based mechanisms for authentication as defined in {{Section 3.2 of RFC7481}}. A federated authentication mechanism, such as the examples in {{Section 3.2.1 of RFC7481}}, is RECOMMENDED.
+
+For international and/or global harmonization, this document standardizes the following RDAP behavior for authentication of clients and servers:
+
+- MUST support HTTP Digest Authentication Scheme ({{RFC7616}}) **AND**
+- SHOULD NOT support HTTP Basic Authentication Scheme ({{RFC7617}}) but MAY accept Basic if peer offers that and nothing stronger **AND**
+- MUST support Mutual TLS {{Section 7.4.6 of RFC5246}} for global and/or international queries **AND**
+- SHOULD use Mutual TLS {{Section 7.4.6 of RFC5246}} but MAY do any other RDAP compatible AAA for domestic queries
+
+An HME, when supporting Mutual TLS, MUST accept valid HKIX certificates and MAY accept other {{RFC5280}} (PKIX) compliant certificates.
+
+> Author Note: the selection of Mutual TLS is an initial down selection from OpenID Connect for RDAP ({{RFC9560}}), or Mutual TLS ({{Section 7.4.6 of RFC5246}}) or eXtensible Access Control Markup Language (XACML) with Security Assertion Markup Language (SAML). This is still a discussion point.
+
+# Registrant Request
+
+## Keys & Certificate Signing Request {#key-csr}
+
+The Registrant MUST generate an asymmetric key-pair for use and constructs a HKIX-compliant Certificate Signing Request (CSR), see {{dkix-csr}} for UAS ecosystem CSR, to be included in {{req-model}}.
+
+If the Registrant knows the HID of the Registrar it wishes to be endorsed by, it SHOULD construct its HHIT accordingly and include it in the CSR under an IP6 Name of a Subject Alternative Name (SAN) Extension marked as critical. The process of discovering a specific HID is out of scope for this document.
+
+## Request Model {#req-model}
+
+~~~
+{::include cddl/request.cddl}
+~~~
+{:fig #model-req title="Request Model CDDL"}
+
+entity-type:
+An enumeration of the HHIT Entity Type registry using the integer value for the CBOR typing and a string representation of the HHIT Type for use in JSON.
+
+unique_id:
+A value used during the locally scoped interaction between Registrant and HME when there is more than one registration request in a claim.
+
+csr:
+The CSR generated in {{key-csr}}, DER encoded.
+
+vna & vnb:
+See {{time-window}}.
+
+meta & metadata:
+See {{metadata}}.
+
+## Request Web Token & Transport {#req-wt}
+
+The Web Token, signed by the Registrant per either {{self-signed}} or {{proxy-signed}}, contains the content found in {{req-model}} under the claim `hhit_req`.
+
+~~~ ascii-art
+POST /.well-known/register-hhit HTTP/1.1
+Host: uss.example.com
+Accept: application/cwt, application/jwt
+Content-Type: application/cwt
+Content-Length: <CWT length>
+
+[ Encrypted CWT from registrant ]
+~~~
+{: #api-request title="Example REST Registration API with CWT (request)"}
+
+### Encryption
+
+The Web Token MUST be encrypted as it can contain Personally Identifiable Information (PII) as found in {{req-model}}. The Registrant MUST use the associated encryption key of the HME, which is the X25519 key derived from the HME's public key associated with their HHIT.
+
+> Author Note: is the scheme for encryption key good for this application or is something else needed?
+
+### Self-Signed
+
+When a Registrant has no prior relationship with the HME it is registering to, the public key MUST be provided in the Web Token. This can be achieved in two ways:
+
+1. As part of the Web Token header
+2. As part of the Web Token payload; specifically the CSR that is already required in the model
+
+### Proxy-Signed
+
+When a Registrant has an existing registered HHIT for themselves and registering another HHIT (for themselves or a proxy device), they MUST provide their registered HHIT as part of the Web Token header in the `kid` field. The field contents MUST be a well-formed string representation of the IPv6 address.
+
+# HME Processing & Response
+
+## Request Validation & Processing {#req-valid}
+
+All requests MUST pass the following checks before following {{req-approve}}:
+
+1. The Web Token signature validates with an acceptable public key
+2. The CSR signature passes with embedded public key
+3. The public key in CSR is unique to the HME's scope
+4. HME constructs using their HID and the CSR's public key an HHIT and;
+    * If an HHIT is provided by Registrant in CSR ensure they are equivalent
+    * Confirm the HHIT is unique in the HME's authority of the hierarchy
+5. Additional data, if any, in the Web Token is acceptable; see {{oaas}}
+
+If any of the above checks fail, the DIME follows {{req-deny}}.
+
+### Request Approval {#req-approve}
+
+Once processed as a "pass" the HME MUST generate at least HKIX-compliant certificates (for the UAS ecosystem see {{dkix}}) and based on the use case being registered MAY generate other artifacts (such as Endorsements). Broadcast Endorsements MUST be generated for applications involving UAS. The HME MUST store these certificates and other artifacts in a private information registry and also update the relative Authoritative Name Server accordingly.
+
+### Request Rejection {#req-deny}
+
+Rejections MUST be sent in an appropriate HTTP Response code and SHOULD contain reasoning, when applicable. A non-exhaustive list of examples of rejection reasons are:
+
+- Web Token not encrypted
+- Public key not found/provided
+- Invalid/missing model element(s)
+- Non-conformance with HME policy/policies
+
+An HTTP Response associated with an error MUST NOT contain a Web Token. The exact contents of the error response are out of scope for this document but should follow best practices.
+
+~~~ ascii-art
+HTTP/1.1 401 Unauthorized
+Content-Type: application/json
+
+{
+  "status": 401,
+  "code": "UNAUTHORIZED",
+  "message": "Key used to sign Web Token is denied.",
+}
+~~~
+{: #api-response-error title="Example REST Registration API (response, failure)"}
+
+## Response Model {#resp-model}
+
+~~~ ascii-art
+{::include cddl/response.cddl}
+~~~
+{:fig #model-resp title="Response Model CDDL"}
+
+See {{req-model}} for same named field definitions.
+
+be_chain:
+An optional list of Broadcast Endorsements of the HME and any relevant parent or sibling entities in the the hierarchy.
+
+be:
+An optional Broadcast Endorsement of the HME endorsing the newly registered HHIT/HI.
+
+## Response Web Token & Transport {#resp-wt}
+
+Approved requests MUST contain a Web Token, signed by the HME with their HHIT as part of the header like described in {{proxy-signed}}, in their response. The model of {{resp-model}} is under a claim designated by `hhit_resp`.
+
+~~~ ascii-art
+HTTP/1.1 200 OK
+Accept: application/cwt, application/jwt
+Content-Type: application/cwt
+
+[ CWT from HME ]
+~~~
+{: #api-response title="Example REST Registration API with CWT (response, success)"}
+
+# Registrant Post-Response {#req-resp}
+
+## Response Validation & Onboarding {#resp-valid}
+
+The Registrant MUST validate the signature of the Web Token returned by the HME and SHOULD validate all signatures found in the response claim.
+
+# Client Query
+
+A client can receive an HHIT from various sources. An Observer will typically receive the DET from Broadcast RID either via the {{ASTM.F3411}} Basic ID Message or Authentication Message. This part of the specification details how clients should handle HHITs to obtains additional information through the selected differential access mechanism known as Registration Data Access Protocol (RDAP, {{STD95}}).
+
+## Finding Authoritative Server URL {#find-rdap-url}
+
+There are two ways to obtain the URL to perform an RDAP query: DNS or through the RDAP bootstrap. DNS is the RECOMMENDED method for HHITs as an HME may elect to not be part of the RDAP bootstrap mechanism. See {{RFC9224}} for details.
+
+For DNS, a client performs a lookup using the nibble-reversed IPv6 address for an HHIT RRType. This results in the data defined in {{Section 5.1 of DET-DNS}}. In the HHIT RRType as part of the Canonical Registration Certificate, a URI is present in the Subject Alternative Name extension as defined in {{san-uri}}. 
+
+## RDAP Query
+
+The query URL is constructed with the URI obtained in {{find-rdap-url}} appended with `/.well-known/query-hhit/<IP address>`. The query MUST use an HTTPS GET method and provide authentication using Mutual TLS using a PKIX compatible (i.e {{dkix}} for UAS/aviation ecosystem) certificate. The HME MUST redirect `/.well-known/query-hhit/` to their locally hosted path of {{Section 3.1.1 of RFC9082}}.
+
+~~~ ascii-art
+GET /.well-known/query-hhit/<IP address> HTTP/1.1
+Host: uss.example.com
+~~~
+{: title="Example HHIT HTTP RDAP Query"}
+
+# HME RDAP Processing & Response
+
+## Authentication & Access Control {#rdap-process}
+
+With the use of Mutual TLS as part of the query, the authentication is covered by acceptance or rejection of the certificate presented by the client. Standard TLS rejection methods MUST be followed to signal to the client the rejection of the certificate.
+
+Once cleared through with a valid certificate, access control is handled using policy methods of the HME and is out of scope for this document. It is RECOMMENDED for interoperability of sharing policy information between HME's that eXtensible Access Control Markup Language (XACML) with Security Assertion Markup Language (SAML) is used.
+
+## HME Data Structure
+
+This following data structure and elements are provided based on the policy decision of the HME.
+
+~~~ ascii-art
+{::include cddl/rdap.cddl}
+~~~
+{:fig #rdap-model title="HME RDAP Extension"}
+
+## RDAP Response {#rdap-pass}
+
+An RDAP response from an HME MUST contain {{rdap-model}} under the key of `hme_resp`. The `rdapConformance` array of the response MUST include `hme_v0`. The HME MAY also include the standard expected response of {{Section 5.4 of RFC9083}} if applicable.
+
+~~~ ascii-art
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+[ RDAP JSON from HME ]
+~~~
+{:fig title="HME RDAP Response"}
+
+# Client Post-Response {#client-resp}
+
+TBD
+
+# IANA Considerations {#ic}
+
+## Well-Known URIs
+
+IANA is requested to add the following entries in the "Well-Known URIs" registry {{IANA.WellKnownURIs}}.
+
+| URI Suffix | Change Controller | Reference | Status | Related Information |
+| ---------- | ----------------- | --------- | ------ | ------------------- |
+| register-hhit | IETF | This RFC | permanent | N/A |
+| query-hhit | IETF | This RFC | permanent | N/A |
+| oaas-hhit | IETF | This RFC | permanent | N/A |
+{: title="Additions to Well-Known URIs Registry"}
+
+## CWT & JWT Claims {#claims}
+
+Claims defined for DRIP are compatible with those of CWT and JWT, so the CWT and JWT Claims registries, {{IANA.CWT.Claims}} and {{IANA.JWT.Claims}}, are reused. No new IANA registry is created.
+
+Per this specification, the following values are requested to be added to the "JSON Web Token Claims" registry established by {{RFC7519}} and the "CBOR Web Token (CWT) Claims" registry established by {{RFC8392}}. Each entry is requested to be added to both registries. The "Claim Description", "Change Controller", and "Reference" fields are common and equivalent for the JWT and CWT registries. The "Claim Key" and "Claim Value Type" fields are for the CWT registry only. The "Claim Name" field is as defined for the CWT registry, not the JWT registry. The "JWT Claim Name" field is equivalent to the "Claim Name" field in the JWT registry.
+
+~~~ ascii-text
+Claim Name: HHIT Registration Request
+Claim Description: HHIT Registration Request
+JWT Claim Name: hhit_req
+Claim Key: TBD1
+Claim Value Type: map
+Change Controller: IETF
+Reference: This RFC
+~~~
+{: title="HHIT Registration Request Claim Registration Form"}
+
+~~~ ascii-text
+Claim Name: HHIT Registration Response
+Claim Description: HHIT Registration Response
+JWT Claim Name: hhit_resp
+Claim Key: TBD2
+Claim Value Type: map
+Change Controller: IETF
+Reference: This RFC
+~~~
+{: title="HHIT Registration Response Claim Registration Form"}
+
+## RDAP Extensions Registry
+
+IANA is requested to register the following value in the "RDAP Extensions" registry {{IANA.RDAP.Extensions}}.
+
+~~~~
+Extension Identifier: 
+  hme_v0
+Registry Operator:
+  Any
+Specification:
+  This specification
+Contact:
+  IETF <iesg@ietf.org>
+Intended Usage:
+  This extension is used to convey private information 
+  under an HHIT registration.
+~~~~
+
+## HME Interchange Keys
+
+An HME is an ingress and egress for many different types of data. A common data model as specified in this document and a registry of available fields enables wide-spread interoperability of the implementations across various ecosystems.
+
+This document requests IANA create a new registry under IANA.DRIP called "HME Interchange Keys". This registry is to maintain a globally harmonized list of JSON keys (i.e. "Names") and CBOR map integer keys (i.e. "Labels") for use by HME's and their clients. The following ranges are defined based on the CBOR Label values:
+
+| Range | Registration Policy | Range Use | Comments |
+| ----- | ------------------- | --------- | -------- |
+| from -2^64 to -25 | Private Use ({{Section 4.1 of RFC8126}})            | HME Private Keys | - |
+| from -24 to 23    | TODO: TBD                                           | ASTM UAS Keys    | Keys found in UAS Standards such as {{ASTM.F3411}} |
+| from 24 to 2^64-1 | Specification Required ({{Section 4.6 of RFC8126}}) | Global Harmonization Keys | Reserved for future registrations to maintain global harmonization in various domains |
+{: #key-table title="HME Interchange Keys: Registry Policies"}
+
+Keys in the Private Use and Experimental ranges are RECOMMENDED to prepend a `_` to the Name to avoid namespace collisions with registered Names. 
+
+The HME Private Keys range in this registry provide code-points for any HME to define their own subset of elements in both registration and RDAP responses. HME Operators SHOULD provide specification for any Private Use values, but this may not be public due to policy.
+
+### Review Criteria
+
+For registrations, review should note if the Name field matches an existing entry, the request should be denied. A request should also be denied if the specification duplicates an existing entry both in syntax and semantics. For example, if an existing key called `whee` already exists with the specification of `[+ uint]` and a new request comes along to register `whee_but_mine` with specification `[+ uint]`, then the latter should be rejected on the grounds of being able to use `whee` instead. This denial can be overruled if shown that the new registration has clear justification, as part of the specification citing technical reasoning, to exist.
+
+### Registry Fields
+
+Name (JSON Key Value):
+
+: A string value, to be used as a `key` in the `key: value` pair of a JSON object. No specific rules apply for syntax beyond being a valid JSON string for a object key, but it is recommended to use all lower-case and snake-case with underscores. Care should be given to the length of a Name to reduce wire size of JSON encodings for constrained environments.
+
+Label (CBOR Integer Key Value):
+
+: A integer value, ranging from `-2^64` to `2^64 - 1`, to be used as a key in a CBOR map. Different ranges of values use different registration policies, see {{key-table}}.
+
+Description:
+
+: A short description of the entry providing an overview of its semantic meaning and its expected use-cases.
+
+Reference:
+
+: A link to a permanent and readily available specification defining the value syntax and semantics to be used for this key.
+
+### Registration Form
+
+~~~~
+Requested Range: 
+Name (JSON Key Value):
+Description:
+Specification:
+~~~~
+{: #key-form title="HME Interchange Keys: Registration Form}
+
+### Initial Values
+
+| Name (JSON Key Value) | Label (CBOR Integer Key Value) | Description                       | Reference                |
+| --------------------- | ------------------------------ | --------------------------------- | ------------------------ |
+| uas_type              | 0                              | Enumeration of UAS Type           | {{DET-DNS}}              |
+| uas_ids               | 1                              | UAS IDs                           | {{DET-DNS}}              |
+| auth                  | 2                              | Authentication Data               | {{DET-DNS}}              |
+| self_id               | 3                              | Self ID                           | {{DET-DNS}}              |
+| classification        | 4                              | UA Category & Class               | {{DET-DNS}}              |
+| area                  | 5                              | Area Count, Radius, etc.          | {{DET-DNS}}              |
+| operator_id           | 6                              | Operator ID                       | {{DET-DNS}}              |
+| raa                   | 23                             | RAA                               | This RFC                 |
+| hda                   | 24                             | HDA                               | This RFC                 |
+| csr                   | 25                             | DER Encoded X.509 CSR             | This RFC                 |
+| uas                   | 26                             | UAS Datum Map                     | This RFC                 |
+| utm                   | 27                             | UTM Operational Intent & Source   | This RFC                 |
+| spec                  | 28                             | HME Specification Code            | This RFC                 |
+| canonical_cert        | 39                             | DER Encoded X.509 Certificate     | This RFC                 |
+| be_chain              | 30                             | List of Broadcast Endorsements    | This RFC                 |
+| registrant            | 31                             | Registrant Information            | This RFC                 |
+| hhit                  | 32                             | Hierarchial Host Identity Tag     | This RFC                 |
+| oracle_x509           | 33                             | Oracle X.509 Certificate          | This RFC                 |
+| uas_serial_number     | 34                             | ANSI/CTA 2063-A UAS Serial Number | This RFC                 |
+| caa_assigned_id       | 35                             | CAA Assigned ID                   | This RFC                 |
+| pilot_license_id      | 36                             | Pilot License Number              | This RFC                 |
+{: #pre-key-values title="Pre-Allocated HME Interchange Keys"}
+
+# Security Considerations {#sc}
+
+The considerations discussed in {{RFC9153}}, {{RFC9374}}, {{RFC9434}} and {{DET-DNS}} apply.
+
+## AAA
+
+HMEs use and provide various methods to protect data through: Attestation, Authentication, Authorization, Access Control, Attribution, Accounting, and Audit (AAA). All data, handled under DRIP, MUST be protected by AAA, as per applicable regulation and policy (which, in some cases, for public data, may impose minimal requirements). All private data MUST also be protected by strong encryption where permitted by applicable law etc. These requirements apply to data at rest and in transit in all phases of the process, i.e. registration and query.
+
+Attestation may be mandated by a jurisdiction for devices. Remote ATtestation ProcedureS (RATS) {{RFC9334}} is recommended for such mandates. The specific attestation mechanisms are out of scope for this document.
+
+## Cryptographic Materials
+
+Best practices dictate that cryptographic materials that should only be available to selected parties SHOULD be generated by one or more of those parties and stored accessibly only on those parties devices. E.g. the asymmetric key-pair from which an HHIT will be derived SHOULD be generated by the entity identified by that HHIT and the corresponding private key should be stored only on that entity's device. There may be scenarios where other parts of a system, such as a UAS, generates the cryptographic materials and provision them as needed during an operation. Any such system MUST ensure security of the cryptographic material is guaranteed.
+
+# Privacy & Transparency Considerations {#ptc}
+
+The considerations discussed in {{RFC9153}} and {{Section 10 of RFC9434}} apply.
+
+> Author Note: do we copy/paste Section 10 of {{RFC9434}} and update here or is below sufficient?
+
+--- back
+
+# Use of Constrained Application Protocol {#coap}
+
+This appendix is normative.
+
+CoAP defines a RESTful protocol as typically used in HTTP for UDP applications (such as Internet of Things). Drones, apart from being airborne and moving, have similar enough attributes to IoT devices that protocols and other solutions in IoT space could be harmonious. CoAP also has a variant to use Datagram Transport Layer Security (DTLS, {{RFC9147}})
+
+The use of DTLS-secured CoAP (CoAPS) for HHIT registration and onboarding is OPTIONAL. It is RECOMMENDED that CoAPS is used rather than CoAP as DTLS provides similar security guarantees as HTTPS. When using DTLS, it is RECOMMENDED that a Registrant following {{self-signed}} uses the `RawPublicKey` mode or uses `Certificate` when following {{proxy-signed}} as defined in {{Section 9 of RFC7252}}. When a X.509 certificate is in use it MAY be DKIX compliant.
+
+Keeping in theme with constrained environments, only CWTs MUST be used over a CoAPS endpoint during the registration process. This decision is also driven by the statement in {{Section 3 of RFC7252}} which says: "each CoAP message occupies the data section of one UDP datagram". Use of an encoding other than CBOR for the Web Token could easily exceed the limit of a single UDP datagram. 
+
+CoAPS can also be proxied to and from HTTPS applications, allowing a single HTTPS-based endpoint to be implemented by DIMEs. See {{Section 5.7 of RFC7252}} for details.
+
+# Oracle As A Service {#oaas}
+
+This appendix is normative.
+
+In certain circumstances field contents may only be properly validated by other entities outside of DRIP. A so called "oracle" can be provided by an RAA or designated 3rd party as a service (i.e. "oracle-as-a-service") or mandated by an RAA to be implemented directly by their HDAs. If such an "oracle" is not consulted there is a risk that information being registered is fraudulent and DRIP has no method or authority to confirm the claims. If such information is accepted, future information queries by authorities could result in bogus data being returned.
+
+The rest of this section (and subsections) only applies for an "oracle-as-a-service" model.
+
+## Example
+
+An an example, the binding between UAS Serial Number and Operator ID should already be known by the CAA, as typically this information is required out of band of DRIP directly to the CAA in some form. The CAA should provide or itself have access to an "oracle" that can validate these claimed bindings for registration to proceed. When an "oracle" is not consulted there is a risk that the a recorded binding between UAS and Operator is non-existent, resulting in faulty CAA enforcement capabilities.
+
+## Expected HME Behavior
+
+HME's when presented with additional information that requires an "oracle", MUST forward without modification the Registrants Web Token for processing to their RAAs "oracle-as-a-service" endpoint. HME's acting as an RAA under this specification MUST always provide the "oracle-as-a-service" endpoint (`/.well-known/oaas-hhit`) and respond as follows:
+
+- return an applicable HTTP Response error when the "oracle" does not exist within a given jurisdiction
+  - HMEs receiving such a response SHOULD proceed as if the "oracle" successfully validated the request 
+- perform a redirect to appropriate system when "oracle" is being provided as a 3rd party service that the HDAs are expected to independently consult
+- process and respond following {{eob}}
+
+HMEs process non-error HTTP codes by including the returned "oracle" certificate in artifacts in the Private Information Registry and continuing the registration process. An error HTTP code received by a DIME MUST be mimicked back to the Registrant.
+
+## Expected Oracle Behavior {#eob}
+
+The "oracle" MUST validate the Web Token signature before processing any of the claim data it has authority over. Additional authentication and/or authorization on the endpoint MAY be required by a jurisdiction and its selection, implementation and policy are out of scope for this document.
+
+If an "oracle" accepts the data presented it MUST respond with a valid X.509 certificate, RECOMMENDED to be HKIX compliant, with the Subject set to the same contents as the Registrant CSR. When a "oracle" denies any data presented is MUST respond with an appropriate HTTP Response code and MUST NOT include a reason. This is to avoid clients data mining information to forge malicious requests. Once the "oracle" has completed its validations on fields it has authority over and responded accordingly the Web Token MUST be deleted from the "oracle".
+
+The policy and other inner mechanics of the "oracle" are out of scope for this document.
+
+# DRIP Key Infrastructure X.509 (DKIX) {#dkix}
+
+This appendix is normative.
+
+The following sections define profiles and any specific field content for X.509 certificates that serve as a "shadow" of Endorsements that make up the DRIP Key Infrastructure (DKI). DKIX is a HKIX specifically serving the UAS and wider aviation ecosystem under the {{ICAO.ACCP}}. It is recommended that DKIX-Full ({{dkix-full}}) be deployed, as its CA certificates contain ICAO policy OIDs the reflect on the whole DKIX deployment.
+
+A DKIX compliant Certificate Authority (CA) MUST implement generation of the DKI Endorsements. It SHOULD also generate both DKIX profiles ({{dkix-lite}} and {{dkix-full}}). In this section Endorsing Server and CA are interchangeable.
+
+> Author Note: At this point in defining the shadow PKIs, alternatives to a strict hierarchy is still an open work item.
+
+## Signing Request {#dkix-csr}
+
+The Certificate Signing Request (CSR) is a mandatory for all DET registrations. Depending on the entity being registered, there is specific content rules.
+
+~~~~
+Certificate Request:
+    Data:
+        Version: 1 (0x0)
+        Subject:
+        Subject Public Key Info:
+            Public Key Algorithm: ED25519
+                ED25519 Public-Key:
+                pub:
+        Attributes:
+        Requested Extensions:
+            X509v3 Subject Alternative Name: critical
+                IP Address:
+    Signature Algorithm: ED25519
+~~~~
+
+Subject:
+
+: As defined in {{Section 4.1.2.6 of RFC5280}}. This field is filled in based on the type of entity being registered. When the attribute type is set to SERIAL_NUMBER, it MUST contain the ANSI/CTA 2063-A UAS Serial Number encoded as a string. The value of this field for other entity types are subject to policy and are out of scope for this document.
+
+Subject Alternative Name:
+
+: When the registrant knows which HID and/or Suite ID they want the CSR SHOULD contain the Subject Alternate Name extension as defined in {{Section 4.2.1.6 of RFC5280}} using ipAddress containing the fully formed DET and MUST mark the extension as `critical`. This DIME MUST check to ensure that the DET located in the extension is properly generated with the included public key of this CSR. If the registrant does not know or care the value of their HID and/or Suite ID, the Extensions field MUST NOT appear and the DIME will use its HID for DET generation using the public key provided by this CSR. 
+
+The use of other Extension fields are out of scope for this document.
+
+## Lite Profile {#dkix-lite}
+
+DKIX-Lite is designed to fully mirror the DKI in the smallest reasonable X.509 certificates (e.g. 240 bytes for DER), but still adhere to {{RFC5280}} MUST field usage. The profile can be found in {{dkix-lite-profile}} and a field matrix found in {{dkix-lite-matrix}}.
+
+~~~~
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+        Signature Algorithm: ED25519
+        Issuer: CN =
+        Validity
+            Not Before:
+            Not After :
+        Subject:
+        Subject Public Key Info:
+            Public Key Algorithm: ED25519
+                ED25519 Public-Key:
+                pub:
+        X509v3 extensions:
+            X509v3 Subject Alternative Name: critical
+                IP Address:
+    Signature Algorithm: ED25519
+    Signature Value:
+~~~~
+{: #dkix-lite-profile title="DKIX-Lite Profile"}
+
+| Field | Authorization | Issuing | Operational | Comments |
+| ----- | ------------- | ------- | ----------- | -------- |
+| Serial Number | MUST | MUST | MUST | {{lite-serial}} |
+| Subject | MUST | MUST | MUST NOT | {{ca-subject}} |
+| Issuer | MUST | MUST | MUST | {{issuer}} |
+| Subject Alternative Name (SAN) IP6 | MUST | MUST | MUST | {{san-ip6}} |
+| Subject Alternative Name (SAN) URI | MAY | MAY | MAY | {{san-uri}}
+| Basic Constraints | MUST | MUST | MUST NOT | CA=True, flagged as Critical | 
+| Subject Key Identifier (SKI) | MUST NOT | MUST NOT | MUST NOT | - |
+| Authority Key Identifier (AKI) | MUST NOT | MUST NOT | MUST NOT | - |
+| Key Usage | MAY | MAY | MAY | - |
+| CA Policy OIDs | MAY | MAY | MAY | {{policy-oid}} | 
+{: #dkix-lite-matrix title="DKIX-Lite Field Matrix"}
+
+## Full Profile {#dkix-full}
+
+The X.509 certificates are minimalistic (less than 400 bytes for DER). Any DRIP specific OIDs should come from the ICAO arc (see {{policy-oid}}). The profile can be found in {{dkix-full-profile}} and a field matrix found in {{dkix-full-matrix}}.
+
+~~~~
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+        Signature Algorithm: ED25519
+        Issuer: CN =
+        Validity
+            Not Before:
+            Not After :
+        Subject:
+        Subject Public Key Info:
+            Public Key Algorithm: ED25519
+                ED25519 Public-Key:
+                pub:
+        X509v3 extensions:
+            X509v3 Subject Alternative Name: critical 
+                IP Address:
+                URI:
+            X509v3 Subject Key Identifier:
+            X509v3 Authority Key Identifier:
+            X509v3 Basic Constraints: critical
+            X509v3 Key Usage: critical
+    Signature Algorithm: ED25519
+    Signature Value:
+~~~~
+{: #dkix-full-profile title="DKIX-Full Profile"}
+
+| Field | Authorization | Issuing | Operational | Comments |
+| ----- | ------------- | ------- | ----------- | -------- |
+| Serial Number | MUST | MUST | MUST | {{full-serial}} |
+| Subject | MUST | MUST | MUST NOT | {{ca-subject}} |
+| Issuer | MUST | MUST | MUST | {{issuer}} |
+| Subject Alternative Name (SAN) IP6 | MUST | MUST | MUST | {{san-ip6}} |
+| Subject Alternative Name (SAN) URI | MAY | MAY | MAY | {{san-uri}} |
+| Basic Constraints | MUST | MUST | MUST NOT | CA=True, flagged as Critical | 
+| Subject Key Identifier (SKI) | MUST | MUST | MUST NOT | {{ski}} |
+| Authority Key Identifier (AKI) | MUST | MUST | MUST | {{aki}} |
+| Key Usage | SHOULD | SHOULD | SHOULD | - |
+| CA Policy OIDs | RECOMMENDED | RECOMMENDED | RECOMMENDED | {{policy-oid}}
+{: #dkix-full-matrix title="DKIX-Full Field Matrix"}
+
+## Certificate Fields
+
+The following sections contain clarifications on the usage of fields in the DKIX when they deviate from "standard" X.509 {{RFC5280}} practice or have specific functions in the context of DRIP.
+
+### Serial Number
+
+#### Lite {#lite-serial}
+
+The Serial Number is a MUST field, but it has no usage in this DRIP-Lite. It is 1-byte in size and thus duplicates are guaranteed. To drop this field could make many X.509 parsing libraries fail. 
+
+However, CA certificate's Serial Number MAY be the common 20 bytes. This is to avoid possible issues with general software expecting this size Serial Numbers for CAs. 
+
+If Serial Numbers are incrementally assigned, 31 bits are sufficient for an Issuing CA with 2B DETs active. A CA should determine its best-used Serial Number field size to limit the impact of this field on the certificate size.
+
+#### Full {#full-serial}
+
+The certificates will contain a 20-byte randomly generated Serial Number, compliant with CABForum recommendations. Serial Numbers are included for CRL functionality.
+
+### Subject {#ca-subject}
+
+The Subject field is only used in Authorization and Issuing Certificates. For Operational Certificates, the Subject is Empty and the DET will be in Subject Alternative Name (SAN, {{san-ip6}}). In the SAN, the DET can be properly encoded as an IPv6 address.
+
+The format defined in {{ca-subject-format}} MUST be used. The CA Subject Name serves a dual purpose: foremost, to place the CA within the DKI tree, but secondly for outside of DRIP usage to tag that this CA's function is to serve DRIP Entities.
+
+~~~~
+DRIP-{APEX|RAA|HDA}-{A|I}[-RAA#][-HDA#]
+~~~~
+{: #ca-subject-format title="CA Subject Format"}
+
+As examples; an Authorization DET for RAA 16376 would be: `DRIP-RAA-A-16376` and an Issuing DET for HDA 16376 under the same RAA would be: `DRIP-HDA-I-16376-16376`.
+
+### Issuer
+
+The Issuer MUST be the higher level's DET. 
+
+The Issuer for the Apex Authorization certificate MUST be its DET (indicating self-signed). If the RAA Authorization certificate is self-signed (i.e., no Apex), its Issuer is its DET. 
+
+The Issuer content of its DET assists in finding this specific Issuer in the DRIP `ip6.arpa.` DNS tree and any additional information.
+
+### Subject Alternative Name IP6 {#san-ip6}
+
+Subject Alternative Name is only used in Operational certificates. It is used to provide the DET as an IP address with an Empty Subject (SAN MUST be flagged as Critical). 
+
+The Subject Alternative Name is also used in Manufacturer DET certificates. These may contain the `hardwareModuleName` as described in {{802.1AR}} that references {{RFC4108}}. 
+
+Per {{RFC5280}} and {{802.1AR}}, Manufacturer DET certificates with `hardwareModuleName` MUST have the notAfter date as `99991231235959Z`.
+
+### Subject Alternative Name URI {#san-uri}
+
+This field contains a pointer in the form of a URI where additional information on the CA and certificates under its control can be found. For example, an authorized authority may access end-entity PII like an Operator phone number through this URI link using the method specified in {{rdap-query}}.
+
+Authorization certificates MAY have a SAN URI and MUST when it is self-signed. Issuing certificates SHOULD have a SAN URI. Operational certificates MAY have a SAN URI.
+
+The RECOMMENDED configuration with respect to Issuing and Operational certificates for a CA is to place the SAN URI in the Issuing certificate and exclude them in Operational certificates. When multiple providers are used by the CA to handle additional information there SHOULD be a unique Issuing certificate with SAN URI for each provider, and Operational certificates MUST NOT contain a SAN URI. Otherwise a CA with multiple providers MUST NOT have a SAN URI in the Issuing certificate and MUST set the SAN URI to the specific provider for each Operational certificate.
+
+The contents of the SAN URI are the base URL containing at least the fields scheme, host and port to query for additional information of a DET.
+
+### Subject Key Identifier {#ski}
+
+The Subject Key Identifier MUST be the DET. This is a major deviation from "standard" X.509 certificates that hash (normally with SHA2) the Public Key to fill the Subject Key Identifier. 
+
+The Subject Key Identifier is NOT included in Operational certificates. If needed by some application, it is identical with SAN.
+
+### Authority Key Identifier {#aki}
+
+The Authority Key Identifier MUST be the higher level's Subject Key Identifier (i.e. DET). This partially follows standard practice to chain up the Authority Key Identifier from the Subject Key Identifier, except for how the Subject Key Identifiers are populated. 
+
+The Authority Key Identifier for the Apex Authorization (or self-signed RAA Authorization) certificate MUST be the Subject Key Identifier (indicating self-signed).
+
+### CA Policy OIDs {#policy-oid}
+
+It is recommended that a CA have policy OIDs defining rules for EEs within its domain. The OIDs used here will tend to be within ICAO's arc of `1.3.27.16`.
+
+If the CA certificate has policy OIDs, it MUST include an ICAO LOA OID (arc of `1.3.27.16.1.1.0`) defining "the confidence in the security measures that protect the private key and manage the certificate lifecycle".
+
+| OID | Description | Applicability |
+| --- | ----------- | ------------- |
+| 1 | Low | This level is relevant to environments where Risks and consequences of data Compromise are low. Subscriber Private Keys shall be stored in software at this Identity Assurance Level (IAL). |
+| 2 | LowDevice | This policy is identical to that defined for the Low Assurance policy (above) with the exception of identity proofing, re-key, and Activation Data. |
+| 3 | Low-TSP Mediated Signature | This policy is identical to that defined for the Low Assurance policy (above) with the exception that the Private key is not in the possession of the user, but rather by a Trust Service Provider. |
+| 4 | Medium | This level is relevant to environments where Risks and consequences of data Compromise are moderate. This may include transactions having substantial monetary value or Risk of fraud or involving access to private information where the likelihood of malicious access is substantial. Subscriber Private Keys shall be stored in software at this IAL. |
+| 5 | MediumDevice | This policy is identical to that defined for the Medium Assurance policy (above) with the exception of identity proofing, re-key, and Activation Data. |
+| 6 | Medium-TSP Mediated Signature | This policy is identical to that defined for the Medium Assurance policy (above) with the exception that the Private key is not in the possession of the user, but rather by a Trust Service Provider. |
+| 7 | MediumHardware | This policy is identical to that defined for the Medium Assurance policy (above) with the exception of Subscriber Cryptographic Module requirements described in {{ICAO.ACCP}}. |
+| 8 | MediumDeviceHardware | This policy is identical to that defined for the Medium Hardware Assurance policy (above) with the exception of identity proofing, re-key, and Activation Data. |
+| 9 | High | This level is relevant to environments where Risks and consequences of data Compromise are high. Certificates issued at the High-CardAuth IAL shall only be issued for Card Authentication, as defined by NIST SP 800-73 or equivalent standard. Further, this policy is identical to that defined for the identical to the MediumHardware IAL except where specifically noted in {{ICAO.ACCP}}. |
+| 10 | High-CardAuth | This level is relevant to environments where Risks and consequences of data Compromise are high. Certificates issued at the High-cardAuth IAL shall only be issued for Card Authentication, as defined by NIST SP 800-73 or equivalent standard. |
+| 11 | High-ContentSigning | This level is relevant to environments where Risks and consequences of data Compromise are High. This may include transactions having substantial monetary value or Risk of fraud or involving access to private information where the likelihood of malicious access is substantial. Certificates issued at the High IAL shall only be issued to human Subscribers.Certificates issued at the High-contentSigning IAL shall only be issued to the CMS for signing the HIGH card security objects (e.g. Certificates, CRLs, OCSP responses). Further, this policy is identical to that defined for the identical to the MediumHardware IAL except where specifically noted in {{ICAO.ACCP}}. |
+{: #loa-oid-table title="ICAO LOA OID Assignments under 1.3.27.16.1.1.0"}
+
+In this document, the term “Device” is defined as a Non-Person Entity, i.e., an entity with a digital identity that acts in cyberspace but is not a human actor. This can include Organizations, hardware devices (e.g. a UA), software applications, and information artifacts. 
+
+Operational Certificates issued to Devices shall assert policies mapped to LowDevice, MediumDevice, MediumDeviceHardware, or High Content Signing policies. All other policies defined here should be reserved for human Subscribers when used in Operational Certificates. Thus it is recommended that Issuing CAs/HDAs should be segregated by device and human subscribers so policy can be stated at the CA level rather in individual certificates.
+
+# DRIP CDDL Definitions
+
+This appendix is normative.
+
+## Prelude
+
+The DRIP CDDL Prelude is built upon the prelude defined in {{Appendix E of RFC8610}} to allow interoperability with JSON encodings. The conversion of fields to/from CBOR and JSON MUST use the advice in {{Section 6 of RFC8949}}.
+
+~~~ ascii-art
+{::include cddl/prelude.cddl}
+~~~
+{:fig #drip-cddl-prelude title="DRIP CDDL Prelude"}
+
+## Metadata
+
+The `uas` key and its contents are lifted from {{Section 5.2.2 of DET-DNS}} with no modifications.
+
+~~~ ascii-art
+{::include cddl/metadata.cddl}
+~~~
+{:fig #metadata-cddl title="Metadata CDDL"}
+
+## Time Window
+
+The Registrant can select from a number of options to encode the values of valid not before (`vnb`) and valid not after (`vna`) for time of applicability of an individual CSR (`csr`). The use of the `time` or `tdate` types allow for absolute time references. The use of the `uint` type for `vna` specifies a positive offset in seconds from an absolute time. When `null` is used the Registrant is informing the HME that for `vnb` the HME MUST use the current time as `vnb` during registration and for `vna` the HME MUST set `vna` to a time such that the default HME policy for maximum delta between `vnb` and `vna` is not exceeded.
+
+> Implementation Note: due to not differentiating between integers and floats in its number type, implementations using JSON as the encoded format MUST check the value of `vna` to determine if its being used as an offset or absolute time.
+
+As an example of the use of `vnb` and `vna`, a Registrant may set `vnb=null` and `vna=3600`. The HME in this instance would use the current absolute time at receipt of the registration request for `vnb` and then apply the offset specified by `vna` to obtain an absolute time for `vna` that is 3600 seconds after `vnb`. These absolute times of `vnb` and `vna` are then used in an X.509 certificate being created by the HME to endorse the registration.

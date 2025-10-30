@@ -1,0 +1,14 @@
+response-claim = {
+  + &(entity-type): [+ response-data],
+  canonical_chain: [+ x509],
+  ? be_chain: [+ be: endorsement],
+  metadata,
+}
+response-data = [
+  unique_id: uint / hash / uuid,
+  certs: {
+    canonical_cert: x509,
+    ? be: endorsement,
+    metadata
+  }
+]
