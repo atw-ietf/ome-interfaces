@@ -1,15 +1,13 @@
 # Registration & Query Interfaces for DRIP Identity Management Entities (DIMEs)
 
-This is the working area for the IETF [DRIP Working Group](https://datatracker.ietf.org/wg/drip/documents/) Internet-Draft, "DRIP Registries".
-
-* [Working Group Draft](https://tools.ietf.org/html/draft-ietf-drip-registries)
+This is the working area for the IETF [DRIP Working Group](https://datatracker.ietf.org/wg/drip/documents/) Internet-Draft, "Registration & Query Interfaces for DRIP Identity Management Entities (DIMEs)".
 
 ## Building the Draft
 
 Formatted text, XML and HTML versions of the draft can be built using `make`.
 
 ```sh
-$ make
+make clean && make
 ```
 
 This requires that you have the necessary software installed.  See

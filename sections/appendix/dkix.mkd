@@ -2,7 +2,7 @@
 
 This appendix is normative.
 
-The following sections define profiles and any specific field content for X.509 certificates that serve as a "shadow" of Endorsements that make up the DRIP Key Infrastructure (DKI). DKIX is an HKIX specifically serving the UAS and wider aviation ecosystem under the {{ICAO.ACCP}}. It is recommended that DKIX-Full ({{dkix-full}}) be deployed, as its CA certificates contain ICAO policy OIDs the reflect on the whole DKIX deployment.
+The following sections define profiles and any specific field content for X.509 certificates that serve as a "shadow" of Endorsements that make up the DRIP Key Infrastructure (DKI). DKIX is an OKIX specifically serving the UAS and wider aviation ecosystem under the {{ICAO.ACCP}}. It is recommended that DKIX-Full ({{dkix-full}}) be deployed, as its CA certificates contain ICAO policy OIDs the reflect on the whole DKIX deployment.
 
 A DKIX compliant Certificate Authority (CA) MUST implement generation of the DKI Endorsements. It SHOULD also generate both DKIX profiles ({{dkix-lite}} and {{dkix-full}}). In this section Endorsing Server and CA are interchangeable.
 
@@ -10,7 +10,7 @@ A DKIX compliant Certificate Authority (CA) MUST implement generation of the DKI
 
 ## Signing Request {#dkix-csr}
 
-The Certificate Signing Request (CSR) is a mandatory for all DET registrations. Depending on the entity being registered, there is specific content rules.
+The Certificate Signing Request (CSR) is a mandatory for all HHIT registrations. Depending on the entity being registered, there is specific content rules.
 
 ~~~~
 Certificate Request:
@@ -38,7 +38,7 @@ The use of other Extension fields are out of scope for this document.
 
 ## Lite Profile {#dkix-lite}
 
-DKIX-Lite is designed to fully mirror the DKI in the smallest reasonable X.509 certificates (e.g. 240 bytes for DER), but still adhere to {{RFC5280}} MUST field usage. The profile can be found in {{dkix-lite-profile}} and a field matrix found in {{dkix-lite-matrix}}.
+DKIX-Lite is designed to fully encapsulate the DKI in the smallest reasonable X.509 certificates (e.g. 240 bytes for DER), but still adhere to {{RFC5280}} MUST field usage. The profile can be found in {{dkix-lite-profile}} and a field matrix found in {{dkix-lite-matrix}}.
 
 ~~~~
 Certificate:

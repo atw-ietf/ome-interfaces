@@ -1,4 +1,4 @@
-DRAFT:=hme-interfaces
+DRAFT:=ome-interfaces
 VERSION:=$(shell ./getver ${DRAFT}.mkd )
 EXAMPLES=
 OPEN=$(word 1, $(wildcard /usr/bin/xdg-open /usr/bin/open /bin/echo))

@@ -4,7 +4,7 @@ The considerations discussed in {{RFC9153}}, {{RFC9374}}, {{RFC9434}} and {{DET-
 
 ## AAA
 
-HMEs use and provide various methods to protect data through: Attestation, Authentication, Authorization, Access Control, Attribution, Accounting, and Audit (AAA). All data, handled under DRIP, MUST be protected by AAA, as per applicable regulation and policy (which, in some cases, for public data, may impose minimal requirements). All private data MUST also be protected by strong encryption where permitted by applicable law etc. These requirements apply to data at rest and in transit in all phases of the process, i.e. registration and query.
+OMEs use and provide various methods to protect data through: Attestation, Authentication, Authorization, Access Control, Attribution, Accounting, and Audit (AAA). All data, handled under DRIP, MUST be protected by AAA, as per applicable regulation and policy (which, in some cases, for public data, may impose minimal requirements). All private data MUST also be protected by strong encryption where permitted by applicable law etc. These requirements apply to data at rest and in transit in all phases of the process, i.e. registration and query.
 
 Attestation may be mandated by a jurisdiction for devices. Remote ATtestation ProcedureS (RATS, {{RFC9334}}) is recommended for such mandates. The specific attestation mechanisms are out of scope for this document.
 

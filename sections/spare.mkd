@@ -1,0 +1,61 @@
+{::comment}
+## Aviation ASCs
+
+IANA is requested to create a new registry called "Aviation ASCs" in {{IANA.DRIP}}. This is to support JSON encoding of the ASDA map scheme. The registry is First Come First Served ({{Section 4.4 of RFC8126}}) with {{pre-values-asda-uas}} being the initial registrations.
+
+| Label Value | Name | Reference |
+| ----------- | ---- | --------- |
+| TBD1 | uas | This RFC |
+{: #pre-values-asda-uas title="Aviation Application Specific Dynamically Assigned Contexts"}
+
+| Key | Description | Name | Label Offset | Value Type | Change Controller | Reference |
+| --- | ----------- | ---- | ------------ | ---------- | ----------------- | --------- |
+| - | - | - | -24 | - | IETF | - |
+| - | - | - | -23 | - | IETF | - |
+| - | - | - | -22 | - | IETF | - |
+| - | - | - | -21 | - | IETF | - |
+| - | - | - | -20 | - | IETF | - |
+| - | - | - | -19 | - | IETF | - |
+| - | - | - | -18 | - | IETF | - |
+| - | - | - | -17 | - | IETF | - |
+| - | RAA                                    | raa               | -16 | TBD   | IETF | This RFC |
+| - | HDA                                    | hda               | -15 | TBD   | IETF | This RFC |
+| - | UTM Operational Intent & Source        | utm               | -14 | array | IETF | This RFC |
+| - | HME Specification Code                 | spec              | -13 | TBD   | IETF | This RFC |
+| - | DER Encoded X.509 CSR                  | csr               | -12 | bstr  | IETF | This RFC |
+| - | Registrant Information                 | registrant        | -11 | TBD   | IETF | This RFC |
+| - | ANSI/CTA 2063-A UAS Serial Number      | uas_serial_number | -10 | tstr  | IETF | This RFC |
+| - | CAA Assigned ID                        | caa_assigned_id   | -9  | tstr  | IETF | This RFC |
+| - | Pilot License Number                   | pilot_license_id  | -8  | tstr  | IETF | This RFC |
+| - | Oracle X.509 Certificate               | oracle_x509       | -7  | bstr  | IETF | This RFC |
+| - | DER Encoded X.509 Certificate          | canonical_cert    | -6  | bstr  | IETF | This RFC |
+| - | List of DER Encoded X.509 Certificates | canonical_chain   | -5  | array | IETF | This RFC |
+| - | Broadcast Endorsement                  | be                | -4  | bstr  | IETF | This RFC |
+| - | List of Broadcast Endorsements         | be_chain          | -3  | array | IETF | This RFC |
+| - | - | - | -2  | - | IETF | - |
+| - | - | - | -1  | - | IETF | - |
+| - | Enumeration of UAS Type         | uas_type             | 1   | uint        | IETF | {{DET-DNS}} |
+| - | UAS IDs                         | uas_ids              | 2   | array       | IETF | {{DET-DNS}} |
+| - | Authentication Data             | auth                 | 3   | array       | IETF | {{DET-DNS}} |
+| - | Self ID                         | self_id              | 4   | array       | IETF | {{DET-DNS}} |
+| - | UA Category & Class             | classification       | 5   | array       | IETF | {{DET-DNS}} |
+| - | Area Count, Radius, etc.        | area                 | 6   | array       | IETF | {{DET-DNS}} |
+| - | Operator ID                     | operator_id          | 7   | array       | IETF | {{DET-DNS}} |
+| - | Enumeration of Status           | ua_status            | 8   | uint        | IETF | RFC-TBD |
+| - | UA Position                     | ua_position          | 9   | array       | IETF | RFC-TBD |
+| - | Bearing / Track Direction       | ua_bearing           | 10  | uint        | IETF | RFC-TBD |
+| - | Vertical & Horizontal Speeds    | ua_speed             | 11  | array       | IETF | RFC-TBD |
+| - | Height Above Ground or Take-off | ua_height            | 12  | array       | IETF | RFC-TBD |
+| - | Enumerations of Accuracies      | accuracy             | 13  | array       | IETF | RFC-TBD |
+| - | System GNSS Position            | sys_gnss_position    | 14  | #6.103      | IETF | RFC-TBD |
+| - | System Fixed Position           | sys_fixed_position   | 15  | #6.103      | IETF | RFC-TBD |
+| - | System Take-Off Position        | sys_takeoff_position | 16  | #6.103      | IETF | RFC-TBD |
+| - | UTC Timestamp                   | timestamp            | 17  | tdate, time | IETF | RFC-TBD |
+| - | Compliance Enumeration          | compliance           | 18  | array       | IETF | RFC-TBD |
+| - | - | - | 19  | - | - | - |
+| - | - | - | 20  | - | - | - |
+| - | - | - | 21  | - | - | - |
+| - | - | - | 22  | - | - | - |
+| UAS Datum | UAS Datum Object | uas | 23  | map | IETF | This RFC |
+{: title="UAS Context Key Offsets: Pre-Allocated Values"}
+{:/comment}

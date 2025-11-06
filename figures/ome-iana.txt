@@ -1,0 +1,103 @@
+Key: Application Specific Context
+Description: TBD
+Name: asc
+Label: 0
+Value Type: tstr, int
+Change Controller: IETF
+Reference: This RFC
+
+Key: Hierarchial Host Identity Tags
+Description: TBD
+Name: hhit
+Label: TBD
+Value Type: #6.54
+Change Controller: IETF
+Reference: This RFC
+
+Key: CAA Assigned ID
+Description: CAA Assigned ID
+Name: caa_assigned_id
+Label: TBD
+Value Type: tstr
+Change Controller: IETF
+Reference: This RFC
+
+Key: Pilot License Number
+Description:
+Name: pilot_license_id
+Label: TBD
+Value Type: tstr
+Change Controller: IETF
+Reference: This RFC
+
+Key: UAS Serial Number
+Description: ANSI/CTA 2063-A UAS Serial Number
+Name: uas_serial_number
+Label: TBD
+Value Type: tstr
+Change Controller: IETF
+Reference: This RFC
+
+Key: UAS Traffic Management (UTM)
+Description: UTM Operational Intent & Source
+Name: utm
+Label: TBD
+Value Type: array
+Change Controller: IETF
+Reference: This RFC
+
+Key: Certificate Signing Request (CSR)
+Description: DER Encoded X.509 CSR
+Name: csr
+Label: TBD
+Value Type: bstr
+Change Controller: IETF
+Reference: This RFC
+
+Key: Oracle X.509 Certificate
+Description: Oracle X.509 Certificate
+Name: oracle_x509
+Label: TBD
+Value Type: bstr
+Change Controller: IETF
+Reference: This RFC
+
+Key: Canonical Certificate
+Description: DER Encoded X.509 Certificate
+Name: canonical_cert
+Label: TBD
+Value Type: bstr
+Change Controller: IETF
+Reference: This RFC
+
+Key: Canonical Certificate Chain
+Description: List of DER Encoded X.509 Certificates
+Name: canonical_chain
+Label: TBD
+Value Type: array
+Change Controller: IETF
+Reference: This RFC
+
+Key: Broadcast Endorsement
+Description: Broadcast Endorsement
+Name: be
+Label: TBD
+Value Type: bstr
+Change Controller: IETF
+Reference: This RFC
+
+Key: Broadcast Endorsement Chain
+Description: List of Broadcast Endorsements
+Name: be_chain
+Label: TBD
+Value Type: array
+Change Controller: IETF
+Reference: This RFC
+
+Key: UAS Datum
+Description: UAS Datum Map
+Name: uas
+Label: 23
+Value Type: map
+Change Controller: IETF
+Reference: This RFC

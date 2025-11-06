@@ -10,21 +10,21 @@ The rest of this section (and subsections) only applies for an "oracle-as-a-serv
 
 An an example, the binding between UAS Serial Number and Operator ID should already be known by the CAA, as typically this information is required out of band of DRIP directly to the CAA in some form. The CAA should provide or itself have access to an "oracle" that can validate these claimed bindings for registration to proceed. When an "oracle" is not consulted there is a risk that the a recorded binding between UAS and Operator is non-existent, resulting in faulty CAA enforcement capabilities.
 
-## Expected HME Behavior
+## Expected OME Behavior
 
-HME's when presented with additional information that requires an "oracle", MUST forward without modification the Registrants Web Token for processing to their RAAs "oracle-as-a-service" endpoint. HME's acting as an RAA under this specification MUST always provide the "oracle-as-a-service" endpoint (`/.well-known/oaas-hhit`) and respond as follows:
+OME's when presented with additional information that requires an "oracle", MUST forward without modification the Registrants Web Token for processing to their RAAs "oracle-as-a-service" endpoint. OME's acting as an RAA under this specification MUST always provide the "oracle-as-a-service" endpoint (`/.well-known/oaas-hhit`) and respond as follows:
 
 - return an applicable HTTP Response error when the "oracle" does not exist within a given jurisdiction
-  - HMEs receiving such a response SHOULD proceed as if the "oracle" successfully validated the request 
+  - OMEs receiving such a response SHOULD proceed as if the "oracle" successfully validated the request 
 - perform a redirect to appropriate system when "oracle" is being provided as a 3rd party service that the HDAs are expected to independently consult
 - process and respond following {{eob}}
 
-HMEs process non-error HTTP codes by including the returned "oracle" certificate in artifacts in the Private Information Registry and continuing the registration process. An error HTTP code received by a DIME MUST be mimicked back to the Registrant.
+OMEs process non-error HTTP codes by including the returned "oracle" certificate in artifacts in the Private Information Registry and continuing the registration process. An error HTTP code received by a DIME MUST be mimicked back to the Registrant.
 
 ## Expected Oracle Behavior {#eob}
 
 The "oracle" MUST validate the Web Token signature before processing any of the claim data it has authority over. Additional authentication and/or authorization on the endpoint MAY be required by a jurisdiction and its selection, implementation and policy are out of scope for this document.
 
-If an "oracle" accepts the data presented it MUST respond with a valid X.509 certificate, RECOMMENDED to be HKIX compliant, with the Subject set to the same contents as the Registrant CSR. When a "oracle" denies any data presented is MUST respond with an appropriate HTTP Response code and MUST NOT include a reason. This is to avoid clients data mining information to forge malicious requests. Once the "oracle" has completed its validations on fields it has authority over and responded accordingly the Web Token MUST be deleted from the "oracle".
+If an "oracle" accepts the data presented it MUST respond with a valid X.509 certificate, RECOMMENDED to be OKIX compliant, with the Subject set to the same contents as the Registrant CSR. When a "oracle" denies any data presented is MUST respond with an appropriate HTTP Response code and MUST NOT include a reason. This is to avoid clients data mining information to forge malicious requests. Once the "oracle" has completed its validations on fields it has authority over and responded accordingly the Web Token MUST be deleted from the "oracle".
 
 The policy and other inner mechanics of the "oracle" are out of scope for this document.

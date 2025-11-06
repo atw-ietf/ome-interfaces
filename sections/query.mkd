@@ -4,41 +4,41 @@ A client can receive an HHIT from various sources. An Observer will typically re
 
 ## Finding Authoritative Server URL {#find-rdap-url}
 
-There are two ways to obtain the URL to perform an RDAP query: DNS or through the RDAP bootstrap. DNS is the RECOMMENDED method for HHITs as an HME may elect to not be part of the RDAP bootstrap mechanism. See {{RFC9224}} for details.
+There are two ways to obtain the URL to perform an RDAP query: DNS or through the RDAP bootstrap. DNS is the RECOMMENDED method for HHITs as an OME may elect to not be part of the RDAP bootstrap mechanism. See {{RFC9224}} for details.
 
 For DNS, a client performs a lookup using the nibble-reversed IPv6 address for an HHIT RRType. This results in the data defined in {{Section 5.1 of DET-DNS}}. In the HHIT RRType as part of the Canonical Registration Certificate, a URI is present in the Subject Alternative Name extension as defined in {{san-uri}}. 
 
 ## RDAP Query
 
-The query URL is constructed with the URI obtained in {{find-rdap-url}} appended with `/.well-known/query-hhit/<IP address>`. The query MUST use an HTTPS GET method and provide authentication using Mutual TLS using a PKIX compatible (i.e {{dkix}} for UAS/aviation ecosystem) certificate. The HME MUST redirect `/.well-known/query-hhit/` to their locally hosted path of {{Section 3.1.1 of RFC9082}}.
+The query URL is constructed with the URI obtained in {{find-rdap-url}} appended with `/.well-known/query-hhit/<IP address>`. The query MUST use an HTTPS GET method and provide authentication using {{mutual-tls}} using a PKIX compatible (i.e {{dkix}} for UAS/aviation ecosystem) certificate. The OME MUST redirect `/.well-known/query-hhit/` to their locally hosted path of {{Section 3.1.1 of RFC9082}}.
 
 ~~~ ascii-art
 {::include figures/query-http.txt}
 ~~~
 {: title="Example HHIT HTTP RDAP Query"}
 
-# HME RDAP Processing & Response
+# OME RDAP Processing & Response
 
-## Authentication & Access Control {#rdap-process}
+## Access Control {#rdap-process}
 
-With the use of Mutual TLS as part of the query, the authentication is covered by acceptance or rejection of the certificate presented by the client. Standard TLS rejection methods MUST be followed to signal to the client the rejection of the certificate.
+With the use of {{mutual-tls}} as part of the query, the authentication is covered by acceptance or rejection of the certificate presented by the client. Standard TLS rejection methods MUST be followed to signal to the client the rejection of the certificate.
 
-Once cleared through with a valid certificate, access control is handled using policy methods of the HME and is out of scope for this document. It is RECOMMENDED for interoperability of sharing policy information between HME's that eXtensible Access Control Markup Language (XACML) with Security Assertion Markup Language (SAML) is used.
+Once cleared through with a valid certificate, access control is handled using policy methods of the OME and is out of scope for this document. It is RECOMMENDED for interoperability of sharing policy information between OME's that eXtensible Access Control Markup Language (XACML) with Security Assertion Markup Language (SAML) is used.
 
-## HME Data Structure
+## OME Data Structure
 
 This following data structure and elements that are required in every response. Additional elements are added based on policy and use-case.
 
 ~~~ ascii-art
 {::include cddl/rdap.cddl}
 ~~~
-{:fig #rdap-model title="HME RDAP Extension CDDL"}
+{:fig #rdap-model title="OME RDAP Extension CDDL"}
 
 *csr*:
 : The DER encoded CSR received from the Registrant.
 
 *canonical_cert*:
-: The HKIX-compliant certificate signed by the HME endorsing the submitted HHIT and public key of the Registrant.
+: The OKIX-compliant certificate signed by the OME endorsing the submitted HHIT and public key of the Registrant.
 
 *hhit*:
 : Array structure contain the *entity_type* and *ipv6* address.
@@ -46,19 +46,21 @@ This following data structure and elements that are required in every response. 
 *registrant*:
 : An object representing the Registrant that registered the HHIT and submitted data found in this object.
 
-### DKI Additional Fields
+### DKI Additional Fields {#dki-add-rdap}
+
+The following fields are REQUIRED in the model when acting under DKI. Additional fields MAY be required by policy and MUST be provided by the OME.
 
 *be_chain*:
 : Array structure containing the relevant binary Endorsement chain. REQUIRED when operating under the DKI (i.e. UAS/aviation ecosystem).
 
 ## RDAP Response {#rdap-pass}
 
-An RDAP response from an HME MUST contain {{rdap-model}} under the key of `hme_resp`. The `rdapConformance` array of the response MUST include `hme_v0`. The HME MAY also include the standard expected response of {{Section 5.4 of RFC9083}} if applicable.
+An RDAP response from an OME MUST contain {{rdap-model}} under the key of `ome_resp`. The `rdapConformance` array of the response MUST include `ome_v0`. The OME MAY also include the standard expected response of {{Section 5.4 of RFC9083}} if applicable.
 
 ~~~ ascii-art
 {::include figures/query-resp-http.txt}
 ~~~
-{:fig title="HME RDAP Response"}
+{:fig title="OME RDAP Response"}
 
 # Client Post-Response {#client-resp}
 

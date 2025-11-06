@@ -1,0 +1,55 @@
+Key: UAS Type 
+Description: Enumeration of UAS Type
+Name: uas_type
+Label: TBD
+Value Type: uint
+Change Controller: IETF
+Reference:
+
+Key: UAS Identifiers
+Description: UAS IDs
+Name: uas_ids
+Label: TBD
+Value Type: array
+Change Controller: IETF
+Reference:
+
+Key: Authentication Data
+Description: Authentication Type & Data
+Name: auth
+Label: TBD
+Value Type: array
+Change Controller: IETF
+Reference:
+
+Key: Self ID
+Description: Self description
+Name: self_id
+Label: TBD
+Value Type: array
+Change Controller: IETF
+Reference:
+
+Key: UAS Classification
+Description: UAS Category & Class
+Name: classification
+Label: TBD
+Value Type: array
+Change Controller: IETF
+Reference:
+
+Key: Area
+Description: Count, Radius, Floor & Ceiling 
+Name: area
+Label: TBD
+Value Type: array
+Change Controller: IETF
+Reference:
+
+Key: Operator ID
+Description: UAS Pilot Operator ID
+Name: operator_id
+Label: TBD
+Value Type: array
+Change Controller: IETF
+Reference:

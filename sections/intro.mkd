@@ -12,9 +12,13 @@ TBD
 
 ## Scope
 
-This document is defined in a general manner to be applied to any system providing HHIT identity services. However specific fields and provisions are defined in this document to support the initial use case of UAS/aviation. The term HHIT is used when discussing the general technology while DET is used with discussion around UAS/aviation specific elements when possible. Additional terms reinforcing this delineation are found in {{terminology}}. This document defines all data models in the Concise Data Definition Language (CDDL, {{RFC8610}}).
+This document defines the general interface specifications for an entity that provides HHIT identity services. It is not limited to DETs or the aviation/UAS use-case that is the primary driver of this document.
 
-DRIP does NOT provide protection against incorrect (e.g. fraudulent) data entered during registration or asserted subsequently. DRIP does protect against alteration (intentional or unintentional) of data subsequent to its assertion by the cryptographic signer. The signer might be the proximate sender (e.g. UA transmitting Broadcast RID) or might be an attestor far away and long ago (e.g. root Certificate Authority). It is the duty of the operator of each DIME, or the party on whose behalf the DIME is being operated, to validate the registration data. The RAA (e.g. CAA under DKI) SHOULD provide services to obtain this goal, see {{oaas}}.
+The term HHIT is used when discussing the general technology while DET is used with discussion around UAS/aviation specific elements when possible. Additional terms reinforcing this delineation are found in {{terminology}}. This document defines all data models in the Concise Data Definition Language (CDDL, {{RFC8610}}).
+
+### Disclaimer
+
+DRIP, and the specifications in this document, do NOT provide protection against incorrect (e.g. fraudulent) data entered during registration or asserted subsequently. DRIP does protect against alteration (intentional or unintentional) of data subsequent to its assertion by the cryptographic signer. The signer might be the proximate sender (e.g. UA transmitting Broadcast RID) or might be an attestor far away and long ago (e.g. root Certificate Authority). It is the duty of the operator of each DIME, or the party on whose behalf the DIME is being operated, to validate the registration data. The RAA (e.g. CAA under DKI) SHOULD provide services to obtain this goal, see {{oaas}}.
 
 ### Targeted DRIP Requirements
 

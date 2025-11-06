@@ -2,7 +2,7 @@
 
 ## Keys & Certificate Signing Request {#key-csr}
 
-The Registrant MUST generate an asymmetric key-pair for use and constructs a HKIX-compliant Certificate Signing Request (CSR), see {{dkix-csr}} for UAS/aviation ecosystem CSR, to be included in {{req-model}}.
+The Registrant MUST generate an asymmetric key-pair for use and constructs a OKIX-compliant Certificate Signing Request (CSR), see {{dkix-csr}} for UAS/aviation ecosystem CSR, to be included in {{req-model}}.
 
 If the Registrant knows the HID of the Registrar it wishes to be endorsed by, it SHOULD construct its HHIT accordingly and include it in the CSR under an IP6 Name of a Subject Alternative Name (SAN) Extension marked as critical. The process of discovering a specific HID is out of scope for this document.
 
@@ -17,7 +17,7 @@ If the Registrant knows the HID of the Registrar it wishes to be endorsed by, it
 : An enumeration of the HHIT Entity Type registry using the integer value for the CBOR typing and a string representation of the HHIT Type for use in JSON.
 
 *unique_id*:
-: A value used during the locally scoped interaction between Registrant and HME when there is more than one registration request in a claim.
+: A value used during the locally scoped interaction between Registrant and OME when there is more than one registration request in a claim.
 
 *csr*:
 : The CSR generated in {{key-csr}}, DER encoded.
@@ -25,8 +25,9 @@ If the Registrant knows the HID of the Registrar it wishes to be endorsed by, it
 *vna & vnb*:
 : See {{time-window}}.
 
-*meta & metadata*:
-: See {{metadata}}.
+### DKI Additional Fields {#dki-add-req}
+
+The following fields are REQUIRED in the model when acting under DKI. Additional fields MAY be required by policy and MUST be provided by the OME to the client to be aware of. These fields are provided under the *meta* or *metadata* field, see {{metadata}} for details.
 
 ## Request Web Token & Transport {#req-wt}
 
@@ -39,13 +40,13 @@ The Web Token, signed by the Registrant per either {{self-signed}} or {{proxy-si
 
 ### Encryption
 
-The Web Token MUST be encrypted as it can contain Personally Identifiable Information (PII) as found in {{req-model}}. The Registrant MUST use the associated encryption key of the HME, which is the X25519 key derived from the HME's public key associated with their HHIT.
+The Web Token MUST be encrypted as it can contain Personally Identifiable Information (PII) as found in {{req-model}}. The Registrant MUST use the associated encryption key of the OME, which is the X25519 key derived from the OME's public key associated with their HHIT.
 
 > Author Note: is the scheme for encryption key good for this application or is something else needed?
 
 ### Self-Signed
 
-When a Registrant has no prior relationship with the HME it is registering to, the public key MUST be provided in the Web Token. This can be achieved in two ways:
+When a Registrant has no prior relationship with the OME it is registering to, the public key MUST be provided in the Web Token. This can be achieved in two ways:
 
 1. As part of the Web Token header
 2. As part of the Web Token payload; specifically the CSR that is already required in the model
@@ -54,7 +55,7 @@ When a Registrant has no prior relationship with the HME it is registering to, t
 
 When a Registrant has an existing registered HHIT for themselves and registering another HHIT (for themselves or a proxy device), they MUST provide their registered HHIT as part of the Web Token header in the `kid` field. The field contents MUST be a well-formed string representation of the IPv6 address.
 
-# HME Processing & Response
+# OME Processing & Response
 
 ## Request Validation & Processing {#req-valid}
 
@@ -62,17 +63,19 @@ All requests MUST pass the following checks before following {{req-approve}}:
 
 1. The Web Token signature validates with an acceptable public key
 2. The CSR signature passes with embedded public key
-3. The public key in CSR is unique to the HME's scope
-4. HME constructs using their HID and the CSR's public key an HHIT and;
+3. The public key in CSR is unique to the OME's scope
+4. OME constructs using their HID and the CSR's public key an HHIT and;
     * If an HHIT is provided by Registrant in CSR ensure they are equivalent
-    * Confirm the HHIT is unique in the HME's authority of the hierarchy
+    * Confirm the HHIT is unique in the OME's authority of the hierarchy
 5. Additional data, if any, in the Web Token is acceptable; see {{oaas}}
 
 If any of the above checks fail, the DIME follows {{req-deny}}.
 
 ### Request Approval {#req-approve}
 
-Once processed as a "pass" the HME MUST generate at least HKIX-compliant certificates (for the UAS/aviation ecosystem see {{dkix}}) and based on the use case being registered MAY generate other artifacts (such as Endorsements). Broadcast Endorsements MUST be generated for applications involving UAS/aviation. The HME MUST store these certificates and other artifacts in a private information registry and also update the relative Authoritative Name Server accordingly.
+Once processed as a "pass" the OME MUST generate at least OKIX-compliant certificates (for the UAS/aviation ecosystem see {{dkix}}) and based on the use case being registered MAY generate other artifacts (such as Endorsements). Broadcast Endorsements MUST be generated for applications involving UAS/aviation. The OME MUST store these certificates and other artifacts in a private information registry and also update the relative Authoritative Name Server accordingly.
+
+> Author Note: there should be a matrix of the various artifacts that MUST be generated based on HHIT Entity Type with specific notes. 
 
 ### Request Rejection {#req-deny}
 
@@ -81,7 +84,7 @@ Rejections MUST be sent in an appropriate HTTP Response code and SHOULD contain 
 - Web Token not encrypted
 - Public key not found/provided
 - Invalid/missing model element(s)
-- Non-conformance with HME policy/policies
+- Non-conformance with OME policy/policies
 
 An HTTP Response associated with an error MUST NOT contain a Web Token. The exact contents of the error response are out of scope for this document but should follow best practices.
 
@@ -99,15 +102,19 @@ An HTTP Response associated with an error MUST NOT contain a Web Token. The exac
 
 See {{req-model}} for same named field definitions.
 
+### DKI Additional Fields {#dki-add-resp}
+
+The following fields are REQUIRED in the model when acting under DKI. Additional fields MAY be required by policy and MUST be provided by the OME.
+
 *be_chain*:
-: An optional list of Broadcast Endorsements of the HME and any relevant parent or sibling entities in the the hierarchy.
+: An optional list of Broadcast Endorsements of the OME and any relevant parent or sibling entities in the the hierarchy.
 
 *be*:
-: An optional Broadcast Endorsement of the HME endorsing the newly registered HHIT/HI.
+: An optional Broadcast Endorsement of the OME endorsing the newly registered HHIT/HI.
 
 ## Response Web Token & Transport {#resp-wt}
 
-Approved requests MUST contain a Web Token, signed by the HME with their HHIT as part of the header like described in {{proxy-signed}}, in their response. The model of {{resp-model}} is under a claim designated by `hhit_resp`.
+Approved requests MUST contain a Web Token, signed by the OME with their HHIT as part of the header like described in {{proxy-signed}}, in their response. The model of {{resp-model}} is under a claim designated by `hhit_resp`.
 
 ~~~ ascii-art
 {::include figures/reg-resp-http.txt}
@@ -118,4 +125,4 @@ Approved requests MUST contain a Web Token, signed by the HME with their HHIT as
 
 ## Response Validation & Onboarding {#resp-valid}
 
-The Registrant MUST validate the signature of the Web Token returned by the HME and SHOULD validate all signatures found in the response claim.
+The Registrant MUST validate the signature of the Web Token returned by the OME and SHOULD validate all signatures found in the response claim.
