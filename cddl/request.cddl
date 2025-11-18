@@ -7,5 +7,6 @@ request-data = [
   csr: x509,
   vnb: time / tdate / null,
   vna: time / tdate / 1..15638400 / null,
+  defer: bool,
   meta: { metadata } / null
 ]
