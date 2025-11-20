@@ -36,6 +36,13 @@ informative:
       date: July 2025
       seriesinfo:
         DOI: 10.1109/ieeestd.2018.8423794
+    DsQ.Criteria:
+      title: DronesQuad High-level Product Safety Criteria (HPSCriteria)
+      author:
+        -
+          org: DronesQuad
+      target: https://github.com/ietf-wg-drip/external-docs
+      date: November 2025
 
     IANA.DRIP:
       title: Drone Remote ID Protocol

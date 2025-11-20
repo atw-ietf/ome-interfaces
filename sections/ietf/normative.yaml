@@ -1,5 +1,6 @@
 normative:
     DET-DNS: I-D.ietf-drip-registries
+    DKI: I-D.ietf-drip-dki
 
     RFC4108: # ???
     RFC5246: # tls

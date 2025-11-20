@@ -1,31 +1,91 @@
-# Client Query
+# Query Process
 
-A client can receive an HHIT from various sources. An Observer will typically receive the DET from Broadcast RID either via the {{ASTM.F3411}} Basic ID Message or Authentication Message. This part of the specification details how clients should handle HHITs to obtains additional information through the selected differential access mechanism known as Registration Data Access Protocol (RDAP, {{STD95}}).
+This sections details the process of query for additional private information following the Z-diagram of {{query-z}} and the associated table of contents in {{query-z-tbl}}. It is the lower right link of {{arch-fig}} labeled with "RDAP" between *Querant* and *Registry*.
 
-## Finding Authoritative Server URL {#find-rdap-url}
+~~~ ascii-text
+{::include figures/query-z.txt}
+~~~
+{:fig #query-z title="Query Z-Diagram"}
+
+| Section | Applicable Z-Diagram Reference(s) |
+| ------- | --------------------------------- |
+| {{client-query}} | (L) RX_HHIT, (M) DNS, (N) RDAP_URI, (O) RDAP_Q |
+| {{rdap-process}} | (P) VALID_X509?, (Q) POLICY_CHK?, (R) ??? |
+| {{rdap-pass}} | (R) ???, (S) RDAP_R |
+| {{client-resp}} | (S) RDAP_R, (T) ACT |
+{: #query-z-tbl title="Query Process Table of Contents"}
+
+For OME's the differential access mechanism known as Registration Data Access Protocol (RDAP, {{STD95}}) is selected as the interface definition.
+
+## Expectations {#query-expectations}
+
+### OME {#query-ome}
+
+#### Registrar {#query-registrar}
+
+The *Registrar* has no direct expectations in the RDAP query process. It MAY provide a redirect to their own entity that can answer RDAP queries under their domain.
+
+#### Certificate Authority {#query-ca}
+
+The *Certificate Authority* has no expectations during RDAP query process.
+
+#### Registry {#query-registry}
+
+As the Private Information *Registry*, the *Registry* provides private data through an RDAP interface. As part of RDAP, the OME MAY follow {{RFC9224}} to be part of the RDAP bootstrap mechanism for discovery. This is not requirement as the same information can be obtained through the HHIT RRType from the *Authoritative Name Server*. It is RECOMMENDED that eXtensible Access Control Markup Language (XACML) with Security Assertion Markup Language (SAML) is used to exchange policy information.
+
+##### Endpoint
+
+An OME MUST provide an HTTPS-based, GET method only, query interface following {{Section 3.1.1 of RFC9082}} (i.e. `ip/<IP address>`) and MUST be the destination of redirection from `/.well-known/query-hhit`. All other RDAP endpoints SHOULD NOT be implemented as specified in {{RFC9082}}. Other methods MAY be provided to enable differential access controlled queries of information pertaining to an HHIT but are out of scope for this document.
+
+##### Authentication {#mutual-tls}
+
+Per REG-2 and REG-4 of {{Section 4.4.1 of RFC9153}}, RDAP queries to a OME MUST be protected using fine-grained AAA policies in a both human- & machine-readable form for automated enforcement. RDAP supports only HTTP-based mechanisms for authentication as defined in {{Section 3.2 of RFC7481}}. A federated authentication mechanism, such as the examples in {{Section 3.2.1 of RFC7481}}, is RECOMMENDED.
+
+For international and/or global harmonization, this document standardizes the following RDAP behavior for authentication of clients and servers:
+
+- MUST support HTTP Digest Authentication Scheme ({{RFC7616}}) **AND**
+- SHOULD NOT support HTTP Basic Authentication Scheme ({{RFC7617}}) but MAY accept Basic if peer offers that and nothing stronger **AND**
+- MUST support Mutual TLS {{Section 7.4.6 of RFC5246}} for global and/or international queries **AND**
+- SHOULD use Mutual TLS {{Section 7.4.6 of RFC5246}} but MAY do any other RDAP compatible AAA for domestic queries
+
+An OME, when supporting Mutual TLS, MUST accept valid OKIX-compliant certificates and MAY accept other {{RFC5280}} (PKIX) compliant certificates.
+
+> Author Note: the selection of Mutual TLS is an initial down selection from OpenID Connect for RDAP ({{RFC9560}}), or Mutual TLS ({{Section 7.4.6 of RFC5246}}) or eXtensible Access Control Markup Language (XACML) with Security Assertion Markup Language (SAML). This is still a discussion point.
+
+#### Authoritative Name Server {#query-ans}
+
+As the Public Information *Registry*, the *Authoritative Name Server* provides public data through DNS Resource Records and its specification is defined in {{DET-DNS}}. Specifically for queries the URI of the *Registry* is provided through the HHIT RRType as part of an extension in the Canonical Registration Certificate.
+
+### Querant {#query-client}
+
+The *Querant* initiating a query is expected to use the defined OME RDAP interface with Mutual TLS authentication. The HHIT can be obtained from various sources such as Broadcast RID either via the {{ASTM.F3411}} Basic ID Message or Authentication Message. It is RECOMMENDED that discovery of an HHITs RDAP URI is done through DNS rather than RDAP bootstrap.
+
+## Querant Query {#client-query}
+
+### Finding Authoritative Server URL {#find-rdap-url}
 
 There are two ways to obtain the URL to perform an RDAP query: DNS or through the RDAP bootstrap. DNS is the RECOMMENDED method for HHITs as an OME may elect to not be part of the RDAP bootstrap mechanism. See {{RFC9224}} for details.
 
-For DNS, a client performs a lookup using the nibble-reversed IPv6 address for an HHIT RRType. This results in the data defined in {{Section 5.1 of DET-DNS}}. In the HHIT RRType as part of the Canonical Registration Certificate, a URI is present in the Subject Alternative Name extension as defined in {{san-uri}}. 
+For DNS, a *Querant* performs a lookup using the nibble-reversed IPv6 address for an HHIT RRType. This results in the data defined in {{Section 5.1 of DET-DNS}}. In the HHIT RRType as part of the Canonical Registration Certificate, a URI is present in the Subject Alternative Name extension as defined in {{san-uri}}. 
 
-## RDAP Query
+### RDAP Query {#rdap-query}
 
-The query URL is constructed with the URI obtained in {{find-rdap-url}} appended with `/.well-known/query-hhit/<IP address>`. The query MUST use an HTTPS GET method and provide authentication using {{mutual-tls}} using a PKIX compatible (i.e {{dkix}} for UAS/aviation ecosystem) certificate. The OME MUST redirect `/.well-known/query-hhit/` to their locally hosted path of {{Section 3.1.1 of RFC9082}}.
+The query URL is constructed with the URI obtained in {{find-rdap-url}} appended with `/.well-known/query-hhit/<IP address>`. The query MUST use an HTTPS GET method and provide authentication using {{mutual-tls}} with a PKIX compatible (i.e {{dkix}} for UAS/aviation ecosystem) certificate. The OME MUST redirect `/.well-known/query-hhit/` to their locally hosted path of {{Section 3.1.1 of RFC9082}}.
 
 ~~~ ascii-art
 {::include figures/query-http.txt}
 ~~~
 {: title="Example HHIT HTTP RDAP Query"}
 
-# OME RDAP Processing & Response
+## OME RDAP Processing & Response
 
-## Access Control {#rdap-process}
+### Access Control {#rdap-process}
 
-With the use of {{mutual-tls}} as part of the query, the authentication is covered by acceptance or rejection of the certificate presented by the client. Standard TLS rejection methods MUST be followed to signal to the client the rejection of the certificate.
+With the use of {{mutual-tls}} as part of the query, the authentication is covered by acceptance or rejection of the certificate presented by the *Querant*. Standard TLS rejection methods MUST be followed to signal to the *Querant* the rejection of the certificate.
 
 Once cleared through with a valid certificate, access control is handled using policy methods of the OME and is out of scope for this document. It is RECOMMENDED for interoperability of sharing policy information between OME's that eXtensible Access Control Markup Language (XACML) with Security Assertion Markup Language (SAML) is used.
 
-## OME Data Structure
+### OME Data Structure
 
 This following data structure and elements that are required in every response. Additional elements are added based on policy and use-case.
 
@@ -46,14 +106,14 @@ This following data structure and elements that are required in every response. 
 *registrant*:
 : An object representing the Registrant that registered the HHIT and submitted data found in this object.
 
-### DKI Additional Fields {#dki-add-rdap}
+#### DKI Additional Fields {#dki-add-rdap}
 
 The following fields are REQUIRED in the model when acting under DKI. Additional fields MAY be required by policy and MUST be provided by the OME.
 
 *be_chain*:
 : Array structure containing the relevant binary Endorsement chain. REQUIRED when operating under the DKI (i.e. UAS/aviation ecosystem).
 
-## RDAP Response {#rdap-pass}
+### RDAP Response {#rdap-pass}
 
 An RDAP response from an OME MUST contain {{rdap-model}} under the key of `ome_resp`. The `rdapConformance` array of the response MUST include `ome_v0`. The OME MAY also include the standard expected response of {{Section 5.4 of RFC9083}} if applicable.
 
@@ -62,6 +122,6 @@ An RDAP response from an OME MUST contain {{rdap-model}} under the key of `ome_r
 ~~~
 {:fig title="OME RDAP Response"}
 
-# Client Post-Response {#client-resp}
+## Querant Post-Response {#client-resp}
 
 TBD

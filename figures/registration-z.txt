@@ -1,0 +1,18 @@
+             Registrant             OME
+                 |                   |
+(A) GEN_HHIT/HI  |                   |
+    (B) GEN_CSR  |                   |
+                 |-----(C) REG------>|
+                 |                   | (D) VALID_REG?
+                 |<-------FAIL-------|
+                 |                   | (E) DUPE_HI?
+                 |<-------FAIL-------|
+                 |                   | (F) DUPE_HHIT?
+                 |<-------FAIL-------|
+                 |                   | (G) GEN_CERTS
+                 |                   | (H) UPDATE_DATABASE
+                 |                   | (I) UPDATE_NS
+                 |<-----(J) RESP-----|
+    (K) ONBOARD  |                   |
+                 |                   |
+                                     |

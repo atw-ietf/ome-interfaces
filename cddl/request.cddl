@@ -1,12 +1,14 @@
 request-claim = {
-  + &(entity-type): [+ request-data],
-  metadata,
+  + &(entity-type): [ 
+    requests: [+ request-datum], 
+    meta: { metadata } / null 
+  ]
 }
-request-data = [
-  unique_id: uint / hash / uuid,
+request-datum = [
+  unique_id: uint / str / uuid,
   csr: x509,
   vnb: time / tdate / null,
-  vna: time / tdate / 1..15638400 / null,
+  vna: time / tdate / uint / null,
   defer: bool,
   meta: { metadata } / null
 ]

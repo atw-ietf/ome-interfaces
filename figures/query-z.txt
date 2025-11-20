@@ -1,0 +1,14 @@
+              Querant               OME
+                 |                   |
+    (L) RX_HHIT  |                   |
+                 |<-----(M) DNS----->|
+   (N) RDAP_URI  |                   |
+                 |----(O) RDAP_Q---->|                 
+                 |                   | (P) ACCEPT_X509?
+                 |<------DENY--------| 
+                 |                   | (Q) POLICY_CHECK?
+                 |<------DENY--------|
+                 |                   | (R) ???
+                 |<---(S) RDAP_R-----|
+        (T) ACT  |                   |
+                 |                   |

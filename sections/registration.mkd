@@ -1,12 +1,55 @@
-# Registrant Request
+# Registration Process
 
-## Keys & Certificate Signing Request {#key-csr}
+This sections details the process of registration following the Z-diagram of {{reg-z}} and the associated table of contents in {{reg-z-tbl}}. It is the upper link of {{arch-fig}} labeled with "Web Token/HTTPS" between *Registrant* and *Registrar*.
 
-The Registrant MUST generate an asymmetric key-pair for use and constructs a OKIX-compliant Certificate Signing Request (CSR), see {{dkix-csr}} for UAS/aviation ecosystem CSR, to be included in {{req-model}}.
+~~~ ascii-text
+{::include figures/registration-z.txt}
+~~~
+{:fig #reg-z title="Registration Z-Diagram"}
 
-If the Registrant knows the HID of the Registrar it wishes to be endorsed by, it SHOULD construct its HHIT accordingly and include it in the CSR under an IP6 Name of a Subject Alternative Name (SAN) Extension marked as critical. The process of discovering a specific HID is out of scope for this document.
+| Section | Applicable Z-Diagram Reference(s) |
+| ------- | --------------------------------- |
+| {{key-csr}} | (A) GEN_HHIT/HI, (B) GEN_CSR |
+| {{req-wt}} | (C) REG |
+| {{req-valid}} | (D) VALID_INPUT?, (E) DUPE_HI?, (F) DUPE_HHIT? |
+| {{req-approve}} | (G) GEN_CERTS, (H) UPDATE_DATABASE, (I) UPDATE_NS |
+| {{resp-wt}} | (J) RESP |
+| {{req-resp}} | (K) ONBOARD |
+{: #reg-z-tbl title="Registration Process Table of Contents"}
 
-## Request Model {#req-model}
+## Expectations {#reg-expectations}
+
+### OME {#reg-ome}
+
+#### Registrar {#reg-registrar}
+
+An OME MUST provide an HTTPS-based registration interface using this documents registered `/.well-known/register-hhit` entry. Data MUST be encapsulated using CBOR or JSON Web Tokens (CWT or JWT or more generally called in this specification Web Tokens). It MAY provide other transport methods that carries the same data models. The Constrained Application Protocol (CoAP, {{RFC7252}}) is an OPTIONAL method that can re-use the contents of this document with caveats in {{coap}}.
+
+#### Certificate Authority {#reg-ca}
+
+The *Certificate Authority* handle most cryptographic operations in relation to an actual registration. This is the functional component that typically handles the cryptographic materials related to the OME when endorsing child entities. It MUST provide as endorsement of registration OKIX-compliant certificates.
+
+#### Registry {#reg-registry}
+
+As the Private Information Registry, all artifacts of the registration process are protected and stored here. 
+
+#### Authoritative Name Server {#reg-ans}
+
+As the Public Information Registry, this is where a subset of the registration process artifacts are stored and provided with DNS lookups.
+
+### Registrant {#reg-client}
+
+Cryptographic materials SHOULD be on the device intending to use said material in operation. If the *Registrant* is acting as a proxy the methods of the generation and/or transfer of cryptographic materials to and from the device being proxied to is out of scope for this document.
+
+## Registrant Request
+
+### Keys & Certificate Signing Request {#key-csr}
+
+The *Registrant* MUST generate an asymmetric key-pair for use and constructs a OKIX-compliant Certificate Signing Request (CSR), see {{dkix-csr}} for UAS/aviation ecosystem CSR, to be included in {{req-model}}.
+
+If the *Registrant* knows the HID of the *Registar* it wishes to be endorsed by, it SHOULD construct its HHIT accordingly and include it in the CSR under an IP6 Name of a Subject Alternative Name (SAN) Extension marked as critical. The process of discovering a specific HID is out of scope for this document.
+
+### Request Model {#req-model}
 
 ~~~
 {::include cddl/request.cddl}
@@ -17,7 +60,7 @@ If the Registrant knows the HID of the Registrar it wishes to be endorsed by, it
 : An enumeration of the HHIT Entity Type registry using the integer value for the CBOR typing and a string representation of the HHIT Type for use in JSON.
 
 *unique_id*:
-: A value used during the locally scoped interaction between Registrant and OME when there is more than one registration request in a claim.
+: A value used during the locally scoped interaction between *Registrant* and OME when there is more than one registration request in a claim.
 
 *csr*:
 : The CSR generated in {{key-csr}}, DER encoded.
@@ -25,39 +68,48 @@ If the Registrant knows the HID of the Registrar it wishes to be endorsed by, it
 *vna & vnb*:
 : See {{time-window}}.
 
-### DKI Additional Fields {#dki-add-req}
+*defer*:
+: Boolean signal to OME to defer the publishing of the information to DNS. This is defaulted to the value of `False` to instantly publish during registration. The default trigger to publish (when *defer* is `True`) is at `vnb` but MAY be a more involved and earlier trigger mechanism between the registrant and OME which is out of scope for this document.
 
-The following fields are REQUIRED in the model when acting under DKI. Additional fields MAY be required by policy and MUST be provided by the OME to the client to be aware of. These fields are provided under the *meta* or *metadata* field, see {{metadata}} for details.
+#### DKI Additional Fields {#dki-add-req}
 
-## Request Web Token & Transport {#req-wt}
+The fields in {{req-add-fields}} are part of the model when acting under DKI for each of the Entity Types. Additional fields MAY be required by policy and MUST be provided by the OME to the client to be aware of. These fields are provided under *meta*, see {{metadata}} for details. It can be provided per individual `request-datum` or across all datums under an `entity-type`.
 
-The Web Token, signed by the Registrant per either {{self-signed}} or {{proxy-signed}}, contains the content found in {{req-model}} under the claim `hhit_req`.
+| Entity Type | Required | Optional |
+| ----------- | -------- | -------- |
+| UA, UAS, RID | UAS Serial Number | Make, Model, UAS Datum |
+| GCS | Serial Number | Make, Model |
+| Pilot, Operator | CAA Assigned Operator ID | Pilot ID |
+{: #req-add-fields}
+
+### Request Web Token & Transport {#req-wt}
+
+The Web Token, signed by the *Registrant* per either {{self-signed}} or {{proxy-signed}}, contains the content found in {{req-model}} under the claim `hhit_req`.
 
 ~~~ ascii-art
 {::include figures/reg-http.txt}
 ~~~
 {: #api-request title="Example REST Registration API with CWT (request)"}
 
-### Encryption
+#### Encryption
 
-The Web Token MUST be encrypted as it can contain Personally Identifiable Information (PII) as found in {{req-model}}. The Registrant MUST use the associated encryption key of the OME, which is the X25519 key derived from the OME's public key associated with their HHIT.
+The Web Token MUST be encrypted as it can contain Personally Identifiable Information (PII) as found in {{req-model}}. The *Registrant* MUST use the associated encryption key of the OME, which is the X25519 key derived from the OME's public key associated with their HHIT.
 
 > Author Note: is the scheme for encryption key good for this application or is something else needed?
 
-### Self-Signed
+#### Self-Signed
 
-When a Registrant has no prior relationship with the OME it is registering to, the public key MUST be provided in the Web Token. This can be achieved in two ways:
+When a *Registrant* has no prior relationship with the OME it is registering to, the public key MUST be provided in the Web Token in the payload, specifically the CSR. The unprotected header of the CWT MUST be empty.
 
-1. As part of the Web Token header
-2. As part of the Web Token payload; specifically the CSR that is already required in the model
+When multiple keys are being registered at once, the CWT contains not a `COSE_Sign1` but a `COSE_Sign` object. There MUST be a signature for each CSR and the `kid` of each signatures unprotected header MUST match the `unique_id` field found in the data model.
 
-### Proxy-Signed
+#### Proxy-Signed
 
-When a Registrant has an existing registered HHIT for themselves and registering another HHIT (for themselves or a proxy device), they MUST provide their registered HHIT as part of the Web Token header in the `kid` field. The field contents MUST be a well-formed string representation of the IPv6 address.
+When a *Registrant* has an existing registered HHIT for themselves and registering another HHIT (for themselves or a proxy device), they MUST provide their registered HHIT as part of the Web Token unprotected header in the `kid` field. The field contents MUST be the IPv6 address in network byte order.
 
-# OME Processing & Response
+## OME Processing & Response
 
-## Request Validation & Processing {#req-valid}
+### Request Validation & Processing {#req-valid}
 
 All requests MUST pass the following checks before following {{req-approve}}:
 
@@ -65,19 +117,19 @@ All requests MUST pass the following checks before following {{req-approve}}:
 2. The CSR signature passes with embedded public key
 3. The public key in CSR is unique to the OME's scope
 4. OME constructs using their HID and the CSR's public key an HHIT and;
-    * If an HHIT is provided by Registrant in CSR ensure they are equivalent
+    * If an HHIT is provided by *Registrant* in CSR ensure they are equivalent
     * Confirm the HHIT is unique in the OME's authority of the hierarchy
 5. Additional data, if any, in the Web Token is acceptable; see {{oaas}}
 
 If any of the above checks fail, the DIME follows {{req-deny}}.
 
-### Request Approval {#req-approve}
+#### Request Approval {#req-approve}
 
-Once processed as a "pass" the OME MUST generate at least OKIX-compliant certificates (for the UAS/aviation ecosystem see {{dkix}}) and based on the use case being registered MAY generate other artifacts (such as Endorsements). Broadcast Endorsements MUST be generated for applications involving UAS/aviation. The OME MUST store these certificates and other artifacts in a private information registry and also update the relative Authoritative Name Server accordingly.
+Once processed as a "pass" the OME MUST generate at least OKIX-compliant certificates (for the UAS/aviation ecosystem see {{dkix}}) and based on the use case being registered MAY generate other artifacts (such as Endorsements). Broadcast Endorsements MUST be generated for applications involving UAS/aviation. The OME MUST store these certificates and other artifacts in a private information registry and also update the relative *Authoritative Name Server* accordingly.
 
 > Author Note: there should be a matrix of the various artifacts that MUST be generated based on HHIT Entity Type with specific notes. 
 
-### Request Rejection {#req-deny}
+#### Request Rejection {#req-deny}
 
 Rejections MUST be sent in an appropriate HTTP Response code and SHOULD contain reasoning, when applicable. A non-exhaustive list of examples of rejection reasons are:
 
@@ -93,7 +145,7 @@ An HTTP Response associated with an error MUST NOT contain a Web Token. The exac
 ~~~
 {: #api-response-error title="Example REST Registration API (response, failure)"}
 
-## Response Model {#resp-model}
+### Response Model {#resp-model}
 
 ~~~ ascii-art
 {::include cddl/response.cddl}
@@ -102,17 +154,20 @@ An HTTP Response associated with an error MUST NOT contain a Web Token. The exac
 
 See {{req-model}} for same named field definitions.
 
-### DKI Additional Fields {#dki-add-resp}
+*canonical_chain*:
+: Chain of OKIX-compliant certificates between the root and OME.
+
+#### DKI Additional Fields {#dki-add-resp}
 
 The following fields are REQUIRED in the model when acting under DKI. Additional fields MAY be required by policy and MUST be provided by the OME.
 
 *be_chain*:
-: An optional list of Broadcast Endorsements of the OME and any relevant parent or sibling entities in the the hierarchy.
+: An optional list of Broadcast Endorsements of the OME and any relevant parent or sibling entities in the the hierarchy. A key of the `chains` map to carry the endorsements from root to OME.
 
 *be*:
-: An optional Broadcast Endorsement of the OME endorsing the newly registered HHIT/HI.
+: An optional Broadcast Endorsement of the OME endorsing the newly registered HHIT/HI. Part of the `certs` map in a registration.
 
-## Response Web Token & Transport {#resp-wt}
+### Response Web Token & Transport {#resp-wt}
 
 Approved requests MUST contain a Web Token, signed by the OME with their HHIT as part of the header like described in {{proxy-signed}}, in their response. The model of {{resp-model}} is under a claim designated by `hhit_resp`.
 
@@ -121,8 +176,8 @@ Approved requests MUST contain a Web Token, signed by the OME with their HHIT as
 ~~~
 {: #api-response title="Example REST Registration API with CWT (response, success)"}
 
-# Registrant Post-Response {#req-resp}
+## Registrant Post-Response {#req-resp}
 
-## Response Validation & Onboarding {#resp-valid}
+### Response Validation & Onboarding {#resp-valid}
 
-The Registrant MUST validate the signature of the Web Token returned by the OME and SHOULD validate all signatures found in the response claim.
+The *Registrant* MUST validate the signature of the Web Token returned by the OME and SHOULD validate all signatures found in the response claim.
