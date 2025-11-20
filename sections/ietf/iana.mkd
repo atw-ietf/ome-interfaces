@@ -58,35 +58,22 @@ Intended Usage:
 ~~~
 {: title="RDAP Extensions: Registration Form"}
 
-## Aviation Application Specific Dynamically Assigned Keys
+## Aviation ASDAM Keys
 
-This document requests IANA create a new registry under {{IANA.DRIP}} called "Aviation Application Specific Dynamically Assigned Keys". This registry is used by applications following {{using-asda}}.
+This document requests IANA create a new registry under {{IANA.DRIP}} called "Aviation ASDAM Keys". This registry is used by applications following REF-TBD. Initial keys are provided in {{initial-asdam-keys}}.
 
-| Label Value | Label Encoding Size | Range Name | Registration Policy | Comments |
-| ----------- | ------------------- | ---------- | ------------------- | -------- |
-| -2^64 to -25 | -(1+1, 1+2, 1+4, 1+8) | Private (PRIV) | Private Use ({{Section 4.1 of RFC8126}}) | - |
-| -24 to -1 & 1 to 23 | -1+0, 1+0 | Application Specific Dynamically Assigned (ASDA) | Unassigned | - |
-| 0 | 1+0 | Application Specific Context (ASC) | N/A | - |
-| 24 to 2^8-1 | 1+1 | Standard (STD) | Standards Action ({{Section 4.9 of RFC8126}}) | - |
-| 2^8 to 2^16-1 | 1+2 | Specification (SPEC) | Specification Required ({{Section 4.6 of RFC8126}}) | - |
-| 2^16 to 2^64-1 | 1+4, 1+8 | First Come First Served (FCFS) | First Come First Served ({{Section 4.4 of RFC8126}})| - |
-{: #key-table title="Aviation ASDA Keys: Registry Policies"}
-
-### Using ASDA
-
-This section only applies to maps encoded in CBOR. JSON maps use this registry as is using the Name field. 
-
-A map supporting ASDA MUST contain a Label 0; the Application Specific Context (ASC). The value of the ASC MUST be one of the following:
-
-- `null` or `undefined`; representing that the local scope map does not use an ASC
-- `nil`; representing that the local scope map uses its parent map ASC
-- an integer value ("direct mode"); representing a pointer elsewhere in the registry that has the following rules:
-  - values around the pointer, called the context, are referenced based on the `-1+0` and `1+0` encodings
-  - MUST NOT let value minus 24 and plus 23 (lower and upper bounds of the context) go out of bounds
-  - MUST NOT let lower and upper bounds of the context overlap with the ASDA key range itself
-- a string ("indirect mode"); representing a referenced to a relevant specification that defines a curated set of keys from the registry to use for the `-1+0` and `1+0` encodings with the following rules:
-  - MUST be in the form `RFC` followed without a space by the RFC number
-  - MUST NOT modify an existing key registration in anyway (Name, value, etc.) when part of the context
+| Range Values | CBOR Encoding Size | Registration Policy | Range Use |
+| ------------ | ------------------ | ------------------- | --------- |
+| -2^64 to (-2^16)+1 | 1+4, 1+8 | Private Use ({{Section 4.2 of RFC8126}})             | - |
+| -2^16 to -257      | 1+2      | Specification Required ({{Section 4.7 of RFC8126}})  | ASDA-OKS |
+| -256 to -25        | 1+1      | Reserved                                             | ASDA-IKS |
+| -24 to -1          | 1+0      | Reserved                                             | ASDAK |
+| 0                  | 1+0      | Reserved                                             | ASC |
+| 1 to 23            | 1+0      | Reserved                                             | ASDAK |
+| 24 to 255          | 1+1      | Reserved                                             | XASDAK |
+| 256 to (2^16)-1    | 1+2      | Specification Required ({{Section 4.7 of RFC8126}})  | - |
+| 2^16 to (2^64)-1   | 1+4, 1+8 | First Come First Served ({{Section 4.3 of RFC8126}}) | - |
+{: #key-table title="Aviation ASDAM Keys: Registry Policies"}
 
 ### Registry Fields
 
@@ -100,7 +87,7 @@ A map supporting ASDA MUST contain a Label 0; the Application Specific Context (
 : A string value, to be used as a `key` in the `key: value` pair of a JSON object. No specific rules apply for syntax beyond being a valid JSON string for a object key, but it is recommended to use all lower-case and snake-case with underscores. Care should be given to the length of a Name to reduce wire size of JSON encodings for constrained environments.
 
 *Label*:
-: A integer value, ranging from `24 to 2^64-1`, to be used as a key in a CBOR map. Different ranges of values use different registration policies, see {{key-table}}.
+: A integer value, ranging from `256 to 2^64-1`, to be used as a key in a CBOR map. Different ranges of values use different registration policies, see {{key-table}}.
 
 *Value Type*:
 : CBOR/JSON typing for value under the Key.
@@ -111,36 +98,109 @@ A map supporting ASDA MUST contain a Label 0; the Application Specific Context (
 *Reference*:
 : A link to a permanent and readily available specification defining the value syntax and semantics to be used for this key.
 
-### Registration Form
+### Registration Form {#asdam-form}
 
-~~~ ascii-art
+~~~ ascii-text
 Key:
 Description:
-Range Name:
+Range:
 Name:
 Label:
 Value Type:
 Change Controller:
 Reference:
 ~~~
-{: #key-form title="Aviation ASDA Keys: Registration Form"}
+{: #key-form title="Aviation ASDAM Keys: Registration Form"}
 
 #### Review Criteria
 
 For a Key the specified value of a new registration should not duplicate the syntax and/or semantics of an existing registration. For the Name parameter of the Key, a new registration MUST NOT duplicate an existing registration Name.
 
-The Range Name parameter of registration is used by the registrant to request a specific area of registration, but is not required to have a field indicating no preferences in the registration.
+The Range parameter of registration is used by the registrant to request a specific area of registration, but is not required to have a field indicating no preferences in the registration.
 
 Value Type MUST be a valid CBOR type or from {{IANA.CBOR.Tags}}. Their typing in JSON is assumed to follow the translation from CBOR to JSON following {{Section 6 of RFC8949}}.
 
-### Initial Values
+### Initial Values {#initial-asdam-keys}
+
+~~~ ascii-text
+Key: DRIP UAS Indirect & Mixed ASC Context
+Description: Context Keys for Indirect & Mixed ASC for DRIP UAS
+Range: ASDA-OKS
+Name: N/A
+Label: TBD3
+Value Type: ASDA Key Set
+Change Controller: IETF
+Reference: This Specification
+~~~
+{: title="Aviation ASDAM Keys: DRIP UAS Indirect & Mixed ASC Context"}
 
 ~~~ ascii-text
 {::include figures/ome-iana.txt}
 ~~~
-{: title="General Aviation ASDA Keys"}
+{: title="Aviation ASDAM Keys: General Aviation Keys"}
 
 ~~~ ascii-text
 {::include figures/brid-iana.txt}
 ~~~
-{: title="UAS Aviation ASDA Keys"}
+{: title="Aviation ASDAM Keys: UAS Keys"}
+
+## DRIP UAS Indirect & Mixed ASC Context
+
+IANA is requested to create a new registry called "DRIP UAS Indirect & Mixed ASC Context" under {{IANA.DRIP}}. This is to support Indirect and Mixed ASC Modes for ASDAM when the value of `TBD3` is used in the ASC.
+
+The registry is under Expert Review ({{Section 4.5 of RFC8126}}) with {{offset-asda-oks-uas}} being the initial assignments.
+
+### Registration Form {#uas-context-form}
+
+~~~ ascii-text
+Offset Label:
+Canonical Label:
+Name:
+Description:
+~~~
+{: #key-form title="DRIP UAS Indirect & Mixed ASC Context: Registration Form"}
+
+### Initial Values {#initial-uas-context}
+
+> Note to IANA: once registrations in {{initial-asdam-keys}} are in place, the `Canonical Label` should be filled in accordingly and `TBD3` should change.
+
+| Offset Label | Canonical Label | Name | Description |
+| ------------ | --------------- | ---- | ----------- |
+| -15 | - | raa                  | RAA                                    |
+| -14 | - | hda                  | HDA                                    |
+| -13 | - | utm                  | UTM Operational Intent & Source        |
+| -12 | - | spec                 | HME Specification Code                 |
+| -11 | - | csr                  | DER Encoded X.509 CSR                  |
+| -10 | - | registrant           | Registrant Information                 |
+| -9  | - | uas_serial_number    | ANSI/CTA 2063-A UAS Serial Number      |
+| -8  | - | caa_assigned_id      | CAA Assigned ID                        |
+| -7  | - | pilot_license_id     | Pilot License Number                   |
+| -6  | - | oracle_x509          | Oracle X.509 Certificate               |
+| -5  | - | canonical_cert       | DER Encoded X.509 Certificate          |
+| -4  | - | canonical_chain      | List of DER Encoded X.509 Certificates |
+| -3  | - | be                   | Broadcast Endorsement                  |
+| -2  | - | be_chain             | List of Broadcast Endorsements         |
+| -1  | - | uas                  | UAS Datum Object                       |
+| 1   | - | uas_type             | Enumeration of UAS Type                |
+| 2   | - | uas_ids              | UAS IDs                                |
+| 3   | - | auth                 | Authentication Data                    |
+| 4   | - | self_id              | Self ID                                |
+| 5   | - | classification       | UA Category & Class                    |
+| 6   | - | area                 | Area Count, Radius, etc.               |
+| 7   | - | operator_id          | Operator ID                            |
+| 8   | - | ua_status            | Enumeration of Status                  |
+| 9   | - | ua_position          | UA Position                            |
+| 10  | - | ua_bearing           | Bearing / Track Direction              |
+| 11  | - | ua_speed             | Vertical & Horizontal Speeds           |
+| 12  | - | ua_height            | Height Above Ground or Take-off        |
+| 13  | - | accuracy             | Enumerations of Accuracies             |
+| 14  | - | sys_gnss_position    | System GNSS Position                   |
+| 15  | - | sys_fixed_position   | System Fixed Position                  |
+| 16  | - | sys_takeoff_position | System Take-Off Position               |
+| 17  | - | timestamp            | UTC Timestamp                          |
+| 18  | - | compliance           | Compliance Enumeration                 |
+{: #offset-asda-oks-uas title="DRIP UAS Indirect & Mixed ASC Context: Pre-Allocated Values"}
+
+The values of `-24` to `-15` and `19` to `255` are currently unassigned. 
+
+> Author Note: should this table have a "reference" column or do we leave it to the reader to go back to the main registry and get the reference?
