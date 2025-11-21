@@ -1,5 +1,7 @@
 # DRIP Key Infrastructure X.509 (DKIX) {#dkix}
 
+> Author Note: this section is lifted from {{DKI}} and re-organized by the authors for inclusion in Markdown. It is an open question on if the DKI becomes and RFC or not and where this section would go if it does not. Hence its inclusion here is for easy reference until the preceding question is answered fully.
+
 This appendix is normative.
 
 The following sections define profiles and any specific field content for X.509 certificates that serve as a "shadow" of Endorsements that make up the DRIP Key Infrastructure (DKI). DKIX is an OKIX specifically serving the UAS and wider aviation ecosystem under the {{ICAO.ACCP}}. It is recommended that DKIX-Full ({{dkix-full}}) be deployed, as its CA certificates contain ICAO policy OIDs the reflect on the whole DKIX deployment.
