@@ -1,0 +1,48 @@
+# Update to BRID RRType Model {#brid-update}
+
+A minor update to reflect the changes brought on by the proposed registries under IANA is required to the data model. {{old-brid}} provides the old model with {{new-brid}} provides the new. Content unchanged is removed for clarity.
+
+~~~ ascii-text
+bcast-rr = {
+    uas_type => nibble-field,
+    uas_ids => [+ uas-id-grp],
+    ? auth => [+ auth-grp],
+    ? self_id => self-grp,
+    ? area => area-grp,
+    ? classification => classification-grp,
+    ? operator_id => operator-grp
+}
+
+uas_type = 0
+uas_ids = 1
+auth = 2
+self_id = 3
+area = 4
+classification = 5
+operator_id = 6
+~~~
+{: #old-brid title="Old BRID RRType Model"}
+
+~~~ ascii-text
+bcast-rr = #6.ASDAM({
+    0: [null, TBD3, null],
+    uas_type => nibble-field,
+    uas_ids => [+ uas-id-grp],
+    ? auth => [+ auth-grp],
+    ? self_id => self-grp,
+    ? area => area-grp,
+    ? classification => classification-grp,
+    ? operator_id => operator-grp
+})
+
+uas_type = 1
+uas_ids = 2
+auth = 3
+self_id = 4
+area = 5
+classification = 6
+operator_id = 7
+~~~
+{: #new-brid title="New BRID RRType Model"}
+
+The change is that the BRID RRType now uses the allocated Indirect/Mixed ASC by this document (`TBD3`) to provide the offset keys for the map. For clarity and completeness of the original model the hardcoded values of the Labels in the model here are also changed based on {{initial-uas-context}}. The map is also, per REF-TBD, tagged accordingly (`#6.ASDAM`) allowing decoders to quickly detect if it is the old or new model.

@@ -37,3 +37,5 @@ This document standardizes the interfaces required to register and query a DRIP 
 {::include-nested sections/appendix/dkix.mkd}
 
 {::include-nested sections/appendix/cddl.mkd}
+
+{::include-nested sections/appendix/brid.mkd}

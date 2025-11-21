@@ -16,6 +16,8 @@ This document defines the general interface specifications for an entity that pr
 
 The term HHIT is used when discussing the general technology while DET is used with discussion around UAS/aviation specific elements when possible. Additional terms reinforcing this delineation are found in {{terminology}}. This document defines all data models in the Concise Data Definition Language (CDDL, {{RFC8610}}).
 
+This document also performs a minor update to the data model for the Broadcast RID (BRID) Resource Record Type (RRType) of {{DET-DNS}} to align with the new IANA registries proposed in this document in {{brid-update}}.
+
 ### Disclaimer
 
 DRIP, and the specifications in this document, do NOT provide protection against incorrect (e.g. fraudulent) data entered during registration or asserted subsequently. DRIP does protect against alteration (intentional or unintentional) of data subsequent to its assertion by the cryptographic signer. The signer might be the proximate sender (e.g. UA transmitting Broadcast RID) or might be an attestor far away and long ago (e.g. root Certificate Authority). It is the duty of the operator of each DIME, or the party on whose behalf the DIME is being operated, to validate the registration data. The RAA (e.g. CAA under DKI) SHOULD provide services to obtain this goal, see {{oaas}}.

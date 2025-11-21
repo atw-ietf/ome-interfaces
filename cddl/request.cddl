@@ -7,8 +7,8 @@ request-claim = {
 request-datum = [
   unique_id: uint / str / uuid,
   csr: x509,
-  vnb: time / tdate / null,
-  vna: time / tdate / uint / null,
+  vnb: utc / null,
+  vna: utc / uint / null,
   defer: bool,
   meta: { metadata } / null
 ]

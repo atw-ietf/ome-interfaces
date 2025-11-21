@@ -13,12 +13,17 @@ The DRIP CDDL Prelude is built upon the prelude defined in {{Appendix E of RFC86
 
 ## Metadata
 
-The `uas` key and its contents are lifted from {{Section 5.2.2 of DET-DNS}} with no modifications.
-
 ~~~ ascii-art
 {::include cddl/metadata.cddl}
 ~~~
 {:fig #metadata-cddl title="Metadata CDDL"}
+
+## UAS Keys
+
+~~~ ascii-text
+{::include cddl/uas.cddl}
+~~~
+{:fig #uas-cddl title="UAS Keys CDDL"}
 
 ## Time Window
 

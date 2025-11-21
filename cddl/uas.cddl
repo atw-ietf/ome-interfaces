@@ -1,0 +1,38 @@
+; Key = uas_ids
+uas-id-grp = [
+    id_type: &(none: 0, serial: 1, session_id: 4),
+    uas_id: bstr .size(20)
+]
+
+; Key = auths
+auth-grp = [
+    a_type: &(none: 0, specific_method: 5),
+    a_data: bstr .size(1..362)
+]
+
+; Key = area
+area-grp = [
+    area_count: 1..255,
+    area_radius: float,  # in decameters
+    area_floor: float,   # wgs84-hae in meters
+    area_ceiling: float  # wgs84-hae in meters
+]
+
+; Key = classification
+classification-grp = [
+    class_type: 0..8,
+    class: nibble-field,
+    category: nibble-field
+]
+
+; Key = self_id
+self-grp = [
+    desc_type: 0..255,
+    description: tstr .size(23)
+]
+
+; Key = operator_id
+operator-grp = [
+    operator_id_type: 0..255,
+    operator_id: bstr .size(20)
+]
