@@ -11,6 +11,8 @@ IANA is requested to add the following entries in the "Well-Known URIs" registry
 | oaas-hhit | IETF | This RFC | permanent | N/A |
 {: title="Additions to Well-Known URIs Registry"}
 
+> Author Note: should we also add Well-Known URIs for update and delete methods? This would then cover all parts of CRUD.
+
 ## CWT & JWT Claims {#claims}
 
 Claims defined for DRIP are compatible with those of CWT and JWT, so the CWT and JWT Claims registries, {{IANA.CWT.Claims}} and {{IANA.JWT.Claims}}, are reused. No new IANA registry is created.
@@ -158,7 +160,7 @@ Canonical Label:
 Name:
 Description:
 ~~~
-{: #key-form title="DRIP UAS Indirect & Mixed ASC Context: Registration Form"}
+{: #context-form title="DRIP UAS Indirect & Mixed ASC Context: Registration Form"}
 
 ### Initial Values {#initial-uas-context}
 
@@ -203,4 +205,4 @@ Description:
 
 The values of `-24` to `-15` and `19` to `255` are currently unassigned. 
 
-> Author Note: should this table have a "reference" column or do we leave it to the reader to go back to the main registry and get the reference?
+> Author Note: should this table have a "reference" column or do we leave it to the reader to go back to the Aviation ASDAM registry and get the reference?
