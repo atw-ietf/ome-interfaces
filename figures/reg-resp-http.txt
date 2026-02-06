@@ -1,5 +1,5 @@
 HTTP/1.1 200 OK
-Accept: application/cwt, application/jwt
-Content-Type: application/cwt
+Accept: application/cose, application/jose
+Content-Type: application/cose
 
-[ CWT from HME ]
+[ COSE from OME ]

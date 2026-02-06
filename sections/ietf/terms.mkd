@@ -18,4 +18,4 @@
 
 **Web Token**:
 
-: In the context of this specification; a Web Token can be either a Concise Binary Object Representation (CBOR, {{STD94}}) Web Token (CWT, {{RFC8392}}) or JavaScript Object Notation (JSON, {{STD90}}) Web Token (JWT, {{RFC7519}}).
+: In the context of this specification; a Web Token can be any of the Concise Binary Object Representation (CBOR; {{STD94}}) Object Signing & Encryption (COSE; {{RFC9052}}) or JavaScript Object Notation (JSON; {{STD90}}) Object Signing & Encryption (JOSE; {{RFC7515}}, {{RFC7516}}) structures.

@@ -23,7 +23,7 @@ This sections details the process of registration following the Z-diagram of {{r
 
 #### Registrar {#reg-registrar}
 
-An OME MUST provide an HTTPS-based registration interface using this documents registered `/.well-known/register-hhit` entry. Data MUST be encapsulated using CBOR or JSON Web Tokens (CWT or JWT or more generally called in this specification Web Tokens). It MAY provide other transport methods that carries the same data models. The Constrained Application Protocol (CoAP, {{RFC7252}}) is an OPTIONAL method that can re-use the contents of this document with caveats in {{coap}}.
+An OME MUST provide an HTTPS-based registration interface using this documents registered `/.well-known/register-hhit` entry. Data MUST be encapsulated using COSE or JOSE structures (generally called Web Tokens in this specification). It MAY provide other transport methods that carries the same Web Token or data models. The Constrained Application Protocol (CoAP, {{RFC7252}}) is an OPTIONAL method that can re-use the contents of this document with caveats in {{coap}}.
 
 #### Certificate Authority {#reg-ca}
 
@@ -93,15 +93,15 @@ The Web Token, signed by the *Registrant* per either {{self-signed}} or {{proxy-
 ~~~ ascii-art
 {::include figures/reg-http.txt}
 ~~~
-{: #api-request title="Example REST Registration API with CWT (request)"}
+{: #api-request title="Example REST Registration API with COSE (request)"}
 
 #### Encryption
 
-The Web Token MUST be encrypted as it can contain Personally Identifiable Information (PII). The exact encryption method and policies are left for OME policy and MUST be provided to *Registrant*s. See {{Section 5 of RFC9052}} and {{RFC7516}} for details on COSE and JOSE respectively.
+The Web Token MUST be encrypted as it can contain Personally Identifiable Information (PII). The exact encryption method and policies are left for OME policy and MUST be provided to *Registrant*s. See {{Section 5 of RFC9052}} or {{RFC7516}} for details on COSE and JOSE respectively.
 
 #### Self-Signed
 
-When a *Registrant* has no prior relationship with the OME it is registering to, the public key MUST be provided in the payload of the Web Token, specifically the CSR. The unprotected header of the CWT MUST be empty.
+When a *Registrant* has no prior relationship with the OME it is registering to, the public key MUST be provided in the payload of the Web Token, specifically the CSR. The unprotected header of the Web Token MUST be empty.
 
 In the case when only one entity with multiple keys is being registered and no prior relationship with the OME, a multi-signature Web Token structure in either COSE {{Section 4.1 of RFC9052}} or JOSE {{Section 7.2.1 of RFC7515}} MAY be used. Each signature structure MUST use a `kid` of the form `{<entity-id>,<key-id>}` to indicate which key in the inquiry is being used.
 
@@ -111,7 +111,7 @@ When a *Registrant* has an existing registered HHIT for themselves and registeri
 
 #### Countersignatures
 
-Additional signatures MAY be added by additional parties following {{RFC9338}}. Each countersignatures MUST have a `kid` in their unprotected header and MUST contain the HHIT similar to {{proxy-signed}}.
+Additional signatures MAY be added by following {{RFC9338}}. Each countersignatures MUST have a `kid` in their unprotected header and MUST contain the HHIT similar to {{proxy-signed}}.
 
 ## OME Processing & Response
 
@@ -129,27 +129,22 @@ All requests MUST pass the following checks before following {{req-approve}}:
 
 If any of the above checks fail, the DIME follows {{req-deny}}.
 
-#### Request Approval {#req-approve}
+#### Inquiry Approval {#req-approve}
 
 Once processed as a "pass" the OME MUST generate at least OKIX-compliant certificates (for the UAS/aviation ecosystem see {{dkix}}) and based on the use case being registered MAY generate other artifacts (such as Endorsements). Broadcast Endorsements MUST be generated for applications involving UAS/aviation. The OME MUST store these certificates and other artifacts in a private information registry and also update the relative *Authoritative Name Server* accordingly.
+
+The response models `entity-id`'s and `key-id`'s MUST match those provided by the *Registrant*.
 
 > Author Note: there should be a matrix of the various artifacts that MUST be generated based on HHIT Entity Type with specific notes.
 
 #### Inquiry Rejection {#req-deny}
 
-Rejections MUST be sent in an appropriate HTTP Response code and SHOULD contain reasoning, when applicable. A non-exhaustive list of examples of rejection reasons are:
+A section of the response model ({{model-resp}}) is set aside to carry errors if an implementation wishes to use it. A non-exhaustive list of examples of rejection reasons are:
 
 - Web Token not encrypted
 - Public key not found/provided
 - Invalid/missing model element(s)
 - Non-conformance with OME policy/policies
-
-A section of the response model ({{model-resp}}) is set aside to carry errors if an implementation wishes to use it.
-
-~~~ ascii-art
-{::include figures/reg-resp-fail-http.txt}
-~~~
-{: #api-response-error title="Example REST Registration API (response, failure)"}
 
 ### Response Model {#resp-model}
 
@@ -175,7 +170,7 @@ A section of the response model ({{model-resp}}) is set aside to carry errors if
 
 ### Response Web Token & Transport {#resp-wt}
 
-Approved requests MUST contain a Web Token, signed by the OME with their HHIT as part of the header like described in {{proxy-signed}}, in their response. The model of {{resp-model}} is under a claim designated by `hhit_resp`.
+Approved requests MUST contain a Web Token, signed by the OME with their HHIT as described in {{proxy-signed}}, in their response. The model of {{resp-model}} is under a claim designated by `hhit_resp`.
 
 ~~~ ascii-art
 {::include figures/reg-resp-http.txt}

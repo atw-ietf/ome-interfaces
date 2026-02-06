@@ -2,7 +2,7 @@
 entity-id = int / tstr
 key-id = int / tstr
 aviation-map = { &(aviation-keys): any } / null
-aviation-keys = uint / tstr
+aviation-keys = int / tstr
 x509 = bstr ; DER encoded X.509 object (CSR or Certificate)
 endorsement = bstr .size 136
 hash = bstr .size 8 ; generated with cSHAKE

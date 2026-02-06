@@ -8,7 +8,7 @@
 
 --- abstract
 
-This document standardizes the interfaces required to register and query a DRIP Entity Tag (DET) with a DRIP Identity Management Entity (DIME) for use in the UAS/aviation ecosystem. HTTPS carrying a CBOR or JSON Web Token (CWT or JWT) is selected for registration and RDAP with authentication using Mutual TLS is selected for query. The contents of this document can also be generally applied and expanded for other use cases of the Hierarchial Host Identity Tag (HHIT) in domains of interest.
+This document standardizes the interfaces required to register and query a DRIP Entity Tag (DET) with a DRIP Identity Management Entity (DIME) for use in the UAS/aviation ecosystem. HTTPS carrying a CBOR or JSON Object Signing & Encryption (COSE or JOSE) structure is selected for registration and RDAP with authentication using Mutual TLS is selected for query. The contents of this document can also be generally applied and expanded for other use cases of the Hierarchial Host Identity Tag (HHIT) in domains of interest.
 
 --- middle
 
