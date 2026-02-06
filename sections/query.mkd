@@ -54,7 +54,7 @@ An OME, when supporting Mutual TLS, MUST accept valid OKIX-compliant certificate
 
 #### Authoritative Name Server {#query-ans}
 
-As the Public Information *Registry*, the *Authoritative Name Server* provides public data through DNS Resource Records and its specification is defined in {{DET-DNS}}. Specifically for queries the URI of the *Registry* is provided through the HHIT RRType as part of an extension in the Canonical Registration Certificate.
+As the Public Information *Registry*, the *Authoritative Name Server* provides public data through DNS Resource Records and its specification is defined in {{RFC9886}}. Specifically for queries the URI of the *Registry* is provided through the HHIT RRType as part of an extension in the Canonical Registration Certificate.
 
 ### Querant {#query-client}
 
@@ -66,7 +66,7 @@ The *Querant* initiating a query is expected to use the defined OME RDAP interfa
 
 There are two ways to obtain the URL to perform an RDAP query: DNS or through the RDAP bootstrap. DNS is the RECOMMENDED method for HHITs as an OME may elect to not be part of the RDAP bootstrap mechanism. See {{RFC9224}} for details.
 
-For DNS, a *Querant* performs a lookup using the nibble-reversed IPv6 address for an HHIT RRType. This results in the data defined in {{Section 5.1 of DET-DNS}}. In the HHIT RRType as part of the Canonical Registration Certificate, a URI is present in the Subject Alternative Name extension as defined in {{san-uri}}. 
+For DNS, a *Querant* performs a lookup using the nibble-reversed IPv6 address for an HHIT RRType. This results in the data defined in {{Section 5.1 of RFC9886}}. In the HHIT RRType as part of the Canonical Registration Certificate, a URI is present in the Subject Alternative Name extension as defined in {{san-uri}}. 
 
 ### RDAP Query {#rdap-query}
 

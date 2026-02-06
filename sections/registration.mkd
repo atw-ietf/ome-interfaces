@@ -41,46 +41,50 @@ As the Public Information Registry, this is where a subset of the registration p
 
 Cryptographic materials SHOULD be on the device intending to use said material in operation. If the *Registrant* is acting as a proxy the methods of the generation and/or transfer of cryptographic materials to and from the device being proxied to is out of scope for this document.
 
-## Registrant Request
+## Inquiry
+
+Registration inquiries are made around a set of keys, options and metadata for an entity. A single inquiry can have multiple entities, each of which can request multiple keys. The data model ({{model-req}}) is flexible to enable the *Registrant* to tailor their inquiries accordingly.
 
 ### Keys & Certificate Signing Request {#key-csr}
 
-The *Registrant* MUST generate an asymmetric key-pair for use and constructs a OKIX-compliant Certificate Signing Request (CSR), see {{dkix-csr}} for UAS/aviation ecosystem CSR, to be included in {{req-model}}.
+The *Registrant* MUST generate a key-pair, RECOMMENDED asymmetric, for use and constructs a OKIX-compliant Certificate Signing Request (CSR), see {{dkix-csr}} for UAS/aviation ecosystem CSR, to be included in {{req-model}}.
 
 If the *Registrant* knows the HID of the *Registar* it wishes to be endorsed by, it SHOULD construct its HHIT accordingly and include it in the CSR under an IP6 Name of a Subject Alternative Name (SAN) Extension marked as critical. The process of discovering a specific HID is out of scope for this document.
 
-### Request Model {#req-model}
+### Inquiry Model {#req-model}
 
 ~~~
 {::include cddl/request.cddl}
 ~~~
 {:fig #model-req title="Request Model CDDL"}
 
-*entity-type*:
-: An enumeration of the HHIT Entity Type registry using the integer value for the CBOR typing and a string representation of the HHIT Type for use in JSON.
+*entities*:
+: A map of the entities being registered in the inquiry.
 
-*unique_id*:
-: A value used during the locally scoped interaction between *Registrant* and OME when there is more than one registration request in a claim.
+*entity-id*:
+: A string or integer key, as part of the *entities* map, set by the *Registrant*. Unique in scope to only the inquiry it is present in.
+
+*entity_type*:
+: An HHIT Entity Type as defined in REF-TODO.
+
+*keys*:
+: A map of the keys being registered for an entity in the inquiry.
+
+*key-id*:
+: A string or integer key, as part of the *keys* map for each *entity*, set by the *Registrant*. Unique in scope of the *entity* and relevant *keys* map.
 
 *csr*:
-: The CSR generated in {{key-csr}}, DER encoded.
+: An OKIX-compliant CSR, {{key-csr}}, DER encoded.
 
-*vna & vnb*:
-: See {{time-window}}.
+*options*:
+: A map containing keys and their associated values related to options of keys/entities in the inquiry.
 
-*defer*:
-: Boolean signal to OME to defer the publishing of the information to DNS. This is defaulted to the value of `False` to instantly publish during registration. The default trigger to publish (when *defer* is `True`) is at `vnb` but MAY be a more involved and earlier trigger mechanism between the registrant and OME which is out of scope for this document.
+*metadata*:
+: A map containing keys and their associated values related to metadata of keys/entities in the inquiry.
 
-#### DKI Additional Fields {#dki-add-req}
+Each nesting in {{model-req}} contains its own *options* and *metadata*. This allows a *Registrant* to set elements at a higher nesting in the model to be shared among nested sections. When combining the maps from each nesting level, elements found closer to the *key* level are given priority.
 
-The fields in {{req-add-fields}} are part of the model when acting under DKI for each of the Entity Types. Additional fields MAY be required by policy and MUST be provided by the OME to the client to be aware of. These fields are provided under *meta*, see {{metadata}} for details. It can be provided per individual `request-datum` or across all datums under an `entity-type`.
-
-| Entity Type | Required | Optional |
-| ----------- | -------- | -------- |
-| UA, UAS, RID | UAS Serial Number | Make, Model, UAS Datum |
-| GCS | Serial Number | Make, Model |
-| Pilot, Operator | CAA Assigned Operator ID | Pilot ID |
-{: #req-add-fields}
+The contents of *options* and *metadata* are subject to policy of an OME and MUST be provided to their *Registrant*s.
 
 ### Request Web Token & Transport {#req-wt}
 
@@ -93,19 +97,21 @@ The Web Token, signed by the *Registrant* per either {{self-signed}} or {{proxy-
 
 #### Encryption
 
-The Web Token MUST be encrypted as it can contain Personally Identifiable Information (PII) as found in {{req-model}}. The *Registrant* MUST use the associated encryption key of the OME, which is the X25519 key derived from the OME's public key associated with their HHIT.
-
-> Author Note: is the scheme for encryption key good for this application or is something else needed?
+The Web Token MUST be encrypted as it can contain Personally Identifiable Information (PII). The exact encryption method and policies are left for OME policy and MUST be provided to *Registrant*s. See {{Section 5 of RFC9052}} and {{RFC7516}} for details on COSE and JOSE respectively.
 
 #### Self-Signed
 
-When a *Registrant* has no prior relationship with the OME it is registering to, the public key MUST be provided in the Web Token in the payload, specifically the CSR. The unprotected header of the CWT MUST be empty.
+When a *Registrant* has no prior relationship with the OME it is registering to, the public key MUST be provided in the payload of the Web Token, specifically the CSR. The unprotected header of the CWT MUST be empty.
 
-When multiple keys are being registered at once, the CWT contains not a `COSE_Sign1` but a `COSE_Sign` object. There MUST be a signature for each CSR and the `kid` of each signatures unprotected header MUST match the `unique_id` field found in the data model.
+In the case when only one entity with multiple keys is being registered and no prior relationship with the OME, a multi-signature Web Token structure in either COSE {{Section 4.1 of RFC9052}} or JOSE {{Section 7.2.1 of RFC7515}} MAY be used. Each signature structure MUST use a `kid` of the form `{<entity-id>,<key-id>}` to indicate which key in the inquiry is being used.
 
 #### Proxy-Signed
 
-When a *Registrant* has an existing registered HHIT for themselves and registering another HHIT (for themselves or a proxy device), they MUST provide their registered HHIT as part of the Web Token unprotected header in the `kid` field. The field contents MUST be the IPv6 address in network byte order.
+When a *Registrant* has an existing registered HHIT for themselves and registering another HHIT (for themselves or a proxy device), they MUST provide their registered HHIT as part of the Web Token unprotected header in the `kid` field. The field contents MUST be bytes formatted as a CBOR Tag defined in {{RFC9164, Section 3.2}} or a IPv6 address string as defined in {{RFC4291, Section 2.2}}.
+
+#### Countersignatures
+
+Additional signatures MAY be added by additional parties following {{RFC9338}}. Each countersignatures MUST have a `kid` in their unprotected header and MUST contain the HHIT similar to {{proxy-signed}}.
 
 ## OME Processing & Response
 
@@ -127,9 +133,9 @@ If any of the above checks fail, the DIME follows {{req-deny}}.
 
 Once processed as a "pass" the OME MUST generate at least OKIX-compliant certificates (for the UAS/aviation ecosystem see {{dkix}}) and based on the use case being registered MAY generate other artifacts (such as Endorsements). Broadcast Endorsements MUST be generated for applications involving UAS/aviation. The OME MUST store these certificates and other artifacts in a private information registry and also update the relative *Authoritative Name Server* accordingly.
 
-> Author Note: there should be a matrix of the various artifacts that MUST be generated based on HHIT Entity Type with specific notes. 
+> Author Note: there should be a matrix of the various artifacts that MUST be generated based on HHIT Entity Type with specific notes.
 
-#### Request Rejection {#req-deny}
+#### Inquiry Rejection {#req-deny}
 
 Rejections MUST be sent in an appropriate HTTP Response code and SHOULD contain reasoning, when applicable. A non-exhaustive list of examples of rejection reasons are:
 
@@ -138,7 +144,7 @@ Rejections MUST be sent in an appropriate HTTP Response code and SHOULD contain 
 - Invalid/missing model element(s)
 - Non-conformance with OME policy/policies
 
-An HTTP Response associated with an error MUST NOT contain a Web Token. The exact contents of the error response are out of scope for this document but should follow best practices.
+A section of the response model ({{model-resp}}) is set aside to carry errors if an implementation wishes to use it.
 
 ~~~ ascii-art
 {::include figures/reg-resp-fail-http.txt}
@@ -152,20 +158,20 @@ An HTTP Response associated with an error MUST NOT contain a Web Token. The exac
 ~~~
 {:fig #model-resp title="Response Model CDDL"}
 
-See {{req-model}} for same named field definitions.
+*success*:
+: A map of the entities successfully registered from an inquiry.
 
-*canonical_chain*:
-: Chain of OKIX-compliant certificates between the root and OME.
+*entity-id*:
+: A string or integer key, as part of the *success* map, provided by the *Registrant* in the inquiry.
 
-#### DKI Additional Fields {#dki-add-resp}
+*keys*:
+: A map of the keys successfully registered for an entity from an inquiry. Each elements value is a map containing artifacts of the registration associated with the specific key and MUST have an element containing the canonical registration certificate.
 
-The following fields are REQUIRED in the model when acting under DKI. Additional fields MAY be required by policy and MUST be provided by the OME.
+*key-id*:
+: A string or integer key, as part of the *keys* map for each *entity*, set by the *Registrant* in the inquiry.
 
-*be_chain*:
-: An optional list of Broadcast Endorsements of the OME and any relevant parent or sibling entities in the the hierarchy. A key of the `chains` map to carry the endorsements from root to OME.
-
-*be*:
-: An optional Broadcast Endorsement of the OME endorsing the newly registered HHIT/HI. Part of the `certs` map in a registration.
+*failure*:
+: List of registration failures, each denoting the entity and/or key by their respective IDs. When `eid` or `kid` is `null` it implies that all of that type are denoting the same failure.
 
 ### Response Web Token & Transport {#resp-wt}
 

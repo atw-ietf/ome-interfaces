@@ -4,7 +4,7 @@
 
 A common data model and process for registration and query of Hierarchial Host Identity Tags (HHITs, {{RFC9374}}) enables interoperability while the selection of existing standards and methods enables reuse and familiarity across ecosystems and domain vendors. The initial use case for the HHITs is for the fast growing sector of Unmanned Aircraft Systems (UAS) where the HHIT is referred to as a DRIP Entity Tag (DET) as is defined in {{RFC9374}}.
 
-The DRIP Identity Management Entity (DIME), introduced in {{RFC9434}}, is a node in a larger hierarchy that provides the critical function of registering and querying information for DETs and their associated public keys under a smaller scope to satisfy requirements of global uniqueness and other DRIP Requirements. This document provides a standardized way to provide these critical functions to clients (Registrants & Observers) that previous DRIP documents such as {{DET-DNS}} did not address.
+The DRIP Identity Management Entity (DIME), introduced in {{RFC9434}}, is a node in a larger hierarchy that provides the critical function of registering and querying information for DETs and their associated public keys under a smaller scope to satisfy requirements of global uniqueness and other DRIP Requirements. This document provides a standardized way to provide these critical functions to clients (Registrants & Observers) that previous DRIP documents such as {{RFC9886}} did not address.
 
 ## Background
 
@@ -16,7 +16,7 @@ This document defines the general interface specifications for an entity that pr
 
 The term HHIT is used when discussing the general technology while DET is used with discussion around UAS/aviation specific elements when possible. Additional terms reinforcing this delineation are found in {{terminology}}. This document defines all data models in the Concise Data Definition Language (CDDL, {{RFC8610}}).
 
-This document also performs a minor update to the data model for the Broadcast RID (BRID) Resource Record Type (RRType) of {{DET-DNS}} to align with the new IANA registries proposed in this document in {{brid-update}}.
+This document also performs a minor update to the data model for the Broadcast RID (BRID) Resource Record Type (RRType) of {{RFC9886}} to align with the new IANA registries proposed in this document in {{brid-update}}.
 
 ### Disclaimer
 

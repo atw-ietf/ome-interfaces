@@ -1,18 +1,15 @@
-response-claim = {
-  + &(entity-type): [
-    responses: [+ response-datum], 
-    chains: {
-      canonical_chain: [+ canonical: x509],
-      ? be_chain: [+ be: endorsement],
-    },
-    meta: { metadata } / null
-  ]
-}
-response-datum = [
-  unique_id: uint / str / uuid,
-  certs: {
-    canonical: x509,
-    ? be: endorsement,
-  },
-  meta: { metadata } / null
+response = [
+  success: { &(entity-id): success-data } / null
+  failure: [ + error-data ] / null
+  shared: aviation-map
+]
+success-data = [
+  keys: { &(key-id): aviation-map },
+  shared: aviation-map
+]
+error-data = [
+  eid: &(entity-id) / null,
+  kid: &(key-id) / null,
+  cat: any / null,
+  msg: any / null
 ]

@@ -1,6 +1,6 @@
 # Security Considerations {#sc}
 
-The considerations discussed in {{RFC9153}}, {{RFC9374}}, {{RFC9434}} and {{DET-DNS}} apply.
+The considerations discussed in {{RFC9153}}, {{RFC9374}}, {{RFC9434}} and {{RFC9886}} apply.
 
 ## AAA
 

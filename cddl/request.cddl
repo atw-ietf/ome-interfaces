@@ -1,14 +1,16 @@
-request-claim = {
-  + &(entity-type): [ 
-    requests: [+ request-datum], 
-    meta: { metadata } / null 
-  ]
-}
-request-datum = [
-  unique_id: uint / str / uuid,
+inquiry = [
+  entities: { &(entity-id): entity },
+  options: aviation-map,
+  metadata: aviation-map
+]
+entity = [
+  entity_type: entity-type,
+  keys: { &(key-id): key },
+  options: aviation-map,
+  metadata: aviation-map
+]
+key = [
   csr: x509,
-  vnb: utc / null,
-  vna: utc / uint / null,
-  defer: bool,
-  meta: { metadata } / null
+  options: aviation-map,
+  metadata: aviation-map
 ]

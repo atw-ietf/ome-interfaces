@@ -11,13 +11,6 @@ The DRIP CDDL Prelude is built upon the prelude defined in {{Appendix E of RFC86
 ~~~
 {:fig #drip-cddl-prelude title="DRIP CDDL Prelude"}
 
-## Metadata
-
-~~~ ascii-art
-{::include cddl/metadata.cddl}
-~~~
-{:fig #metadata-cddl title="Metadata CDDL"}
-
 ## UAS Keys
 
 ~~~ ascii-text
