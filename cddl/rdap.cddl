@@ -7,6 +7,6 @@
   ],
   registrant: any, 
   ? raa_approval: x509,
-  ? be_chain: [+ be: endorsement]
-  metadata
+  ? be_chain: [+ be: endorsement],
+  metadata: aviation-map
 }

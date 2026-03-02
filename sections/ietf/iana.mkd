@@ -20,22 +20,22 @@ Claims defined for DRIP are compatible with those of CWT and JWT, so the CWT and
 Per this specification, the following values are requested to be added to the "JSON Web Token Claims" registry established by {{RFC7519}} and the "CBOR Web Token (CWT) Claims" registry established by {{RFC8392}}. Each entry is requested to be added to both registries. The "Claim Description", "Change Controller", and "Reference" fields are common and equivalent for the JWT and CWT registries. The "Claim Key" and "Claim Value Type" fields are for the CWT registry only. The "Claim Name" field is as defined for the CWT registry, not the JWT registry. The "JWT Claim Name" field is equivalent to the "Claim Name" field in the JWT registry.
 
 ~~~ ascii-text
-Claim Name: HHIT Registration Request
-Claim Description: HHIT Registration Request
-JWT Claim Name: hhit_req
+Claim Name: HHIT Registration Inquiry
+Claim Description: HHIT Registration Inquiry
+JWT Claim Name: hhit_reg
 Claim Key: TBD1
-Claim Value Type: map
+Claim Value Type: array
 Change Controller: IETF
 Reference: This RFC
 ~~~
-{: title="HHIT Registration Request Claim: Registration Form"}
+{: title="HHIT Registration Inquiry Claim: Registration Form"}
 
 ~~~ ascii-text
 Claim Name: HHIT Registration Response
 Claim Description: HHIT Registration Response
 JWT Claim Name: hhit_resp
 Claim Key: TBD2
-Claim Value Type: map
+Claim Value Type: array
 Change Controller: IETF
 Reference: This RFC
 ~~~
@@ -60,27 +60,39 @@ Intended Usage:
 ~~~
 {: title="RDAP Extensions: Registration Form"}
 
-## Aviation ASDAM Keys
+## HHIT Entity Types
 
-This document requests IANA create a new registry under {{IANA.DRIP}} called "Aviation ASDAM Keys". This registry is used by applications following REF-TBD. Initial keys are provided in {{initial-asdam-keys}}.
+IANA is request to register the following values in the "HHIT Entity Types" registry {{IANA.DRIP}}.
 
-| Range Values | CBOR Encoding Size | Registration Policy | Range Use |
-| ------------ | ------------------ | ------------------- | --------- |
-| -2^64 to (-2^16)+1 | 1+4, 1+8 | Private Use ({{Section 4.2 of RFC8126}})             | - |
-| -2^16 to -257      | 1+2      | Specification Required ({{Section 4.7 of RFC8126}})  | ASDA-OKS |
-| -256 to -25        | 1+1      | Reserved                                             | ASDA-IKS |
-| -24 to -1          | 1+0      | Reserved                                             | ASDAK |
-| 0                  | 1+0      | Reserved                                             | ASC |
-| 1 to 23            | 1+0      | Reserved                                             | ASDAK |
-| 24 to 255          | 1+1      | Reserved                                             | XASDAK |
-| 256 to (2^16)-1    | 1+2      | Specification Required ({{Section 4.7 of RFC8126}})  | - |
-| 2^16 to (2^64)-1   | 1+4, 1+8 | First Come First Served ({{Section 4.3 of RFC8126}}) | - |
-{: #key-table title="Aviation ASDAM Keys: Registry Policies"}
+| Value | HHIT Type | Reference |
+| ----- | --------- | --------- |
+| 2     | DIME Authorization | This RFC  |
+| 3     | DIME Issuing       | This RFC  |
+| 6     | Apex Authorization | This RFC  |
+| 7     | Apex Issuing       | This RFC  |
+| 10    | RAA Authorization  | This RFC  |
+| 11    | RAA Issuing        | This RFC  |
+| 14    | HDA Authorization  | This RFC  |
+| 15    | HDA Issuing        | This RFC  |
+
+## Aviation Keys
+
+This document requests IANA create a new registry under {{IANA.DRIP}} called "Aviation Keys" with registry policies described in {#key-table}. Initial keys are provided in {{initial-keys}}.
+
+| Range Values | CBOR Encoding Size | Registration Policy |
+| ------------ | ------------------ | ------------------- |
+| -2^64 to -257      | 1+2, 1+4, 1+8 | Private Use ({{Section 4.2 of RFC8126}})             |
+| -256 to -25        | 1+1           | Standard Action ({{Section 4.9 of RFC8126}})         |
+| -24 to 23          | 1+0           | Standard Action ({{Section 4.9 of RFC8126}})         |
+| 24 to 255          | 1+1           | Standard Action ({{Section 4.9 of RFC8126}})         |
+| 256 to (2^16)-1    | 1+2           | Specification Required ({{Section 4.7 of RFC8126}})  |
+| 2^16 to (2^64)-1   | 1+4, 1+8      | First Come First Served ({{Section 4.3 of RFC8126}}) |
+{: #key-table title="Aviation Keys: Registry Policies"}
 
 ### Registry Fields
 
 *Key*:
-: TBD
+: Title of the key.
 
 *Description*:
 : A short description of the entry providing an overview of its semantic meaning and its expected use-cases.
@@ -89,7 +101,7 @@ This document requests IANA create a new registry under {{IANA.DRIP}} called "Av
 : A string value, to be used as a `key` in the `key: value` pair of a JSON object. No specific rules apply for syntax beyond being a valid JSON string for a object key, but it is recommended to use all lower-case and snake-case with underscores. Care should be given to the length of a Name to reduce wire size of JSON encodings for constrained environments.
 
 *Label*:
-: A integer value, ranging from `256 to 2^64-1`, to be used as a key in a CBOR map. Different ranges of values use different registration policies, see {{key-table}}.
+: A integer value to be used as a key in a CBOR map. Different ranges of values use different registration policies, see {{key-table}}.
 
 *Value Type*:
 : CBOR/JSON typing for value under the Key.
@@ -100,109 +112,33 @@ This document requests IANA create a new registry under {{IANA.DRIP}} called "Av
 *Reference*:
 : A link to a permanent and readily available specification defining the value syntax and semantics to be used for this key.
 
-### Registration Form {#asdam-form}
+### Registration Form {#ak-form}
 
 ~~~ ascii-text
 Key:
 Description:
-Range:
 Name:
 Label:
 Value Type:
 Change Controller:
 Reference:
 ~~~
-{: #key-form title="Aviation ASDAM Keys: Registration Form"}
+{: #key-form title="Aviation Keys: Registration Form"}
 
 #### Review Criteria
 
 For a Key the specified value of a new registration should not duplicate the syntax and/or semantics of an existing registration. For the Name parameter of the Key, a new registration MUST NOT duplicate an existing registration Name.
 
-The Range parameter of registration is used by the registrant to request a specific area of registration, but is not required to have a field indicating no preferences in the registration.
-
 Value Type MUST be a valid CBOR type or from {{IANA.CBOR.Tags}}. Their typing in JSON is assumed to follow the translation from CBOR to JSON following {{Section 6 of RFC8949}}.
 
-### Initial Values {#initial-asdam-keys}
-
-~~~ ascii-text
-Key: DRIP UAS Indirect & Mixed ASC Context
-Description: Context Keys for Indirect & Mixed ASC for DRIP UAS
-Range: ASDA-OKS
-Name: N/A
-Label: TBD3
-Value Type: ASDA Key Set
-Change Controller: IETF
-Reference: This Specification
-~~~
-{: title="Aviation ASDAM Keys: DRIP UAS Indirect & Mixed ASC Context"}
+### Initial Values {#initial-keys}
 
 ~~~ ascii-text
 {::include figures/ome-iana.txt}
 ~~~
-{: title="Aviation ASDAM Keys: General Aviation Keys"}
+{: title="Aviation Keys: General Aviation Keys"}
 
 ~~~ ascii-text
 {::include figures/brid-iana.txt}
 ~~~
-{: title="Aviation ASDAM Keys: UAS Keys"}
-
-## DRIP UAS Indirect & Mixed ASC Context
-
-IANA is requested to create a new registry called "DRIP UAS Indirect & Mixed ASC Context" under {{IANA.DRIP}}. This is to support Indirect and Mixed ASC Modes for ASDAM when the value of `TBD3` is used in the ASC.
-
-The registry is under Expert Review ({{Section 4.5 of RFC8126}}) with {{offset-asda-oks-uas}} being the initial assignments.
-
-### Registration Form {#uas-context-form}
-
-~~~ ascii-text
-Offset Label:
-Canonical Label:
-Name:
-Description:
-~~~
-{: #context-form title="DRIP UAS Indirect & Mixed ASC Context: Registration Form"}
-
-### Initial Values {#initial-uas-context}
-
-> Note to IANA: once registrations in {{initial-asdam-keys}} are in place, the `Canonical Label` should be filled in accordingly and `TBD3` should change.
-
-| Offset Label | Canonical Label | Name | Description |
-| ------------ | --------------- | ---- | ----------- |
-| -15 | - | raa                  | RAA                                    |
-| -14 | - | hda                  | HDA                                    |
-| -13 | - | utm                  | UTM Operational Intent & Source        |
-| -12 | - | spec                 | HME Specification Code                 |
-| -11 | - | csr                  | DER Encoded X.509 CSR                  |
-| -10 | - | registrant           | Registrant Information                 |
-| -9  | - | uas_serial_number    | ANSI/CTA 2063-A UAS Serial Number      |
-| -8  | - | caa_assigned_id      | CAA Assigned ID                        |
-| -7  | - | pilot_license_id     | Pilot License Number                   |
-| -6  | - | oracle_x509          | Oracle X.509 Certificate               |
-| -5  | - | canonical_cert       | DER Encoded X.509 Certificate          |
-| -4  | - | canonical_chain      | List of DER Encoded X.509 Certificates |
-| -3  | - | be                   | Broadcast Endorsement                  |
-| -2  | - | be_chain             | List of Broadcast Endorsements         |
-| -1  | - | uas                  | UAS Datum Object                       |
-| 1   | - | uas_type             | Enumeration of UAS Type                |
-| 2   | - | uas_ids              | UAS IDs                                |
-| 3   | - | auth                 | Authentication Data                    |
-| 4   | - | self_id              | Self ID                                |
-| 5   | - | classification       | UA Category & Class                    |
-| 6   | - | area                 | Area Count, Radius, etc.               |
-| 7   | - | operator_id          | Operator ID                            |
-| 8   | - | ua_status            | Enumeration of Status                  |
-| 9   | - | ua_position          | UA Position                            |
-| 10  | - | ua_bearing           | Bearing / Track Direction              |
-| 11  | - | ua_speed             | Vertical & Horizontal Speeds           |
-| 12  | - | ua_height            | Height Above Ground or Take-off        |
-| 13  | - | accuracy             | Enumerations of Accuracies             |
-| 14  | - | sys_gnss_position    | System GNSS Position                   |
-| 15  | - | sys_fixed_position   | System Fixed Position                  |
-| 16  | - | sys_takeoff_position | System Take-Off Position               |
-| 17  | - | timestamp            | UTC Timestamp                          |
-| 18  | - | compliance           | Compliance Enumeration                 |
-{: #offset-asda-oks-uas title="DRIP UAS Indirect & Mixed ASC Context: Pre-Allocated Values"}
-
-The values of `-24` to `-15` and `19` to `255` are currently unassigned. 
-
-> Author Note: should this table have a "reference" column or do we leave it to the reader to go back to the Aviation ASDAM registry and get the reference?
+{: title="Aviation Keys: UAS Keys"}

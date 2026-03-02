@@ -4,5 +4,5 @@ Content-Type: application/json
 {
   "status": 401,
   "code": "UNAUTHORIZED",
-  "message": "Key used to sign Web Token is denied.",
+  "message": "Key used to sign OME Token is denied.",
 }

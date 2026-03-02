@@ -1,6 +1,6 @@
 # Registration Process
 
-This sections details the process of registration following the Z-diagram of {{reg-z}} and the associated table of contents in {{reg-z-tbl}}. It is the upper link of {{arch-fig}} labeled with "Web Token/HTTPS" between *Registrant* and *Registrar*.
+This sections details the process of registration following the Z-diagram of {{reg-z}} and the associated table of contents in {{reg-z-tbl}}. It is the upper link of {{arch-fig}} labeled with "OME Token/HTTPS" between *Registrant* and *Registrar*.
 
 ~~~ ascii-text
 {::include figures/registration-z.txt}
@@ -23,7 +23,7 @@ This sections details the process of registration following the Z-diagram of {{r
 
 #### Registrar {#reg-registrar}
 
-An OME MUST provide an HTTPS-based registration interface using this documents registered `/.well-known/register-hhit` entry. Data MUST be encapsulated using COSE or JOSE structures (generally called Web Tokens in this specification). It MAY provide other transport methods that carries the same Web Token or data models. The Constrained Application Protocol (CoAP, {{RFC7252}}) is an OPTIONAL method that can re-use the contents of this document with caveats in {{coap}}.
+An OME MUST provide an HTTPS-based registration interface using this documents registered `/.well-known/register-hhit` entry. Data MUST be encapsulated using COSE or JOSE structures (generally called OME Tokens in this specification). It MAY provide other transport methods that carries the same OME Token or data models.
 
 #### Certificate Authority {#reg-ca}
 
@@ -43,7 +43,7 @@ Cryptographic materials SHOULD be on the device intending to use said material i
 
 ## Inquiry
 
-Registration inquiries are made around a set of keys, options and metadata for an entity. A single inquiry can have multiple entities, each of which can request multiple keys. The data model ({{model-req}}) is flexible to enable the *Registrant* to tailor their inquiries accordingly.
+Registration inquiries are made around a set of keys and metadata for an entity. A single inquiry can have multiple entities, each of which can request multiple keys. The data model ({{model-req}}) is flexible to enable the *Registrant* to tailor their inquiries accordingly.
 
 ### Keys & Certificate Signing Request {#key-csr}
 
@@ -76,19 +76,16 @@ If the *Registrant* knows the HID of the *Registar* it wishes to be endorsed by,
 *csr*:
 : An OKIX-compliant CSR, {{key-csr}}, DER encoded.
 
-*options*:
-: A map containing keys and their associated values related to options of keys/entities in the inquiry.
-
 *metadata*:
 : A map containing keys and their associated values related to metadata of keys/entities in the inquiry.
 
-Each nesting in {{model-req}} contains its own *options* and *metadata*. This allows a *Registrant* to set elements at a higher nesting in the model to be shared among nested sections. When combining the maps from each nesting level, elements found closer to the *key* level are given priority.
+Each nesting in {{model-req}} contains its own *metadata*. This allows a *Registrant* to set elements at a higher nesting in the model to be shared among nested sections. When combining the maps from each nesting level, elements found closer to the *key* level are given priority.
 
-The contents of *options* and *metadata* are subject to policy of an OME and MUST be provided to their *Registrant*s.
+The contents of *metadata* are subject to policy of an OME and MUST be provided to their *Registrant*s.
 
-### Request Web Token & Transport {#req-wt}
+### Inquiry Token & Transport {#req-wt}
 
-The Web Token, signed by the *Registrant* per either {{self-signed}} or {{proxy-signed}}, contains the content found in {{req-model}} under the claim `hhit_req`.
+The OME Token, signed by the *Registrant* per either {{self-signed}} or {{proxy-signed}}, contains the content found in {{req-model}} under the claim `hhit_req`.
 
 ~~~ ascii-art
 {::include figures/reg-http.txt}
@@ -97,17 +94,17 @@ The Web Token, signed by the *Registrant* per either {{self-signed}} or {{proxy-
 
 #### Encryption
 
-The Web Token MUST be encrypted as it can contain Personally Identifiable Information (PII). The exact encryption method and policies are left for OME policy and MUST be provided to *Registrant*s. See {{Section 5 of RFC9052}} or {{RFC7516}} for details on COSE and JOSE respectively.
+The OME Token MUST be encrypted as it can contain Personally Identifiable Information (PII). The exact encryption method and policies are left for OME policy and MUST be provided to *Registrant*s. See {{Section 5 of RFC9052}} or {{RFC7516}} for details on COSE and JOSE respectively.
 
 #### Self-Signed
 
-When a *Registrant* has no prior relationship with the OME it is registering to, the public key MUST be provided in the payload of the Web Token, specifically the CSR. The unprotected header of the Web Token MUST be empty.
+When a *Registrant* has no prior relationship with the OME it is registering to, the public key MUST be provided in the payload of the OME Token, specifically the CSR. The unprotected header of the OME Token MUST be empty.
 
-In the case when only one entity with multiple keys is being registered and no prior relationship with the OME, a multi-signature Web Token structure in either COSE {{Section 4.1 of RFC9052}} or JOSE {{Section 7.2.1 of RFC7515}} MAY be used. Each signature structure MUST use a `kid` of the form `{<entity-id>,<key-id>}` to indicate which key in the inquiry is being used.
+In the case when only one entity with multiple keys is being registered and no prior relationship with the OME, a multi-signature OME Token structure defined in either {{Section 4.1 of RFC9052}} or {{Section 7.2.1 of RFC7515}} MAY be used. Each signature structure MUST use a `kid` of the form `{<entity-id>,<key-id>}` to indicate which key in the inquiry is being used.
 
 #### Proxy-Signed
 
-When a *Registrant* has an existing registered HHIT for themselves and registering another HHIT (for themselves or a proxy device), they MUST provide their registered HHIT as part of the Web Token unprotected header in the `kid` field. The field contents MUST be bytes formatted as a CBOR Tag defined in {{RFC9164, Section 3.2}} or a IPv6 address string as defined in {{RFC4291, Section 2.2}}.
+When a *Registrant* has an existing registered HHIT for themselves and registering another HHIT (for themselves or a proxy device), they MUST provide their registered HHIT as part of the OME Token unprotected header in the `kid` field. The field contents MUST be bytes formatted as a CBOR Tag defined in {{RFC9164, Section 3.2}} or a IPv6 address string as defined in {{RFC4291, Section 2.2}}.
 
 #### Countersignatures
 
@@ -119,13 +116,13 @@ Additional signatures MAY be added by following {{RFC9338}}. Each countersignatu
 
 All requests MUST pass the following checks before following {{req-approve}}:
 
-1. The Web Token signature validates with an acceptable public key
+1. The OME Token signature validates with an acceptable public key
 2. The CSR signature passes with embedded public key
 3. The public key in CSR is unique to the OME's scope
 4. OME constructs using their HID and the CSR's public key an HHIT and;
     * If an HHIT is provided by *Registrant* in CSR ensure they are equivalent
     * Confirm the HHIT is unique in the OME's authority of the hierarchy
-5. Additional data, if any, in the Web Token is acceptable; see {{oaas}}
+5. Additional data, if any, in the OME Token is acceptable; see {{oaas}}
 
 If any of the above checks fail, the DIME follows {{req-deny}}.
 
@@ -141,7 +138,7 @@ The response models `entity-id`'s and `key-id`'s MUST match those provided by th
 
 A section of the response model ({{model-resp}}) is set aside to carry errors if an implementation wishes to use it. A non-exhaustive list of examples of rejection reasons are:
 
-- Web Token not encrypted
+- OME Token not encrypted
 - Public key not found/provided
 - Invalid/missing model element(s)
 - Non-conformance with OME policy/policies
@@ -168,9 +165,9 @@ A section of the response model ({{model-resp}}) is set aside to carry errors if
 *failure*:
 : List of registration failures, each denoting the entity and/or key by their respective IDs. When `eid` or `kid` is `null` it implies that all of that type are denoting the same failure.
 
-### Response Web Token & Transport {#resp-wt}
+### Response OME Token & Transport {#resp-wt}
 
-Approved requests MUST contain a Web Token, signed by the OME with their HHIT as described in {{proxy-signed}}, in their response. The model of {{resp-model}} is under a claim designated by `hhit_resp`.
+Approved requests MUST contain a OME Token, signed by the OME with their HHIT as described in {{proxy-signed}}, in their response. The model of {{resp-model}} is under a claim designated by `hhit_resp`.
 
 ~~~ ascii-art
 {::include figures/reg-resp-http.txt}
@@ -181,4 +178,4 @@ Approved requests MUST contain a Web Token, signed by the OME with their HHIT as
 
 ### Response Validation & Onboarding {#resp-valid}
 
-The *Registrant* MUST validate the signature of the Web Token returned by the OME and SHOULD validate all signatures found in the response claim.
+The *Registrant* MUST validate the signature of the OME Token returned by the OME and SHOULD validate all signatures found in the response claim.

@@ -12,7 +12,7 @@ To properly provide the necessary services identified in both {{RFC9153}} and {{
 : The specific details of records hosted by the Authoritative Name Server as part of DNS is specified in {{RFC9886}} and are out of scope for this document. Interactions done by other OME functions to manage an Authoritative Name Server are out of scope for this document. It should be noted that some artifacts generated during the registration process specified in this document end up in RRTypes hosted in DNS. This function serves as the Public Information Registry as defined by {{Section 4.1 of RFC9434}}.
 
 *Certificate Authority*:
-: This document does not cover specific details of this function of an OME. However, it is expected to provide at least ORCHID Key Infrastructure X.509 (OKIX) certificates used in other parts of the OME. These are {{RFC5280}} compliant certificates that support HHITs. See {{DKI}} for details on Certificate Authority requirements and processes.
+: This document does not cover specific details of this function of an OME. However, it is expected to provide at least ORCHID Key Infrastructure X.509 (OKIX) certificates used in other parts of the OME. These are {{RFC5280}} compliant certificates that support HHITs, see {{oki}}. Explicit policy for Certificate Authorities are left for more specific implementation and documents, such as a Concept of Operations.
 
 ~~~ ascii-art
 {::include figures/arch.txt}
@@ -22,3 +22,27 @@ To properly provide the necessary services identified in both {{RFC9153}} and {{
 The specific interaction models and transports between all of these functions when not co-located (i.e. as a distributed system of systems) is out of scope for this document and are represented by dotted lines (`.` and `:` between `x`'s) in {{arch-fig}}. Note that of the duplicate links feeding *Authoritative Name Server* and *Registry* one set is chosen for implementation for each. A number of these functions/interactions are lifted from the DNS and the existing relationships and protocols between such entities in that domain also can apply here. For example, between *Registrar* and *Registry* is the Extensible Provisioning Protocol (EPP, {{STD69}}) or equivalents such as RESTful Provisioning Protocol (RPP).
 
 This document only details the interaction between a registering client (known as *Registrant*) and the *Registrar* through an HTTPS interface as descried in {{registration-process}} and the RDAP interaction by *Querants* (such as *Observers*) and a *Registry* as described in {{query-process}}. These interactions are denoted by the solid lines (`-` and `|` between `o`'s) of {{arch-fig}}. These interfaces can be either used by machines as an API or provided with a UI for humans to interact with such as on a web browser. 
+
+## ORCHID Key Infrastructure {#oki}
+
+ORCHID Key Infrastructure (OKI) follows a pattern of hierarchy starting at the IPv6 address prefix  as the apex and traverses down the levels of the HHITs Hierarchy ID field. For DETs this `2001:30/28` as the apex then RAA and HDA respectively.
+
+Each level MUST have at least one HHIT used for Authorization signing. These are to be used to endorse HDA Authorization HHITs into the hierarchy. Additionally each level MAY have as many HHITs as desired used for Issuing signing. These are used to endorse Operational HHITs coming from entities such a UAS and Operators. This document allocates two new HHIT Entity Types in each level of hierarchy for this purpose, one for Authorization and one for Issuing.
+
+### X.509 Profiles
+
+Existing X.509 profiles can be augmented with additional OIDs when HHITs are in use. This section provides some high level operational details around using such augmentations.
+
+*Issuer Subject*:
+: When HHITs are deployed for identities, certificates being signed using an HHITs key MUST include the IPv6 address string as the Issuer Subject under a Common Name.
+
+*Subject Alternative Name: IP6*:
+: This OID MUST be included at all levels of the OKI to indicate the Subjects HHIT. The Subject Alternative Name MUST be marked as critical.
+
+*Subject Alternative Name: URI*:
+: This OID is used to indicate where the Private Information Registry for this entity or entities endorsed by it can be found. It SHOULD be at the HDA-level but MAY be on individual Operational certificates.
+
+*Subject*:
+: For Operational HHITs the Subject SHOULD be empty. Other levels of the hierarchy MAY use Subject or have specific requirements on its contents.
+
+Other X.509 fields and OIDs MAY be required in a given jurisdiction. See {{dkix}} for more explicit profile examples and details used for the DRIP Key Infrastructure (DKI) and its X.509 profiles (DKIX).

@@ -10,7 +10,7 @@ This sections details the process of query for additional private information fo
 | Section | Applicable Z-Diagram Reference(s) |
 | ------- | --------------------------------- |
 | {{client-query}} | (L) RX_HHIT, (M) DNS, (N) RDAP_URI, (O) RDAP_Q |
-| {{rdap-process}} | (P) VALID_X509?, (Q) POLICY_CHK?, (R) ??? |
+| {{rdap-process}} | (P) VALID_X509?, (Q) POLICY_CHECK?, (R) ??? |
 | {{rdap-pass}} | (R) ???, (S) RDAP_R |
 | {{client-resp}} | (S) RDAP_R, (T) ACT |
 {: #query-z-tbl title="Query Process Table of Contents"}
@@ -39,14 +39,13 @@ An OME MUST provide an HTTPS-based, GET method only, query interface following {
 
 ##### Authentication {#mutual-tls}
 
-Per REG-2 and REG-4 of {{Section 4.4.1 of RFC9153}}, RDAP queries to a OME MUST be protected using fine-grained AAA policies in a both human- & machine-readable form for automated enforcement. RDAP supports only HTTP-based mechanisms for authentication as defined in {{Section 3.2 of RFC7481}}. A federated authentication mechanism, such as the examples in {{Section 3.2.1 of RFC7481}}, is RECOMMENDED.
+Per REG-2 and REG-4 of {{Section 4.4.1 of RFC9153}}, RDAP queries to an OME MUST be protected using fine-grained AAA policies in a both human- & machine-readable form for automated enforcement. RDAP supports only HTTP-based mechanisms for authentication as defined in {{Section 3.2 of RFC7481}}. A federated authentication mechanism, such as the examples in {{Section 3.2.1 of RFC7481}}, is RECOMMENDED.
 
 For international and/or global harmonization, this document standardizes the following RDAP behavior for authentication of clients and servers:
 
-- MUST support HTTP Digest Authentication Scheme ({{RFC7616}}) **AND**
-- SHOULD NOT support HTTP Basic Authentication Scheme ({{RFC7617}}) but MAY accept Basic if peer offers that and nothing stronger **AND**
+- MUST support HTTP Basic or Digest Authentication Scheme per {{Section 3.2 of RFC7481}} **AND**
 - MUST support Mutual TLS {{Section 7.4.6 of RFC5246}} for global and/or international queries **AND**
-- SHOULD use Mutual TLS {{Section 7.4.6 of RFC5246}} but MAY do any other RDAP compatible AAA for domestic queries
+- SHOULD use Mutual TLS {{Section 7.4.6 of RFC5246}} but MAY do any RDAP compatible AAA for domestic queries
 
 An OME, when supporting Mutual TLS, MUST accept valid OKIX-compliant certificates and MAY accept other {{RFC5280}} (PKIX) compliant certificates.
 
@@ -79,13 +78,15 @@ The query URL is constructed with the URI obtained in {{find-rdap-url}} appended
 
 ## OME RDAP Processing & Response
 
-### Access Control {#rdap-process}
+### Differential Access Control {#rdap-process}
 
 With the use of {{mutual-tls}} as part of the query, the authentication is covered by acceptance or rejection of the certificate presented by the *Querant*. Standard TLS rejection methods MUST be followed to signal to the *Querant* the rejection of the certificate.
 
 Once cleared through with a valid certificate, access control is handled using policy methods of the OME and is out of scope for this document. It is RECOMMENDED for interoperability of sharing policy information between OME's that eXtensible Access Control Markup Language (XACML) with Security Assertion Markup Language (SAML) is used.
 
 ### OME Data Structure
+
+> Author Note: this sections data structure is still in flux and requires revisions/feedback.
 
 This following data structure and elements that are required in every response. Additional elements are added based on policy and use-case.
 

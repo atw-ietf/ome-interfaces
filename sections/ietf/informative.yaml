@@ -1,9 +1,11 @@
 informative:
+    RFC4108: # hardwareModuleName
+    RFC4291: # ip6 addr arch
     RFC5280: # pkix
-    RFC7252: # coap
+    RFC7519: # jwt claims
     RFC8126: # iana-considerations
+    RFC8392: # cwt claims
     RFC8610: # cddl
-    RFC9147: # dtls v1.3
     RFC9334: # rats-arch
     RFC9560: # openid connect rdap
 

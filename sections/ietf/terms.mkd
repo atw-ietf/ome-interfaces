@@ -16,6 +16,6 @@
 **ORCHID Key Infrastructure X.509 (OKIX)**:
 : A set of X.509 certificate profiles in compliance of Public Key Infrastructure X.509 (PKIX, {{RFC5280}}) that support an OKI. An example is of DKI X.509 (DKIX) for UAS/aviation.
 
-**Web Token**:
+**OME Token**:
 
-: In the context of this specification; a Web Token can be any of the Concise Binary Object Representation (CBOR; {{STD94}}) Object Signing & Encryption (COSE; {{RFC9052}}) or JavaScript Object Notation (JSON; {{STD90}}) Object Signing & Encryption (JOSE; {{RFC7515}}, {{RFC7516}}) structures.
+: In the context of this specification; a OME Token can be any of the Concise Binary Object Representation (CBOR; {{STD94}}) Object Signing & Encryption (COSE; {{STD96}}) or JavaScript Object Notation (JSON; {{STD90}}) Object Signing & Encryption (JOSE; {{RFC7515}}, {{RFC7516}}) structures.
