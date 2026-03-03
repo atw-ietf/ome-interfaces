@@ -166,9 +166,9 @@ The Issuer content of its DET assists in finding this specific Issuer in the DRI
 
 Subject Alternative Name is only used in Operational certificates. It is used to provide the DET as an IP address with an Empty Subject (SAN MUST be flagged as Critical). 
 
-The Subject Alternative Name is also used in Manufacturer DET certificates. These may contain the `hardwareModuleName` as described in {{802.1AR}} that references {{RFC4108}}. 
+The Subject Alternative Name is also used in Manufacturer DET certificates. These may contain the `hardwareModuleName` as described in {{IEEE.802.1AR}} that references {{RFC4108}}. 
 
-Per {{RFC5280}} and {{802.1AR}}, Manufacturer DET certificates with `hardwareModuleName` MUST have the notAfter date as `99991231235959Z`.
+Per {{RFC5280}} and {{IEEE.802.1AR}}, Manufacturer DET certificates with `hardwareModuleName` MUST have the notAfter date as `99991231235959Z`.
 
 ### Subject Alternative Name URI {#san-uri}
 

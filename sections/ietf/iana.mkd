@@ -6,9 +6,9 @@ IANA is requested to add the following entries in the "Well-Known URIs" registry
 
 | URI Suffix | Change Controller | Reference | Status | Related Information |
 | ---------- | ----------------- | --------- | ------ | ------------------- |
-| register-hhit | IETF | This RFC | permanent | N/A |
-| query-hhit | IETF | This RFC | permanent | N/A |
-| oaas-hhit | IETF | This RFC | permanent | N/A |
+| ome/register | IETF | This RFC | permanent | N/A |
+| ome/query | IETF | This RFC | permanent | N/A |
+| ome/oaas | IETF | This RFC | permanent | N/A |
 {: title="Additions to Well-Known URIs Registry"}
 
 > Author Note: should we also add Well-Known URIs for update and delete methods? This would then cover all parts of CRUD.
@@ -22,7 +22,7 @@ Per this specification, the following values are requested to be added to the "J
 ~~~ ascii-text
 Claim Name: HHIT Registration Inquiry
 Claim Description: HHIT Registration Inquiry
-JWT Claim Name: hhit_reg
+JWT Claim Name: hri
 Claim Key: TBD1
 Claim Value Type: array
 Change Controller: IETF
@@ -33,7 +33,7 @@ Reference: This RFC
 ~~~ ascii-text
 Claim Name: HHIT Registration Response
 Claim Description: HHIT Registration Response
-JWT Claim Name: hhit_resp
+JWT Claim Name: hrr
 Claim Key: TBD2
 Claim Value Type: array
 Change Controller: IETF
@@ -62,7 +62,7 @@ Intended Usage:
 
 ## HHIT Entity Types
 
-IANA is request to register the following values in the "HHIT Entity Types" registry {{IANA.DRIP}}.
+IANA is requested to register the following values in the "HHIT Entity Types" registry {{IANA.DRIP}}.
 
 | Value | HHIT Type | Reference |
 | ----- | --------- | --------- |
@@ -74,6 +74,7 @@ IANA is request to register the following values in the "HHIT Entity Types" regi
 | 11    | RAA Issuing        | This RFC  |
 | 14    | HDA Authorization  | This RFC  |
 | 15    | HDA Issuing        | This RFC  |
+{: #entity-type-table title="Authorization & Issuing HHIT Entity Types"}
 
 ## Aviation Keys
 
@@ -133,12 +134,16 @@ Value Type MUST be a valid CBOR type or from {{IANA.CBOR.Tags}}. Their typing in
 
 ### Initial Values {#initial-keys}
 
+The following keys of {{ome-keys}} are defined in this document for use during registration and query.
+
 ~~~ ascii-text
 {::include figures/ome-iana.txt}
 ~~~
-{: title="Aviation Keys: General Aviation Keys"}
+{: #ome-keys title="Aviation Keys: General Aviation Keys"}
+
+The following keys in {{astm-keys}} are mapped to the CDDL defined in {{uas-cddl}} and are generalized from {{ASTM.F3411}}.
 
 ~~~ ascii-text
 {::include figures/brid-iana.txt}
 ~~~
-{: title="Aviation Keys: UAS Keys"}
+{: #astm-keys title="Aviation Keys: ASTM F3411 UAS Keys"}

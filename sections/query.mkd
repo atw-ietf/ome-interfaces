@@ -35,7 +35,7 @@ As the Private Information *Registry*, the *Registry* provides private data thro
 
 ##### Endpoint
 
-An OME MUST provide an HTTPS-based, GET method only, query interface following {{Section 3.1.1 of RFC9082}} (i.e. `ip/<IP address>`) and MUST be the destination of redirection from `/.well-known/query-hhit`. All other RDAP endpoints SHOULD NOT be implemented as specified in {{RFC9082}}. Other methods MAY be provided to enable differential access controlled queries of information pertaining to an HHIT but are out of scope for this document.
+An OME MUST provide an HTTPS-based, GET method only, query interface following {{Section 3.1.1 of RFC9082}} (i.e. `ip/<IP address>`) and MUST be the destination of redirection from `/.well-known/omg/query`. All other RDAP endpoints SHOULD NOT be implemented as specified in {{RFC9082}}. Other methods MAY be provided to enable differential access controlled queries of information pertaining to an HHIT but are out of scope for this document.
 
 ##### Authentication {#mutual-tls}
 
@@ -69,10 +69,10 @@ For DNS, a *Querant* performs a lookup using the nibble-reversed IPv6 address fo
 
 ### RDAP Query {#rdap-query}
 
-The query URL is constructed with the URI obtained in {{find-rdap-url}} appended with `/.well-known/query-hhit/<IP address>`. The query MUST use an HTTPS GET method and provide authentication using {{mutual-tls}} with a PKIX compatible (i.e {{dkix}} for UAS/aviation ecosystem) certificate. The OME MUST redirect `/.well-known/query-hhit/` to their locally hosted path of {{Section 3.1.1 of RFC9082}}.
+The query URL is constructed with the URI obtained in {{find-rdap-url}} appended with `/.well-known/ome/query/<IP address>`. The query MUST use an HTTPS GET method and provide authentication using {{mutual-tls}} with a PKIX compatible (i.e {{dkix}} for UAS/aviation ecosystem) certificate. The OME MUST redirect `/.well-known/ome/query/` to their locally hosted path of {{Section 3.1.1 of RFC9082}}.
 
 ~~~ ascii-art
-{::include figures/query-http.txt}
+{::include figures/ome-rdap-query.txt}
 ~~~
 {: title="Example HHIT HTTP RDAP Query"}
 
@@ -98,14 +98,11 @@ This following data structure and elements that are required in every response. 
 *csr*:
 : The DER encoded CSR received from the Registrant.
 
-*canonical_cert*:
+*canon_x*:
 : The OKIX-compliant certificate signed by the OME endorsing the submitted HHIT and public key of the Registrant.
 
 *hhit*:
 : Array structure contain the *entity_type* and *ipv6* address.
-
-*registrant*:
-: An object representing the Registrant that registered the HHIT and submitted data found in this object.
 
 #### DKI Additional Fields {#dki-add-rdap}
 
@@ -116,10 +113,10 @@ The following fields are REQUIRED in the model when acting under DKI. Additional
 
 ### RDAP Response {#rdap-pass}
 
-An RDAP response from an OME MUST contain {{rdap-model}} under the key of `ome_resp`. The `rdapConformance` array of the response MUST include `ome_v0`. The OME MAY also include the standard expected response of {{Section 5.4 of RFC9083}} if applicable.
+An RDAP response from an OME MUST contain {{rdap-model}} under the key of `ome`. The `rdapConformance` array of the response MUST include `ome_v0`. The OME MAY also include the standard expected response of {{Section 5.4 of RFC9083}} if applicable.
 
 ~~~ ascii-art
-{::include figures/query-resp-http.txt}
+{::include figures/ome-rdap-response.txt}
 ~~~
 {:fig title="OME RDAP Response"}
 

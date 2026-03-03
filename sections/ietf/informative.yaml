@@ -29,7 +29,7 @@ informative:
         -
           org: International Civil Aviation Organization
       date: July 2025
-    802.1AR:
+    IEEE.802.1AR:
       title: IEEE Standard for Local and Metropolitan Area Networks - Secure Device Identity
       author:
         -

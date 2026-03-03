@@ -11,12 +11,14 @@ The DRIP CDDL Prelude is built upon the prelude defined in {{Appendix E of RFC86
 ~~~
 {:fig #drip-cddl-prelude title="DRIP CDDL Prelude"}
 
-## UAS Keys
+## F3411 UAS Datum
+
+The static content of {{uas-cddl}} is lifted from {{RFC9886}}, specifically the BRID RRType. The additional fields added are to support the dynamic fields defined in the Broadcast RID portion of {{ASTM.F3411}}. Use of these new fields for registration are not expected but included for completeness and to support expected future work with UAS data models.
 
 ~~~ ascii-text
 {::include cddl/uas.cddl}
 ~~~
-{:fig #uas-cddl title="UAS Keys CDDL"}
+{:fig #uas-cddl title="F3411 UAS Datum CDDL"}
 
 ## Time Window
 
