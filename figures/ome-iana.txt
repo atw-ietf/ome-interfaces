@@ -10,7 +10,7 @@ Key: VNB
 Description: Valid Not Before
 Name: vnb
 Label: -3
-Value Type: time
+Value Type: tdate or time
 Change Controller: IETF
 Reference: This RFC
 
@@ -18,7 +18,7 @@ Key: VNA
 Description: Valid Not After
 Name: vna
 Label: -4
-Value Type: time or number
+Value Type: tdate, time or number
 Change Controller: IETF
 Reference: This RFC
 
@@ -34,7 +34,7 @@ Key: Certificate Signing Request (CSR)
 Description: DER Encoded X.509 CSR
 Name: csr
 Label: -6
-Value Type: bstr
+Value Type: bytes
 Change Controller: IETF
 Reference: This RFC
 
@@ -50,7 +50,7 @@ Key: Oracle X.509 Certificate
 Description: Oracle X.509 Certificate
 Name: oracle_x
 Label: -8
-Value Type: bstr
+Value Type: bytes
 Change Controller: IETF
 Reference: This RFC
 
@@ -58,7 +58,7 @@ Key: Canonical Certificate
 Description: DER Encoded X.509 Certificate
 Name: canon_x
 Label: -9
-Value Type: bstr
+Value Type: bytes
 Change Controller: IETF
 Reference: This RFC
 
@@ -74,7 +74,7 @@ Key: Broadcast Endorsement
 Description: Broadcast Endorsement
 Name: be
 Label: -11
-Value Type: bstr
+Value Type: bytes
 Change Controller: IETF
 Reference: This RFC
 
@@ -90,7 +90,7 @@ Key: CAA Assigned ID
 Description: CAA Assigned ID
 Name: caa_assigned_id
 Label: -13
-Value Type: tstr
+Value Type: text
 Change Controller: IETF
 Reference: This RFC
 
@@ -98,7 +98,7 @@ Key: Pilot License Number
 Description:
 Name: pilot_license_id
 Label: -14
-Value Type: tstr
+Value Type: text
 Change Controller: IETF
 Reference: This RFC
 
@@ -106,6 +106,14 @@ Key: UAS Serial Number
 Description: ANSI/CTA 2063-A UAS Serial Number
 Name: uas_serial_number
 Label: -15
-Value Type: tstr
+Value Type: text
+Change Controller: IETF
+Reference: This RFC
+
+Key: Contact
+Description: jCard Contact Information
+Name: contact
+Label: -16
+Value Type: text
 Change Controller: IETF
 Reference: This RFC

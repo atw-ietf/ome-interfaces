@@ -74,7 +74,7 @@ Key: Track Direction
 Description: UAS Track Direction
 Name: track_dir
 Label: 8
-Value Type: uint 
+Value Type: uint
 Change Controller: IETF
 Reference: This RFC
 
@@ -114,6 +114,6 @@ Key: UTC Timestamp
 Description: UAS Timestamp
 Name: uas_time
 Label: 13
-Value Type: time 
+Value Type: tdate or time
 Change Controller: IETF
 Reference: This RFC
