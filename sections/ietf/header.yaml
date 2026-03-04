@@ -2,12 +2,12 @@ coding: utf-8
 
 title: DRIP Identity Management Entity Interfaces for Registration & Differential Access Query 
 abbrev: dime-interfaces
-docname: draft-atw-dime-interfaces-00
+docname: draft-atw-drip-dime-interfaces-00
 stream: IETF
 
 ipr: trust200902
 area: Internet
-wg: drip Working Group
+wg: Drone Remote ID Protocol
 kw: Internet-Draft
 cat: std
 
