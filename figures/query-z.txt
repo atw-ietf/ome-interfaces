@@ -8,7 +8,7 @@
                  |<------DENY--------| 
                  |                   | (Q) POLICY_CHECK?
                  |<------DENY--------|
-                 |                   | (R) ???
+                 |                   | (R) REDACTION
                  |<---(S) RDAP_R-----|
         (T) ACT  |                   |
                  |                   |

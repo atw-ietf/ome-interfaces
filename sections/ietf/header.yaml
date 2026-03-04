@@ -2,7 +2,7 @@ coding: utf-8
 
 title: DRIP Identity Management Entity Interfaces for Registration & Differential Access Query 
 abbrev: dime-interfaces
-docname: draft-atw-drip-dime-interfaces-00
+docname: draft-atw-dime-interfaces-00
 stream: IETF
 
 ipr: trust200902
@@ -18,9 +18,12 @@ author:
 -   ins: A. Wiethuechter
     name: Adam Wiethuechter
     org: AX Enterprize, LLC
-    street: 4947 Commercial Drive
-    city: Yorkville
-    region: NY
-    code: 13495
-    country: USA
     email: adam.wiethuechter@axenterprize.com
+contributor:
+-   name: Robert Moskowitz
+    org: HTT Consulting
+    email: rgm@htt-consulting.com
+    contribution: |
+        Robert Moskowitz provided the concept and general
+        structure for the OKI and the specific inclusions 
+        for X.509 profiles to support HHITs.

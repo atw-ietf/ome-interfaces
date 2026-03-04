@@ -27,11 +27,11 @@ This document only details the interaction between a registering client (known a
 
 ORCHID Key Infrastructure (OKI) follows a pattern of hierarchy starting at the IPv6 address prefix  as the apex and traverses down the levels of the HHITs Hierarchy ID field. For DETs this `2001:30/28` as the apex then RAA and HDA respectively.
 
-Each level MUST have at least one HHIT used for Authorization signing. These are to be used to endorse HDA Authorization HHITs into the hierarchy. Additionally each level MAY have as many HHITs as desired used for Issuing signing. These are used to endorse Operational HHITs coming from entities such a UAS and Operators. This document allocates two new HHIT Entity Types in each level of hierarchy for this purpose, one for Authorization and one for Issuing.
+Each level MUST have at least one HHIT used for Authorization signing. These are to be used to endorse HDA Authorization HHITs into the hierarchy. Additionally each level MAY have as many HHITs as desired used for Issuing signing and are endorsed by the local-levels Authorization HHIT. These Issuing HHITs are used to endorse Operational HHITs coming from the OME client entities. This document allocates two new HHIT Entity Types in each level of hierarchy for this purpose, one for Authorization and one for Issuing ({{iana-entity-types}}).
 
-### X.509 Profiles
+### X.509 Profiles {#okix}
 
-Existing X.509 profiles can be augmented with additional OIDs when HHITs are in use. This section provides some high level operational details around using such augmentations.
+Existing X.509 profiles can be augmented to support HHITs. The following key augmentations are REQUIRED.
 
 *Issuer Subject*:
 : When HHITs are deployed for identities, certificates being signed using an HHITs key MUST include the IPv6 address string as the Issuer Subject under a Common Name.
@@ -45,4 +45,4 @@ Existing X.509 profiles can be augmented with additional OIDs when HHITs are in 
 *Subject*:
 : For Operational HHITs the Subject SHOULD be empty. Other levels of the hierarchy MAY use Subject or have specific requirements on its contents.
 
-Other X.509 fields and OIDs MAY be required in a given jurisdiction. See {{dkix}} for more explicit profile examples and details used for the DRIP Key Infrastructure (DKI) and its X.509 profiles (DKIX).
+Other X.509 fields and OIDs MAY be required in a given jurisdiction. This is up to the primary PKIX policy and out of scope for this document.

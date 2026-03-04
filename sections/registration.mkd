@@ -17,29 +17,7 @@ This sections details the process of registration following the Z-diagram of {{r
 | {{req-resp}} | (K) ONBOARD |
 {: #reg-z-tbl title="Registration Process Table of Contents"}
 
-## Expectations {#reg-expectations}
-
-### OME {#reg-ome}
-
-#### Registrar {#reg-registrar}
-
-An OME MUST provide an HTTPS-based registration interface using this documents registered `/.well-known/ome/register` entry. Data MUST be encapsulated using COSE or JOSE structures (generally called OME Tokens in this specification). It MAY provide other transport methods that carries the same OME Token or data models.
-
-#### Certificate Authority {#reg-ca}
-
-The *Certificate Authority* handle most cryptographic operations in relation to an actual registration. This is the functional component that typically handles the cryptographic materials related to the OME when endorsing child entities. It MUST provide as endorsement of registration OKIX-compliant certificates.
-
-#### Registry {#reg-registry}
-
-As the Private Information Registry, all artifacts of the registration process are protected and stored here. 
-
-#### Authoritative Name Server {#reg-ans}
-
-As the Public Information Registry, this is where a subset of the registration process artifacts are stored and provided with DNS lookups.
-
-### Registrant {#reg-client}
-
-Cryptographic materials SHOULD be on the device intending to use said material in operation. If the *Registrant* is acting as a proxy the methods of the generation and/or transfer of cryptographic materials to and from the device being proxied to is out of scope for this document.
+The mechanism for registration is the use of COSE or JOSE over HTTPS. COSE MUST be supported and JOSE is RECOMMENDED to be supported for flexibility for non-constrained *Registrants*. The rest of this section specifies exact behavior for this interface of an OME.
 
 ## Inquiry
 
@@ -47,7 +25,9 @@ Registration inquiries are made around a set of keys and metadata for an entity.
 
 ### Keys & Certificate Signing Request {#key-csr}
 
-The *Registrant* MUST generate a key-pair, RECOMMENDED asymmetric, for use and constructs a OKIX-compliant Certificate Signing Request (CSR), see {{dkix-csr}} for UAS/aviation ecosystem CSR, to be included in {{req-model}}.
+The *Registrant* MUST generate a key-pair, RECOMMENDED asymmetric, for use and constructs a OKIX-compliant Certificate Signing Request (CSR) to be included in {{req-model}}.
+
+Cryptographic materials SHOULD be on the device intending to use said material in operation. If the *Registrant* is acting as a proxy the methods of the generation and/or transfer of cryptographic materials to and from the device being proxied to is out of scope for this document.
 
 If the *Registrant* knows the HID of the *Registar* it wishes to be endorsed by, it SHOULD construct its HHIT accordingly and include it in the CSR under an IP6 Name of a Subject Alternative Name (SAN) Extension marked as critical. The process of discovering a specific HID is out of scope for this document.
 
@@ -77,15 +57,17 @@ If the *Registrant* knows the HID of the *Registar* it wishes to be endorsed by,
 : An OKIX-compliant CSR, {{key-csr}}, DER encoded.
 
 *metadata*:
-: A map containing elements (key, value pairs) and their associated values related to metadata of keys/entities in the inquiry. Elements in this map are defined as part of the Aviation Key registry ({{aviation-keys}}).
+: A map containing elements (key, value pairs) and their associated values related to keys/entities in the inquiry. Elements in this map are defined as part of the Aviation Key registry ({{aviation-keys}}).
 
 Each nesting in {{model-req}} contains its own *metadata*. This allows a *Registrant* to set elements at a higher nesting in the model to be shared among nested sections. When combining the maps from each nesting level, elements found closer to the *key* level are given priority.
 
 The contents of *metadata* are subject to policy of an OME and MUST be provided to their *Registrant*s.
 
-### Inquiry Token & Transport {#req-wt}
+### Inquiry Token {#req-wt}
 
 The OME Token, signed by the *Registrant* per either {{self-signed}} or {{proxy-signed}}, contains the content found in {{req-model}} under the claim `hri`.
+
+> Author Note: swap to JOSE for illustrative purposes?
 
 ~~~ ascii-art
 {::include figures/hri-http.txt}
@@ -94,7 +76,7 @@ The OME Token, signed by the *Registrant* per either {{self-signed}} or {{proxy-
 
 #### Encryption
 
-The OME Token MUST be encrypted as it can contain Personally Identifiable Information (PII). The exact encryption method and policies are left for OME policy and MUST be provided to *Registrant*s. See {{Section 5 of RFC9052}} or {{RFC7516}} for details on COSE and JOSE respectively.
+An OME Token from a *Registrant* MUST be encrypted as it can contain Personally Identifiable Information (PII). The exact encryption method and policies are left for OME policy and MUST be provided to *Registrant*s. See {{Section 5 of RFC9052}} or {{RFC7516}} for details on COSE and JOSE respectively. The OME MAY also encrypt the response token.
 
 #### Self-Signed
 
@@ -128,7 +110,7 @@ If any of the above checks fail, the DIME follows {{req-deny}}.
 
 #### Inquiry Approval {#req-approve}
 
-Once processed as a "pass" the OME MUST generate at least OKIX-compliant certificates (for the UAS/aviation ecosystem see {{dkix}}) and based on the use case being registered MAY generate other artifacts (such as Endorsements). Broadcast Endorsements MUST be generated for applications involving UAS/aviation. The OME MUST store these certificates and other artifacts in a private information registry and also update the relative *Authoritative Name Server* accordingly.
+Once processed as a "pass" the OME MUST generate at least OKIX-compliant certificates and based on the use case being registered MAY generate other artifacts. The OME MUST store these certificates and other artifacts in their *Registry* and also update the relative *Authoritative Name Server* accordingly.
 
 The response models `entity-id`'s and `key-id`'s MUST match those provided by the *Registrant*.
 
@@ -136,7 +118,7 @@ The response models `entity-id`'s and `key-id`'s MUST match those provided by th
 
 #### Inquiry Rejection {#req-deny}
 
-A section of the response model ({{model-resp}}) is set aside to carry errors if an implementation wishes to use it. A non-exhaustive list of examples of rejection reasons are:
+A section of the response model ({{model-resp}}) is set aside to carry errors and is OPTIONAL. A non-exhaustive list of examples of rejection reasons are:
 
 - OME Token not encrypted
 - Public key not found/provided
@@ -165,9 +147,9 @@ A section of the response model ({{model-resp}}) is set aside to carry errors if
 *failure*:
 : List of registration failures, each denoting the entity and/or key by their respective IDs. When `eid` or `kid` is `null` it implies that all of that type are denoting the same failure.
 
-### Response OME Token & Transport {#resp-wt}
+### Response OME Token {#resp-wt}
 
-Approved requests MUST contain a OME Token, signed by the OME with their HHIT as described in {{proxy-signed}}, in their response. The model of {{resp-model}} is under a claim designated by `hrr`.
+Approved requests MUST contain an OME Token, signed by the OME with their HHIT as described in {{proxy-signed}}, in their response. The model of {{resp-model}} is under a claim designated by `hrr`.
 
 ~~~ ascii-art
 {::include figures/hrr-http.txt}

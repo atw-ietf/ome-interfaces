@@ -60,7 +60,7 @@ Intended Usage:
 ~~~
 {: title="RDAP Extensions: Registration Form"}
 
-## HHIT Entity Types
+## HHIT Entity Types {#iana-entity-types}
 
 IANA is requested to register the following values in the "HHIT Entity Types" registry {{IANA.DRIP}}.
 

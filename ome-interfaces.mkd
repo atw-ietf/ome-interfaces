@@ -30,8 +30,6 @@ This document standardizes the interfaces required to register and query a DRIP 
 
 --- back
 
-{::include-nested sections/appendix/dkix.mkd}
-
 {::include-nested sections/appendix/oaas.mkd}
 
 {::include-nested sections/appendix/cddl.mkd}
