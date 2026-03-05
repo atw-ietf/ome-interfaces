@@ -65,7 +65,7 @@ The contents of *metadata* are subject to policy of an OME and MUST be provided 
 
 ### Inquiry Token {#req-wt}
 
-The OME Token, signed by the *Registrant* per either {{self-signed}} or {{proxy-signed}}, contains the content found in {{req-model}} under the claim `hri`.
+The OME Token is made of two layers in either COSE or JOSE formatted. The inner-most layer is the formats respective signature object and the outer-layer is an encryption object. {{api-request}} shows an example of a COSE encoded OME Token from a *Registrant*.
 
 > Author Note: swap to JOSE for illustrative purposes?
 
@@ -74,19 +74,32 @@ The OME Token, signed by the *Registrant* per either {{self-signed}} or {{proxy-
 ~~~
 {: #api-request title="Example REST Registration API with COSE (request)"}
 
+#### Signature
+
+The signatures payload is a CBOR/JSON Claims Set that MUST include the Claim Key for the `hri` with the value containing the {{req-model}} model. Claim Keys of `nbf`, `iat`, and `exp` are RECOMMENDED. The `aud` Claim Key can is OPTIONAL and used to signal the exact HHIT Issuing entity to process the OME Token contents when it contains the value of the HHIT as an IPv6 address string as defined in {{RFC4291, Section 2.2}}.
+
+##### Self-Signed
+
+When a key that is encapsulated in the OME Token's inner payload the public key to verify the signature MUST be included in the protected header in the `jwk` for JOSE or `kccs` for COSE parameter. This same logic applies when a multi-signature object is used in either COSE/JOSE. This case only applies when a *Registrant* has no prior relationship with the OME and is starting from nothing.
+
+##### Proxy-Signed
+
+If the key used to sign the COSE/JOSE object is already registered and has an HHIT then the unprotected header MUST contain the `kid` parameter with the HHIT. For COSE, the HHIT is tagged as defined in {{RFC9164, Section 3.2}} or for JOSE is a IPv6 address string as defined in {{RFC4291, Section 2.2}}. A multi-signature object has the `kid` as defined here in its each unique signature objects header.
+
 #### Encryption
+ 
+> Author Note: this section is very COSE heavy, need JOSE instructions that I suspect are similar if not identical.
 
-An OME Token from a *Registrant* MUST be encrypted as it can contain Personally Identifiable Information (PII). The exact encryption method and policies are left for OME policy and MUST be provided to *Registrant*s. See {{Section 5 of RFC9052}} or {{RFC7516}} for details on COSE and JOSE respectively. The OME MAY also encrypt the response token.
+An OME Token from a *Registrant* MUST be encrypted as it may contain Personally Identifiable Information (PII). The encryption algorithm selection and policies are left for OME policy and MUST be provided to *Registrant*s. It is strongly RECOMMENDED that asymmetric keys are used for encryption. Encryption follows {{Section 8.5.4 of RFC9052}} with the public key of the OME being provided via DNS or other means and the *Registrants* public key for the operation being sent in the OME Token.
 
-#### Self-Signed
+The encryption payload is the signature object of the previous section. *Registrants* SHOULD set the `content type` parameter (to either `application/cose; cose-type="cose-sign1"` or `application/cose; cose-type="cose-sign"`) in the header of the encryption object to signal the content type. 
 
-When a *Registrant* has no prior relationship with the OME it is registering to, the public key MUST be provided in the payload of the OME Token, specifically the CSR. The unprotected header of the OME Token MUST be empty.
+All encryption on the *Registrant* starts with the creation of an ephemeral key-pair to use with the OME public encryption key to create a shared secret. The public half of this key-pair will be placed in the `ephemeral key` parameter of the header. The algorithm of this key-pair MUST match that of an OMEs public encryption key. There are two ways to obtain an OME public encryption key:
 
-In the case when only one entity with multiple keys is being registered and no prior relationship with the OME, a multi-signature OME Token structure defined in either {{Section 4.1 of RFC9052}} or {{Section 7.2.1 of RFC7515}} MAY be used. Each signature structure MUST use a `kid` of the form `{<entity-id>,<key-id>}` to indicate which key in the inquiry is being used.
+1. The key is from an HHIT used by an OME and is of the algorithm type EdDSA. If so, the *Registrant* can perform a Montgomery transformation on the OME's public key to obtain an encryption key to use.
+2. The OME provides either via DNS or through another public mechanism sets of keys to be directly used for encryption operations.
 
-#### Proxy-Signed
-
-When a *Registrant* has an existing registered HHIT for themselves and registering another HHIT (for themselves or a proxy device), they MUST provide their registered HHIT as part of the OME Token unprotected header in the `kid` field. The field contents MUST be bytes formatted as a CBOR Tag defined in {{RFC9164, Section 3.2}} or a IPv6 address string as defined in {{RFC4291, Section 2.2}}.
+> Author Note: considerations for multiple recipients?
 
 #### Countersignatures
 
@@ -149,7 +162,7 @@ A section of the response model ({{model-resp}}) is set aside to carry errors an
 
 ### Response OME Token {#resp-wt}
 
-Approved requests MUST contain an OME Token, signed by the OME with their HHIT as described in {{proxy-signed}}, in their response. The model of {{resp-model}} is under a claim designated by `hrr`.
+The OME Response Token follows the same encoding as {{req-wt}} but instead of using a Claim Key of `hri` instead it is `hrr` and is signed followed {{proxy-signed}}. The OME Token MAY be encrypted using the same shared secret from ECDH. {{api-response}} shows a typical OME Token being returned to a *Registrant*.
 
 ~~~ ascii-art
 {::include figures/hrr-http.txt}
