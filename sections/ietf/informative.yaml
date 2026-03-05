@@ -1,5 +1,4 @@
 informative:
-    RFC4108: # hardwareModuleName
     RFC4291: # ip6 addr arch
     RFC5280: # pkix
     RFC7519: # jwt claims
@@ -23,21 +22,6 @@ informative:
       seriesinfo:
         ASTM: F3411-22A
         DOI: 10.1520/F3411-22A
-    ICAO.ACCP:
-      title: ICAO Aviation Common Certificate Policy
-      author:
-        -
-          org: International Civil Aviation Organization
-      date: July 2025
-    IEEE.802.1AR:
-      title: IEEE Standard for Local and Metropolitan Area Networks - Secure Device Identity
-      author:
-        -
-          org: IEEE
-      target: https://doi.org/10.1109/ieeestd.2018.8423794
-      date: July 2025
-      seriesinfo:
-        DOI: 10.1109/ieeestd.2018.8423794
 
     IANA.DRIP:
       title: Drone Remote ID Protocol
