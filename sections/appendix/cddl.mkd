@@ -4,7 +4,7 @@ This appendix is normative.
 
 ## Prelude
 
-The DRIP CDDL Prelude is built upon the prelude defined in {{Appendix E of RFC8610}} to allow interoperability with JSON encodings. The conversion of fields to/from CBOR and JSON MUST use the advice in {{Section 6 of RFC8949}}.
+The DRIP CDDL Prelude is built upon the prelude defined in {{Appendix E of RFC8610}} to allow interoperability with JSON encodings. The conversion of fields to/from CBOR and JSON MUST use the advice in {{Section 6 of RFC8949}}. Unless otherwise noted bytes string are to be encoded as base64url text strings in JSON.
 
 ~~~ ascii-art
 {::include cddl/prelude.cddl}

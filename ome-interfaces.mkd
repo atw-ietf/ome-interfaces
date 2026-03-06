@@ -8,7 +8,7 @@
 
 --- abstract
 
-This document standardizes the interfaces required to register and query a DRIP Entity Tag (DET) with a DRIP Identity Management Entity (DIME) for use in the UAS/aviation ecosystem. HTTPS carrying a CBOR or JSON Object Signing & Encryption (COSE or JOSE) structures are selected for registration and RDAP with authentication using Mutual TLS is selected for query. The contents of this document can also be generally applied and expanded for other use cases of the Hierarchial Host Identity Tag (HHIT) in domains of interest.
+This document standardizes the interfaces of an ORCHID Management Entity (OME) to allow clients to register and differential access query for an Overlay Routable Cryptographic Hash Identifier (ORCHID) such as a Hierarchial Host Identity Tag (HHIT). Existing technologies such as CBOR Object Signing & Encryption (COSE) and Registration Data Access Protocol (RDAP) are selected to enable easy interoperability.
 
 --- middle
 

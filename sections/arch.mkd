@@ -1,6 +1,6 @@
-# Registration, Onboarding & Query Architecture
+# OME Functions & Supporting Infrastructure
 
-To properly provide the necessary services identified in both {{RFC9153}} and {{RFC9434}} a DIME, or more generally an ORCHID Management Entity (OME), requires four critical functions: *Registrar*, *Registry*, *Authoritative Name Server* and *Certificate Authority* as detailed below for this document and in {{arch-fig}}.
+To properly provide the necessary services identified in both {{RFC9153}} and {{RFC9434}} a DIME, or more generally an OME, requires four critical functions: *Registrar*, *Registry*, *Authoritative Name Server* and *Certificate Authority* as detailed below for this document and in {{arch-fig}}.
 
 *Registrar*:
 : This document covers the client facing interface of the Registrar function used by Registrants. Interactions done by the Registrar with other OME functions are out of scope for this document.
@@ -23,18 +23,25 @@ The specific interaction models and transports between all of these functions wh
 
 This document only details the interaction between a registering client (known as *Registrant*) and the *Registrar* through an HTTPS interface as descried in {{registration-process}} and the RDAP interaction by *Querants* (such as *Observers*) and a *Registry* as described in {{query-process}}. These interactions are denoted by the solid lines (`-` and `|` between `o`'s) of {{arch-fig}}. These interfaces can be either used by machines as an API or provided with a UI for humans to interact with such as on a web browser. 
 
-## ORCHID Key Infrastructure {#oki}
+## Key Infrastructure & X.509 {#oki}
 
-ORCHID Key Infrastructure (OKI) follows a pattern of hierarchy starting at the IPv6 address prefix  as the apex and traverses down the levels of the HHITs Hierarchy ID field. For DETs this `2001:30/28` as the apex then RAA and HDA respectively.
+ORCHID Key Infrastructure (OKI) follows a pattern of hierarchy starting at the IPv6 address prefix as the apex and traverses down the levels of the HHITs Hierarchy ID field. For DETs this maps `2001:30/28` as the apex then RAA and HDA respectively as is shown in {{oki-fig}}.
 
-Each level MUST have at least one HHIT used for Authorization signing. These are to be used to endorse HDA Authorization HHITs into the hierarchy. Additionally each level MAY have as many HHITs as desired used for Issuing signing and are endorsed by the local-levels Authorization HHIT. These Issuing HHITs are used to endorse Operational HHITs coming from the OME client entities. This document allocates two new HHIT Entity Types in each level of hierarchy for this purpose, one for Authorization and one for Issuing ({{iana-entity-types}}).
+~~~~
+{::include figures/oki.txt}
+~~~~
+{:fig #oki-fig title="ORCHID Key Infrastructure (OKI) Hierarchy"}
 
-### X.509 Profiles {#okix}
+Each hierarchy level MUST have at least one Authorization HHIT. These are used to endorse the next level downwards in the hierarchy (Apex > RAA, RAA > HDA). Additionally each level MAY have as many Issuing HHITs as desired and are endorsed by the local-level Authorization HHIT. Issuing HHITs are used to endorse Operational HHITs within the scope of authority. 
 
-Existing X.509 profiles can be augmented to support HHITs. The following key augmentations are REQUIRED.
+This document allocates two new HHIT Entity Types in each level of hierarchy for this purpose, one for Authorization and one for Issuing ({{iana-entity-types}}).
+
+Specific policies for these hierarchy levels are out of scope for this document and are expected to be developed into OKI policy guidance or added to existing PKI policy guidance for each use-case.
+
+Part of this guidance is X.509 certificate profiles which can be augmented to support HHITs creating a ORCHID Key Infrastructure X.509 (OKIX) profile. The following key augmentations are REQUIRED when supporting HHITs:
 
 *Issuer Subject*:
-: When HHITs are deployed for identities, certificates being signed using an HHITs key MUST include the IPv6 address string as the Issuer Subject under a Common Name.
+: When HHITs are deployed for identities, certificates being signed using an HHITs key MUST include the IPv6 address string as the Issuer Subject under a Common Name (CN).
 
 *Subject Alternative Name: IP6*:
 : This OID MUST be included at all levels of the OKI to indicate the Subjects HHIT. The Subject Alternative Name MUST be marked as critical.
@@ -45,4 +52,4 @@ Existing X.509 profiles can be augmented to support HHITs. The following key aug
 *Subject*:
 : For Operational HHITs the Subject SHOULD be empty. Other levels of the hierarchy MAY use Subject or have specific requirements on its contents.
 
-Other X.509 fields and OIDs MAY be required in a given jurisdiction. This is up to the primary PKIX policy and out of scope for this document.
+Other X.509 fields and OIDs MAY be required in a given jurisdiction. This is up to the original PKI(X) policy if applicable and is out of scope for this document.

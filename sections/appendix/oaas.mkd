@@ -19,7 +19,7 @@ OME's when presented with additional information that requires an "oracle", MUST
 - perform a redirect to appropriate system when "oracle" is being provided as a 3rd party service that the HDAs are expected to independently consult
 - process and respond following {{eob}}
 
-OMEs process non-error HTTP codes by including the returned "oracle" certificate in artifacts in the Private Information Registry and continuing the registration process. An error HTTP code received by a DIME MUST be mimicked back to the *Registrant*.
+OMEs process non-error HTTP codes by including the returned "oracle" certificate in artifacts in the Private Information Registry and continuing the registration process. An error HTTP code received by a OME MUST be mimicked back to the *Registrant*.
 
 ## Expected Oracle Behavior {#eob}
 

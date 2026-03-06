@@ -1,7 +1,5 @@
-{
-  csr: x509,
-  canon_x: x509,
-  ? be: endorsement,
+[
   hhit: hhit
-  ? metadata: aviation-map
-}
+  canon_x: x509,
+  metadata: aviation-map
+]

@@ -1,4 +1,4 @@
-DRAFT:=dime-interfaces
+DRAFT:=ome-interfaces
 VERSION:=$(shell ./getver sections/ietf/header.yaml )
 EXAMPLES=
 OPEN=$(word 1, $(wildcard /usr/bin/xdg-open /usr/bin/open /bin/echo))

@@ -47,7 +47,7 @@ Change Controller: IETF
 Reference: This RFC
 
 Key: Oracle X.509 Certificate
-Description: Oracle X.509 Certificate
+Description: DER Encoded Oracle X.509 Certificate
 Name: oracle_x
 Label: -8
 Value Type: bytes
@@ -95,7 +95,7 @@ Change Controller: IETF
 Reference: This RFC
 
 Key: Pilot License Number
-Description:
+Description: Pilot license number from a CAA
 Name: pilot_license_id
 Label: -14
 Value Type: text

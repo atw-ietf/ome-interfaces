@@ -78,7 +78,7 @@ IANA is requested to register the following values in the "HHIT Entity Types" re
 
 ## Aviation Keys
 
-This document requests IANA create a new registry under {{IANA.DRIP}} called "Aviation Keys" with registry policies described in {#key-table}. Initial keys are provided in {{initial-keys}}.
+This document requests IANA create a new registry under {{IANA.DRIP}} called "Aviation Keys" with registry policies described in {{key-table}}. Initial keys are provided in {{initial-keys}}.
 
 | Range Values | CBOR Encoding Size | Registration Policy |
 | ------------ | ------------------ | ------------------- |

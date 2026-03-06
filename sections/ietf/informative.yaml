@@ -1,10 +1,12 @@
 informative:
     RFC4291: # ip6 addr arch
     RFC5280: # pkix
+    RFC7343: # orchid-v2
     RFC7519: # jwt claims
     RFC8126: # iana-considerations
     RFC8392: # cwt claims
     RFC8610: # cddl
+    RFC9063: # hip-arch
     RFC9334: # rats-arch
     RFC9560: # openid connect rdap
 

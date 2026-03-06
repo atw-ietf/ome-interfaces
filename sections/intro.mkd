@@ -2,23 +2,31 @@
 
 ## Purpose
 
-A common data model and process for registration and query of Hierarchial Host Identity Tags (HHITs, {{RFC9374}}) enables interoperability while the selection of existing standards and methods enables reuse and familiarity across ecosystems and domain vendors. The initial use case for the HHITs is for the fast growing sector of Unmanned Aircraft Systems (UAS) where the HHIT is referred to as a DRIP Entity Tag (DET) as is defined in {{RFC9374}}.
+An ecosystem using Overlay Routable Cryptographic Hash IDentifiers (ORCHIDs, {{RFC7343}}) as its primary identifier can be a strong option for modern systems. The Hierarchial Host Identity Tags (HHITs, {{RFC9374}}) are used in the fast growing sector of Unmanned Aircraft Systems (UAS) to provide identity and authentication services using the Domain Name System (DNS).
 
-The DRIP Identity Management Entity (DIME), introduced in {{RFC9434}}, is a node in a larger hierarchy that provides the critical function of registering and querying information for DETs and their associated public keys under a smaller scope to satisfy requirements of global uniqueness and other DRIP Requirements. This document provides a standardized way to provide these critical functions to clients (Registrants & Observers) that previous DRIP documents such as {{RFC9886}} did not address.
+With standardization, identity ecosystems can be created around the use of ORCHIDs to serve various use-cases. This provides widespread interoperability of the functions of registration, public query and private query using a selection of existing standards and methods. Being backed by cryptographic keys allow existing key infrastructure, certificates and policy to be leveraged with minimal overhead, modification or redeployment.
 
 ## Background
 
-TBD
+HHITs are an evolution of the Host Identity Tags (HITs) in the Host Identity Protocol (HIP, {{RFC9063}}). All of these tags are categorized as an ORCHID which were standardized in {{RFC7343}} and updated by {{RFC9374}}. HHITs solve the problem of HITs being a flat namespace, which is hard to manage at a global scale, by adding hierarchy into the identifier. When the hierarchy is laid onto the DNS interoperability of lookups becomes trivial.
+
+{{RFC9434}} introduces the concept of the DRIP Identity Management Entity (DIME) that provides the critical function of registering and querying information around DETs. It further specifies logical entities of the Public Information Registry and Private Information Registry of which the former has been specified in {{RFC9886}} using the DNS.
+
+The concept of the DIME can be backported to ORCHIDs in general with of term ORCHID Management Entity (OME). In relation to key infrastructure policies and certificates the terms ORCHID Key Infrastructure (OKI) and ORCHID Key Infrastructure X.509 (OKIX) are introduced here to mirror but be distinct from the existing Public Key Infrastructure (PKI) and Public Key Infrastructure X.509 (PKIX).
 
 ## Scope
 
-This document defines the general interface specifications for an entity that provides HHIT identity services. It is not limited to DETs or the aviation/UAS use-case that is the primary driver of this document.
+This document provides specification of the interfaces and models for registration and differential access query of ORCHIDs to support identity services under an OME. This is to provide specification for the final missing pieces of a DIME and is the exemplar use-case of using HHITs, such as the DET, as the core of an identity ecosystem.
 
 The term HHIT is used when discussing the general technology while DET is used with discussion around UAS/aviation specific elements when possible. Additional terms reinforcing this delineation are found in {{terminology}}. This document defines all data models in the Concise Data Definition Language (CDDL, {{RFC8610}}).
 
 ### Disclaimer
 
-DRIP, and the specifications in this document, do NOT provide protection against incorrect (e.g. fraudulent) data entered during registration or asserted subsequently. DRIP does protect against alteration (intentional or unintentional) of data subsequent to its assertion by the cryptographic signer. The signer might be the proximate sender (e.g. UA transmitting Broadcast RID) or might be an attestor far away and long ago (e.g. root Certificate Authority). It is the duty of the operator of each DIME, or the party on whose behalf the DIME is being operated, to validate the registration data. The RAA SHOULD provide services to obtain this goal, see {{oaas}}.
+The specifications in this document, do NOT provide protection against incorrect (e.g. fraudulent) data entered during registration or asserted subsequently. 
+
+The selected technologies do protect against alteration (intentional or unintentional) of data subsequent to its assertion by the cryptographic signer. The signer might be the proximate sender (e.g. UA transmitting Broadcast RID) or might be an attestor far away and long ago (e.g. root Certificate Authority). 
+
+It is the duty of the operator of each OME, or the party on whose behalf the OME is being operated, to validate the registration data. An OME at or near the apex of a given data scope of the hierarchy SHOULD provide services to obtain this goal, see {{oaas}}.
 
 ### Targeted DRIP Requirements
 

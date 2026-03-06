@@ -19,7 +19,7 @@ This sections details the process of registration following the Z-diagram of {{r
 
 The mechanism for registration is the use of COSE or JOSE over HTTPS. COSE MUST be supported and JOSE is RECOMMENDED to be supported for flexibility for non-constrained *Registrants*. The rest of this section specifies exact behavior for this interface of an OME.
 
-## Inquiry
+## Registrant Inquiry
 
 Registration inquiries are made around a set of keys and metadata for an entity. A single inquiry can have multiple entities, each of which can request multiple keys. The data model ({{model-req}}) is flexible to enable the *Registrant* to tailor their inquiries accordingly.
 
@@ -119,15 +119,13 @@ All requests MUST pass the following checks before following {{req-approve}}:
     * Confirm the HHIT is unique in the OME's authority of the hierarchy
 5. Additional data, if any, in the OME Token is acceptable; see {{oaas}}
 
-If any of the above checks fail, the DIME follows {{req-deny}}.
+If any of the above checks fail, the OME follows {{req-deny}}.
 
 #### Inquiry Approval {#req-approve}
 
-Once processed as a "pass" the OME MUST generate at least OKIX-compliant certificates and based on the use case being registered MAY generate other artifacts. The OME MUST store these certificates and other artifacts in their *Registry* and also update the relative *Authoritative Name Server* accordingly.
+Once processed as a "pass" the OME MUST generate at least OKIX-compliant certificates and based on the use case MAY generate other artifacts. The OME MUST store these certificates and other artifacts in their *Registry* and also update the relative *Authoritative Name Server* accordingly.
 
 The response models `entity-id`'s and `key-id`'s MUST match those provided by the *Registrant*.
-
-> Author Note: there should be a matrix of the various artifacts that MUST be generated based on HHIT Entity Type with specific notes.
 
 #### Inquiry Rejection {#req-deny}
 
@@ -171,6 +169,6 @@ The OME Response Token follows the same encoding as {{req-wt}} but instead of us
 
 ## Registrant Post-Response {#req-resp}
 
-### Response Validation & Onboarding {#resp-valid}
-
 The *Registrant* MUST validate the signature of the OME Token returned by the OME and SHOULD validate all signatures found in the response claim.
+
+If satisfied then the *Registrant* may proceed to provision/onboard the now registered keys and related artifacts for use.

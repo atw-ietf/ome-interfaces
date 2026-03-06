@@ -4,18 +4,15 @@
 
 ## Additional Definitions & Abbreviations
 
-**Endorsement**:
-: A binary object defined in {{Section 4.2 of RFC9575}} constructed by an OME endorsing an HHIT/public key pairing in their authority of the hierarchy. Referred to as a Broadcast Endorsement in the UAS/aviation domain and Broadcast RID use-case.
-
 **ORCHID Management Entity (OME)**:
-: A term to describe an entity providing various identity management functions (such as registration, query, etc.) to clients at a specific point in the hierarchy. OME's have four major functional components that can be co-located or distributed as a system of systems: Registrar, Registry, Authoritative Name Server and Certificate Authority. The DRIP Identity Management Entity (DIME) is a specialization of OME in support of the UAS/aviation ecosystem under the DKI.
+: A term to describe an entity providing various identity management functions (such as registration, query, etc.) to clients at a specific point in the hierarchy. OME's have four major functional components that can be co-located or distributed as a system of systems: Registrar, Registry, Authoritative Name Server and Certificate Authority. The DRIP Identity Management Entity (DIME) is a specialization of OME in support of the UAS/aviation ecosystem.
 
 **ORCHID Key Infrastructure (OKI)**:
 : A key infrastructure consisting of policies around entities using HHITs in a domain space. An example of an OKI is the DRIP Key Infrastructure (DKI) for UAS/aviation.
 
 **ORCHID Key Infrastructure X.509 (OKIX)**:
-: A set of X.509 certificate profiles in compliance of Public Key Infrastructure X.509 (PKIX, {{RFC5280}}) that support an OKI. An example is of DKI X.509 (DKIX) for UAS/aviation.
+: A set of X.509 certificate profiles in compliance of Public Key Infrastructure X.509 (PKIX, {{RFC5280}}) that support an OKI. An example is of DRIP Key Infrastructure X.509 (DKIX) for UAS/aviation.
 
 **OME Token**:
 
-: In the context of this specification; a OME Token can be any of the Concise Binary Object Representation (CBOR; {{STD94}}) Object Signing & Encryption (COSE; {{STD96}}) or JavaScript Object Notation (JSON; {{STD90}}) Object Signing & Encryption (JOSE; {{RFC7515}}, {{RFC7516}}) structures.
+: In the context of this specification; a OME Token can be any of the Concise Binary Object Representation (CBOR; {{STD94}}) Object Signing & Encryption (COSE; {{STD96}}) or JavaScript Object Notation (JSON; {{STD90}}) Object Signing & Encryption (JOSE; {{RFC7515}}, {{RFC7516}}) structure.

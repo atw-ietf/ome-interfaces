@@ -1,4 +1,4 @@
-# Query Process
+# Differential Access Query Process {#query-process}
 
 This sections details the process of query for additional private information following the Z-diagram of {{query-z}} and the associated table of contents in {{query-z-tbl}}. It is the lower right link of {{arch-fig}} labeled with "RDAP" between *Querant* and *Registry*.
 
@@ -21,7 +21,7 @@ As part of RDAP, the OME MAY follow {{RFC9224}} to be part of the RDAP bootstrap
 
 It is RECOMMENDED that eXtensible Access Control Markup Language (XACML) with Security Assertion Markup Language (SAML) is used to exchange policy information.
 
-## Queries {#client-query}
+## Querant Query {#client-query}
 
 A *Querent* with an HHIT looking for private information is RECOMMENDED to perform a series of DNS queries to build a URI that is then used for an HTTPS GET query. The same URI MAY be obtained using the RDAP bootstrap process if the OME followed {{RFC9224}}, but *Querants* MUST NOT expect this.
 
@@ -58,29 +58,19 @@ An OME, when supporting Mutual TLS, SHOULD accept valid OKIX-compliant certifica
 
 ### OME Data Structure {#rdap-model}
 
-Elements of {{rdap-cddl}} are added, redacted or removed based on policy and use-case.
-
-> Author Note: change to array structure with hhit, canon_x, metadata? All other keys fill metadata as needed.
-
 ~~~ ascii-art
 {::include cddl/rdap.cddl}
 ~~~
 {:fig #rdap-cddl title="OME RDAP Extension CDDL"}
 
-*csr*:
-: The DER encoded CSR received from the *Registrant*.
+*hhit*:
+: Array structure contain the HHIT Entity Type and the IPv6 address string.
 
 *canon_x*:
-: The OKIX-compliant certificate signed by the OME endorsing the submitted HHIT and public key of the *Registrant*.
-
-*be*:
-: An OPTIONAL element containing a Broadcast Endorsement.
-
-*hhit*:
-: Array structure contain the HHIT Entity Type and the IPv6 address.
+: DER encoded, base64url, OKIX-compliant certificate signed by the OME endorsing the submitted HHIT and public key of the *Registrant*.
 
 *metadata*:
-: An OPTIONAL map that contains Aviation Keys of various elements of information for the registration. Unique based on access policy and registration requirements of the OME.
+: Map that contains Aviation Keys of information for the registration. Elements included are based on access policy and registration requirements of the OME.
 
 ### RDAP Response {#rdap-pass}
 
@@ -93,4 +83,4 @@ An RDAP response from an OME MUST contain {{rdap-cddl}} under the key of `ome`. 
 
 ## Querant Post-Response {#client-resp}
 
-TBD
+Depending on the context of the query and response the *Querant* uses the data accordingly.
