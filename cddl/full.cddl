@@ -1,0 +1,39 @@
+rdap = [
+  hhit: [ ip6: text .hex bytes .size(16), hhit_entity_type: uint ],
+  canon_x: text .b64u bytes,
+  metadata: map / null
+]
+
+response = [
+  success: { &(entity-id): success-data } / null
+  failure: [ + error-data ] / null
+  shared: map / null
+]
+success-data = [
+  keys: { &(key-id): map },
+  shared: map / null
+]
+error-data = [
+  eid: &(entity-id) / null,
+  kid: &(key-id) / null,
+  cat: any,
+  msg: any
+]
+
+inquiry = [
+  entities: { &(entity-id) => entity },
+  metadata: map / null
+]
+entity = [
+  hhit_entity_type: uint,
+  keys: { &(key-id): key },
+  metadata: map / null
+]
+key = [
+  csr: bytes / text .b64u bytes,
+  metadata: map / null
+]
+
+entity-id = int / text
+key-id = int / text
+map = { &(int, text) => any }

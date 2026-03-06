@@ -1,5 +1,5 @@
-[
-  hhit: hhit
-  canon_x: x509,
-  metadata: aviation-map
+rdap = [
+  hhit: [ ip6: text .hex bytes .size(16), hhit_entity_type: uint ],
+  canon_x: text .b64u bytes,
+  metadata: map / null
 ]

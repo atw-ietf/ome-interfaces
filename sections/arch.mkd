@@ -17,11 +17,13 @@ To properly provide the necessary services identified in both {{RFC9153}} and {{
 ~~~ ascii-art
 {::include figures/arch.txt}
 ~~~
-{:fig #arch-fig title="Simplified Diagram of Registration/Query Components & Interactions"}
+{: #arch-fig title="Simplified Diagram of Registration/Query Components & Interactions" artwork-align="center"}
 
 The specific interaction models and transports between all of these functions when not co-located (i.e. as a distributed system of systems) is out of scope for this document and are represented by dotted lines (`.` and `:` between `x`'s) in {{arch-fig}}. Note that of the duplicate links feeding *Authoritative Name Server* and *Registry* one set is chosen for implementation for each. A number of these functions/interactions are lifted from the DNS and the existing relationships and protocols between such entities in that domain also can apply here. For example, between *Registrar* and *Registry* is the Extensible Provisioning Protocol (EPP, {{STD69}}) or equivalents such as RESTful Provisioning Protocol (RPP).
 
 This document only details the interaction between a registering client (known as *Registrant*) and the *Registrar* through an HTTPS interface as descried in {{registration-process}} and the RDAP interaction by *Querants* (such as *Observers*) and a *Registry* as described in {{query-process}}. These interactions are denoted by the solid lines (`-` and `|` between `o`'s) of {{arch-fig}}. These interfaces can be either used by machines as an API or provided with a UI for humans to interact with such as on a web browser. 
+
+The elements of any maps found in CDDL for this specification MUST be declared by an ecosystem. An initial key set for elements in aviation use cases are registered in {{iana-ak}}. Context MAY be provided in-band in HTTP using a registered Media Type as part of the Content-Type header for what key set to use to avoid processing ambiguity.
 
 ## Key Infrastructure & X.509 {#oki}
 
@@ -30,7 +32,7 @@ ORCHID Key Infrastructure (OKI) follows a pattern of hierarchy starting at the I
 ~~~~
 {::include figures/oki.txt}
 ~~~~
-{:fig #oki-fig title="ORCHID Key Infrastructure (OKI) Hierarchy"}
+{: #oki-fig title="ORCHID Key Infrastructure (OKI) Hierarchy"  artwork-align="center"}
 
 Each hierarchy level MUST have at least one Authorization HHIT. These are used to endorse the next level downwards in the hierarchy (Apex > RAA, RAA > HDA). Additionally each level MAY have as many Issuing HHITs as desired and are endorsed by the local-level Authorization HHIT. Issuing HHITs are used to endorse Operational HHITs within the scope of authority. 
 

@@ -1,6 +1,6 @@
 # IANA Considerations {#ic}
 
-## Well-Known URIs
+## Well-Known URIs {#iana-well-known}
 
 IANA is requested to add the following entries in the "Well-Known URIs" registry {{IANA.WellKnownURIs}}.
 
@@ -13,9 +13,9 @@ IANA is requested to add the following entries in the "Well-Known URIs" registry
 
 > Author Note: should we also add Well-Known URIs for update and delete methods? This would then cover all parts of CRUD.
 
-## CWT & JWT Claims {#claims}
+## CWT & JWT Claims {#iana-claims}
 
-Claims defined for DRIP are compatible with those of CWT and JWT, so the CWT and JWT Claims registries, {{IANA.CWT.Claims}} and {{IANA.JWT.Claims}}, are reused. No new IANA registry is created.
+OME Tokens contain a Claim Set compatible with those of CWT and JWT, so the CWT and JWT Claims registries, {{IANA.CWT.Claims}} and {{IANA.JWT.Claims}}, are reused. No new IANA registry is created.
 
 Per this specification, the following values are requested to be added to the "JSON Web Token Claims" registry established by {{RFC7519}} and the "CBOR Web Token (CWT) Claims" registry established by {{RFC8392}}. Each entry is requested to be added to both registries. The "Claim Description", "Change Controller", and "Reference" fields are common and equivalent for the JWT and CWT registries. The "Claim Key" and "Claim Value Type" fields are for the CWT registry only. The "Claim Name" field is as defined for the CWT registry, not the JWT registry. The "JWT Claim Name" field is equivalent to the "Claim Name" field in the JWT registry.
 
@@ -41,7 +41,7 @@ Reference: This RFC
 ~~~
 {: title="HHIT Registration Response Claim: Registration Form"}
 
-## RDAP Extensions Registry
+## RDAP Extensions Registry {#iana-rdap-ext}
 
 IANA is requested to register the following value in the "RDAP Extensions" registry {{IANA.RDAP.Extensions}}.
 
@@ -76,18 +76,16 @@ IANA is requested to register the following values in the "HHIT Entity Types" re
 | 15    | HDA Issuing        | This RFC  |
 {: #entity-type-table title="Authorization & Issuing HHIT Entity Types"}
 
-## Aviation Keys
+## Aviation Keys {#iana-ak}
 
-This document requests IANA create a new registry under {{IANA.DRIP}} called "Aviation Keys" with registry policies described in {{key-table}}. Initial keys are provided in {{initial-keys}}.
+This document requests IANA create a new registry under {{IANA.DRIP}} called "Aviation Keys" with registry policies described in {{key-table}}. Initial keys are provided in {{initial-keys}}. This is to support the initial use-case of HHITs in aviation contexts.
 
-| Range Values | CBOR Encoding Size | Registration Policy |
-| ------------ | ------------------ | ------------------- |
-| -2^64 to -257      | 1+2, 1+4, 1+8 | Private Use ({{Section 4.2 of RFC8126}})             |
-| -256 to -25        | 1+1           | Standard Action ({{Section 4.9 of RFC8126}})         |
-| -24 to 23          | 1+0           | Standard Action ({{Section 4.9 of RFC8126}})         |
-| 24 to 255          | 1+1           | Standard Action ({{Section 4.9 of RFC8126}})         |
-| 256 to (2^16)-1    | 1+2           | Specification Required ({{Section 4.7 of RFC8126}})  |
-| 2^16 to (2^64)-1   | 1+4, 1+8      | First Come First Served ({{Section 4.3 of RFC8126}}) |
+| Range | Registration Policy |
+| ----- | ------------------- |
+| -2^64 to -257 | Private Use ({{Section 4.2 of RFC8126}}) |
+| -256 to -1 | Standard Action ({{Section 4.9 of RFC8126}}) |
+| 0 to (2^16)-1 | Specification Required ({{Section 4.7 of RFC8126}}) |
+| 2^16 to (2^64)-1 | First Come First Served ({{Section 4.3 of RFC8126}}) |
 {: #key-table title="Aviation Keys: Registry Policies"}
 
 ### Registry Fields
@@ -141,9 +139,3 @@ The following keys of {{ome-keys}} are defined in this document for use during r
 ~~~
 {: #ome-keys title="Aviation Keys: General Aviation Keys"}
 
-The following keys in {{astm-keys}} are mapped to the CDDL defined in {{uas-cddl}} and are generalized from {{ASTM.F3411}}.
-
-~~~ ascii-text
-{::include figures/brid-iana.txt}
-~~~
-{: #astm-keys title="Aviation Keys: ASTM F3411 UAS Keys"}

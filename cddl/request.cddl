@@ -1,13 +1,13 @@
 inquiry = [
-  entities: { &(entity-id): entity },
-  metadata: aviation-map
+  entities: { &(entity-id) => entity },
+  metadata: map / null
 ]
 entity = [
-  entity_type: entity-type,
+  hhit_entity_type: uint,
   keys: { &(key-id): key },
-  metadata: aviation-map
+  metadata: map / null
 ]
 key = [
-  csr: x509,
-  metadata: aviation-map
+  csr: bytes / text .b64u bytes,
+  metadata: map / null
 ]

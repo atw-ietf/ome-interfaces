@@ -8,7 +8,7 @@
 
 --- abstract
 
-This document standardizes the interfaces of an ORCHID Management Entity (OME) to allow clients to register and differential access query for an Overlay Routable Cryptographic Hash Identifier (ORCHID) such as a Hierarchial Host Identity Tag (HHIT). Existing technologies such as CBOR Object Signing & Encryption (COSE) and Registration Data Access Protocol (RDAP) are selected to enable easy interoperability.
+This document standardizes the interfaces of an ORCHID Management Entity (OME) to allow clients to register and query with differential access an Overlay Routable Cryptographic Hash Identifier (ORCHID) such as a Hierarchial Host Identity Tag (HHIT). Existing technologies such as CBOR Object Signing & Encryption (COSE) and Registration Data Access Protocol (RDAP) are selected to enable easy interoperability.
 
 --- middle
 

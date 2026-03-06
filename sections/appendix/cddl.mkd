@@ -1,28 +1,28 @@
-# DRIP CDDL Definitions
+# CDDL & Encoding Rules
 
 This appendix is normative.
 
 ## Prelude
 
-The DRIP CDDL Prelude is built upon the prelude defined in {{Appendix E of RFC8610}} to allow interoperability with JSON encodings. The conversion of fields to/from CBOR and JSON MUST use the advice in {{Section 6 of RFC8949}}. Unless otherwise noted bytes string are to be encoded as base64url text strings in JSON.
+The OME CDDL Prelude of {{cddl-prelude}} is built upon the prelude defined in {{Appendix E of RFC8610}} to allow interoperability with JSON encodings. The conversion of fields to/from CBOR and JSON MUST use the advice in {{Section 6 of RFC8949}}. The full CDDL of models defined in this document are in {{cddl-full}}.
 
 ~~~ ascii-art
 {::include cddl/prelude.cddl}
 ~~~
-{:fig #drip-cddl-prelude title="DRIP CDDL Prelude"}
+{:fig #cddl-prelude title="OME CDDL Prelude"}
 
-## F3411 UAS Datum
-
-The static content of {{uas-cddl}} is lifted from {{RFC9886}}, specifically the BRID RRType. The additional fields added are to support the dynamic fields defined in the Broadcast RID portion of {{ASTM.F3411}}. Use of these new fields for registration are not expected but included for completeness and to support expected future work with UAS data models.
-
-~~~ ascii-text
-{::include cddl/uas.cddl}
+~~~ ascii-art
+{::include cddl/full.cddl}
 ~~~
-{:fig #uas-cddl title="F3411 UAS Datum CDDL"}
+{:fig #cddl-full title="Full OME CDDL"}
 
-## Time Window
+## IPv6 Handling {#ip6-handling}
 
-The *Registrant* can select from a number of options to encode the values of valid not before (`vnb`) and valid not after (`vna`) for time of applicability of an individual CSR (`csr`). The use of the `time` or `tdate` types allow for absolute time references. The use of the `uint` type for `vna` specifies a positive offset in seconds from an absolute time. When `null` is used the *Registrant* is informing the OME that for `vnb` the OME MUST use the current time as `vnb` during registration and for `vna` the OME MUST set `vna` to a time such that the default OME policy for maximum delta between `vnb` and `vna` is not exceeded.
+IPv6 addresses MUST be tagged using {{RFC9164}} when encoded in CBOR. For JSON, IPv6 addresses MUST be an address string as defined in {{RFC4291, Section 2.2}}.
+
+## VNB & VNA Handling
+
+The *Registrant* can select from a number of options to encode the values of valid not before (`vnb`) and valid not after (`vna`) for time of applicability of an individual CSR (`csr`) as part of inquiry `metadata`. The use of the `time` or `tdate` types allow for absolute time references. The use of the `number` type for `vna` specifies a positive offset in seconds from an absolute time. When `null` is used the *Registrant* is informing the OME that for `vnb` the OME MUST use the current time as `vnb` during registration and for `vna` the OME MUST set `vna` to a time such that the default OME policy for maximum delta between `vnb` and `vna` is not exceeded.
 
 > Implementation Note: due to not differentiating between integers and floats in its number type, implementations using JSON as the encoded format MUST check the value of `vna` to determine if its being used as an offset or absolute time.
 

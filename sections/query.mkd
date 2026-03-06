@@ -5,7 +5,7 @@ This sections details the process of query for additional private information fo
 ~~~ ascii-text
 {::include figures/query-z.txt}
 ~~~
-{:fig #query-z title="Query Z-Diagram"}
+{: #query-z title="Query Z-Diagram" artwork-align="center"}
 
 | Section | Applicable Z-Diagram Reference(s) |
 | ------- | --------------------------------- |
@@ -64,13 +64,13 @@ An OME, when supporting Mutual TLS, SHOULD accept valid OKIX-compliant certifica
 {:fig #rdap-cddl title="OME RDAP Extension CDDL"}
 
 *hhit*:
-: Array structure contain the HHIT Entity Type and the IPv6 address string.
+: Array structure contain the HHIT Entity Type and the IPv6 address string per {{ip6-handling}}.
 
 *canon_x*:
 : DER encoded, base64url, OKIX-compliant certificate signed by the OME endorsing the submitted HHIT and public key of the *Registrant*.
 
 *metadata*:
-: Map that contains Aviation Keys of information for the registration. Elements included are based on access policy and registration requirements of the OME.
+: Map that contains elements of information for the registration. Elements included are based on access policy and registration requirements of the OME.
 
 ### RDAP Response {#rdap-pass}
 

@@ -14,17 +14,6 @@ informative:
     STD90: # json
     STD94: # cbor
 
-    ASTM.F3411:
-      title: Standard Specification for Remote ID and Tracking
-      author:
-        -
-          org: ASTM International
-      target: https://www.astm.org/f3411-22a.html
-      date: July 2022
-      seriesinfo:
-        ASTM: F3411-22A
-        DOI: 10.1520/F3411-22A
-
     IANA.DRIP:
       title: Drone Remote ID Protocol
       author:

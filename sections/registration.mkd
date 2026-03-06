@@ -5,7 +5,7 @@ This sections details the process of registration following the Z-diagram of {{r
 ~~~ ascii-text
 {::include figures/registration-z.txt}
 ~~~
-{:fig #reg-z title="Registration Z-Diagram"}
+{:#reg-z title="Registration Z-Diagram" artwork-align="center"}
 
 | Section | Applicable Z-Diagram Reference(s) |
 | ------- | --------------------------------- |
@@ -57,11 +57,11 @@ If the *Registrant* knows the HID of the *Registar* it wishes to be endorsed by,
 : An OKIX-compliant CSR, {{key-csr}}, DER encoded.
 
 *metadata*:
-: A map containing elements (key, value pairs) and their associated values related to keys/entities in the inquiry. Elements in this map are defined as part of the Aviation Key registry ({{aviation-keys}}).
+: A map containing elements (key, value pairs) and their associated values related to keys/entities in the inquiry. An initial key set is registered in {{iana-ak}}.
 
 Each nesting in {{model-req}} contains its own *metadata*. This allows a *Registrant* to set elements at a higher nesting in the model to be shared among nested sections. When combining the maps from each nesting level, elements found closer to the *key* level are given priority.
 
-The contents of *metadata* are subject to policy of an OME and MUST be provided to their *Registrant*s.
+The contents of *metadata* are subject to policy of an OME and MUST be provided to their *Registrant*s. The specific key set to be used MAY be indicated using a registered Media Type in the HTTP Content-Type header.
 
 ### Inquiry Token {#req-wt}
 
@@ -84,7 +84,7 @@ When a key that is encapsulated in the OME Token's inner payload the public key 
 
 ##### Proxy-Signed
 
-If the key used to sign the COSE/JOSE object is already registered and has an HHIT then the unprotected header MUST contain the `kid` parameter with the HHIT. For COSE, the HHIT is tagged as defined in {{RFC9164, Section 3.2}} or for JOSE is a IPv6 address string as defined in {{RFC4291, Section 2.2}}. A multi-signature object has the `kid` as defined here in its each unique signature objects header.
+If the key used to sign the COSE/JOSE object is already registered and has an HHIT then the unprotected header MUST contain the `kid` parameter with the HHIT. See {{ip6-handling}} for encoding of the `kid`. A multi-signature object has the `kid` as defined here in its each unique signature objects header.
 
 #### Encryption
  
@@ -103,7 +103,7 @@ All encryption on the *Registrant* starts with the creation of an ephemeral key-
 
 #### Countersignatures
 
-Additional signatures MAY be added by following {{RFC9338}}. Each countersignatures MUST have a `kid` in their unprotected header and MUST contain the HHIT similar to {{proxy-signed}}.
+Additional signatures MAY be added by following {{RFC9338}}. Each countersignatures MUST have a `kid` in their unprotected header and MUST contain the HHIT encoded per {{ip6-handling}}.
 
 ## OME Processing & Response
 
