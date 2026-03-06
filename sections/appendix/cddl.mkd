@@ -20,6 +20,14 @@ The OME CDDL Prelude of {{cddl-prelude}} is built upon the prelude defined in {{
 
 IPv6 addresses MUST be tagged using {{RFC9164}} when encoded in CBOR. For JSON, IPv6 addresses MUST be an address string as defined in {{RFC4291, Section 2.2}}.
 
+~~~ ascii-text
+hhit = [
+  ip6: #6.54(bytes) / text,
+  hhit_entity_type: uint
+]
+~~~
+{: #hhit-cddl title="HHIT Aviation Key CDDL"}
+
 ## VNB & VNA Handling
 
 The *Registrant* can select from a number of options to encode the values of valid not before (`vnb`) and valid not after (`vna`) for time of applicability of an individual CSR (`csr`) as part of inquiry `metadata`. The use of the `time` or `tdate` types allow for absolute time references. The use of the `number` type for `vna` specifies a positive offset in seconds from an absolute time. When `null` is used the *Registrant* is informing the OME that for `vnb` the OME MUST use the current time as `vnb` during registration and for `vna` the OME MUST set `vna` to a time such that the default OME policy for maximum delta between `vnb` and `vna` is not exceeded.
