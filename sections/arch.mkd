@@ -25,7 +25,7 @@ This document only details the interaction between a registering client (known a
 
 The elements of any maps found in CDDL for this specification MUST be declared by an ecosystem. An initial key set for elements in aviation use cases are registered in {{iana-ak}}. Context MAY be provided in-band in HTTP using a registered Media Type as part of the Content-Type header for what key set to use to avoid processing ambiguity.
 
-## Key Infrastructure & X.509 {#oki}
+## ORCHID Key Infrastructure (OKI) {#oki}
 
 ORCHID Key Infrastructure (OKI) follows a pattern of hierarchy starting at the IPv6 address prefix as the apex and traverses down the levels of the HHITs Hierarchy ID field. For DETs this maps `2001:30/28` as the apex then RAA and HDA respectively as is shown in {{oki-fig}}.
 
@@ -34,13 +34,67 @@ ORCHID Key Infrastructure (OKI) follows a pattern of hierarchy starting at the I
 ~~~~
 {: #oki-fig title="ORCHID Key Infrastructure (OKI) Hierarchy"  artwork-align="center"}
 
-Each hierarchy level MUST have at least one Authorization HHIT. These are used to endorse the next level downwards in the hierarchy (Apex > RAA, RAA > HDA). Additionally each level MAY have as many Issuing HHITs as desired and are endorsed by the local-level Authorization HHIT. Issuing HHITs are used to endorse Operational HHITs within the scope of authority. 
+Each hierarchy level SHOULD have at least one Authorization HHIT. These are used to endorse the next level downwards in the hierarchy (Apex > RAA, RAA > HDA). Additionally each level MAY have as many Issuing HHITs as desired and are endorsed by the local-level Authorization HHIT. Issuing HHITs are used to endorse Operational HHITs within the scope of authority. 
 
 This document allocates two new HHIT Entity Types in each level of hierarchy for this purpose, one for Authorization and one for Issuing ({{iana-entity-types}}).
 
 Specific policies for these hierarchy levels are out of scope for this document and are expected to be developed into OKI policy guidance or added to existing PKI policy guidance for each use-case.
 
-Part of this guidance is X.509 certificate profiles which can be augmented to support HHITs creating a ORCHID Key Infrastructure X.509 (OKIX) profile. The following key augmentations are REQUIRED when supporting HHITs:
+### Hierarchy Responsibilities 
+
+An OME has a number of responsibilities depending on its place in the hierarchy. This section covers the technical responsibilities of each level of an HHIT's hierarchy as defined in {{RFC9374}}.
+
+#### General
+
+All OMEs have the following general requirements.
+
+- MAY register Operational entities that share Hierarchy ID value that are endorsed using an Issuing HHIT
+- all endorsements MUST result in OKIX-compliant certificates
+- MUST provide to prospective *Registrants* any requirements, policy and/or guidance for registration
+  - This information SHOULD be publicly accessible
+- MUST maintain HHIT entity registrations with relevant Personally Identifiable Information (PII) as required by their jurisdiction
+- MUST fulfill any jurisdiction requirements that are not defined and are out of scope for this document
+- SHOULD implement the HTTP interfaces of {{registration-process}} and {{query-process}}
+  - MAY have Not Implemented responses if the service is not provided
+- All non-Operational entities MUST provide NS RRType(s) as needed to support DNS delegation to parent entities during registration
+
+#### Apex
+
+In addition to the general requirements, the following applies to an OME acting in the role of an Apex.
+
+- MUST allocate RAA values to prospective entities that satisfy policy and/or technical requirements
+- MUST maintain the reverse zones of the IPv6 prefix that contain delegations of the associated RAA values and RRTypes of registered entities
+- MAY have at least one Authorization HHIT endorsed by itself
+- MAY have at least one Issuing HHIT endorsed by an Apex Authorization HHIT
+- MAY endorse non-Operational entities in their scope using an Authorization HHIT
+- MAY endorse Operational entities in their scope using an Issuing HHIT
+
+#### RAA
+
+In addition to the general requirements, the following applies to an OME acting in the role of an RAA.
+
+- MUST have at least one Authorization HHIT endorsed by an Apex Authorization HHIT or itself
+- MAY have at least one Issuing HHIT endorsed by an RAA Authorization HHIT
+- MUST allocate HDA values to prospective entities that satisfy policy and/or technical requirements
+  - Allocation methods of HDA values are at the discretion of the RAA and their policies
+- MUST maintain the reverse zones of the RAA that contain delegations of the associated HDA values and RRTypes of registered entities
+- MUST endorse non-Operational entities in their scope using an Authorization HHIT
+- MAY endorse Operational entities in their scope using an Issuing HHIT
+- MAY mutually cross-certify with other RAAs
+
+#### HDA
+
+In addition to the general requirements, the following applies to an OME acting in the role of an HDA.
+
+- MUST have at least one Authorization HHIT endorsed by an RAA Authorization HHIT
+- SHOULD have at least one Issuing HHIT endorsed by an HDA Authorization HHIT
+- MUST NOT endorse non-Operational entities in their scope
+- MUST endorse Operational entities in their scope using an Issuing HHIT
+- MUST maintain the reverse zones of the HDA that contain RRTypes of registered entities
+
+### ORCHID Key Infrastructure X.509 (OKIX) {#okix}
+
+Existing Public Key Infrastructure X.509 (PKIX) certificate profiles can be augmented to support HHITs creating a ORCHID Key Infrastructure X.509 (OKIX) profile. The following key augmentations are REQUIRED when supporting HHITs:
 
 *Issuer Subject*:
 : When HHITs are deployed for identities, certificates being signed using an HHITs key MUST include the IPv6 address string as the Issuer Subject under a Common Name (CN).
