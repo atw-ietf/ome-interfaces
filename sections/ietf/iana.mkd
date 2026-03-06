@@ -45,7 +45,7 @@ Reference: This RFC
 
 IANA is requested to register the following value in the "RDAP Extensions" registry {{IANA.RDAP.Extensions}}.
 
-~~~ ascii-art
+~~~ ascii-text
 Extension Identifier: 
   ome_v0
 Registry Operator:

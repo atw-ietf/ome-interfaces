@@ -29,7 +29,7 @@ The elements of any maps found in CDDL for this specification MUST be declared b
 
 ORCHID Key Infrastructure (OKI) follows a pattern of hierarchy starting at the IPv6 address prefix as the apex and traverses down the levels of the HHITs Hierarchy ID field. For DETs this maps `2001:30/28` as the apex then RAA and HDA respectively as is shown in {{oki-fig}}.
 
-~~~~
+~~~~ ascii-art
 {::include figures/oki.txt}
 ~~~~
 {: #oki-fig title="ORCHID Key Infrastructure (OKI) Hierarchy"  artwork-align="center"}

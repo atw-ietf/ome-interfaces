@@ -2,10 +2,10 @@
 
 This sections details the process of registration following the Z-diagram of {{reg-z}} and the associated table of contents in {{reg-z-tbl}}. It is the upper link of {{arch-fig}} labeled with "OME Token/HTTPS" between *Registrant* and *Registrar*.
 
-~~~ ascii-text
+~~~ ascii-art
 {::include figures/registration-z.txt}
 ~~~
-{:#reg-z title="Registration Z-Diagram" artwork-align="center"}
+{: #reg-z title="Registration Z-Diagram" artwork-align="center"}
 
 | Section | Applicable Z-Diagram Reference(s) |
 | ------- | --------------------------------- |
@@ -33,10 +33,10 @@ If the *Registrant* knows the HID of the *Registar* it wishes to be endorsed by,
 
 ### Inquiry Model {#req-model}
 
-~~~
+~~~ ascii-text
 {::include cddl/request.cddl}
 ~~~
-{:fig #model-req title="Request Model CDDL"}
+{: #model-req title="Request Model CDDL"}
 
 *entities*:
 : A map of the entities being registered in the inquiry.
@@ -69,7 +69,7 @@ The OME Token is made of two layers in either COSE or JOSE formatted. The inner-
 
 > Author Note: swap to JOSE for illustrative purposes?
 
-~~~ ascii-art
+~~~ ascii-text
 {::include figures/hri-http.txt}
 ~~~
 {: #api-request title="Example REST Registration API with COSE (request)"}
@@ -138,10 +138,10 @@ A section of the response model ({{model-resp}}) is set aside to carry errors an
 
 ### Response Model {#resp-model}
 
-~~~ ascii-art
+~~~ ascii-text
 {::include cddl/response.cddl}
 ~~~
-{:fig #model-resp title="Response Model CDDL"}
+{: #model-resp title="Response Model CDDL"}
 
 *success*:
 : A map of the entities successfully registered from an inquiry.
@@ -162,7 +162,7 @@ A section of the response model ({{model-resp}}) is set aside to carry errors an
 
 The OME Response Token follows the same encoding as {{req-wt}} but instead of using a Claim Key of `hri` instead it is `hrr` and is signed followed {{proxy-signed}}. The OME Token MAY be encrypted using the same shared secret from ECDH. {{api-response}} shows a typical OME Token being returned to a *Registrant*.
 
-~~~ ascii-art
+~~~ ascii-text
 {::include figures/hrr-http.txt}
 ~~~
 {: #api-response title="Example REST Registration API with COSE (response, success)"}

@@ -6,15 +6,15 @@ This appendix is normative.
 
 The OME CDDL Prelude of {{cddl-prelude}} is built upon the prelude defined in {{Appendix E of RFC8610}} to allow interoperability with JSON encodings. The conversion of fields to/from CBOR and JSON MUST use the advice in {{Section 6 of RFC8949}}. The full CDDL of models defined in this document are in {{cddl-full}}.
 
-~~~ ascii-art
+~~~ ascii-text
 {::include cddl/prelude.cddl}
 ~~~
-{:fig #cddl-prelude title="OME CDDL Prelude"}
+{: #cddl-prelude title="OME CDDL Prelude"}
 
-~~~ ascii-art
+~~~ ascii-text
 {::include cddl/full.cddl}
 ~~~
-{:fig #cddl-full title="Full OME CDDL"}
+{: #cddl-full title="Full OME CDDL"}
 
 ## IPv6 Handling {#ip6-handling}
 

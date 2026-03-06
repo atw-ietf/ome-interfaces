@@ -2,7 +2,7 @@
 
 This sections details the process of query for additional private information following the Z-diagram of {{query-z}} and the associated table of contents in {{query-z-tbl}}. It is the lower right link of {{arch-fig}} labeled with "RDAP" between *Querant* and *Registry*.
 
-~~~ ascii-text
+~~~ ascii-art
 {::include figures/query-z.txt}
 ~~~
 {: #query-z title="Query Z-Diagram" artwork-align="center"}
@@ -31,7 +31,7 @@ Once the base URI is found the *Querant* concatenates the `/.well-known/ome/quer
 
 The HTTPS GET method MUST be authenticated using one of the methods defined in {{mutual-tls}}.
 
-~~~ ascii-art
+~~~ ascii-text
 {::include figures/ome-rdap-query.txt}
 ~~~
 {: title="Example HHIT HTTP RDAP Query"}
@@ -58,10 +58,10 @@ An OME, when supporting Mutual TLS, SHOULD accept valid OKIX-compliant certifica
 
 ### OME Data Structure {#rdap-model}
 
-~~~ ascii-art
+~~~ ascii-text
 {::include cddl/rdap.cddl}
 ~~~
-{:fig #rdap-cddl title="OME RDAP Extension CDDL"}
+{: #rdap-cddl title="OME RDAP Extension CDDL"}
 
 *hhit*:
 : Array structure contain the HHIT Entity Type and the IPv6 address string per {{ip6-handling}}.
@@ -76,10 +76,10 @@ An OME, when supporting Mutual TLS, SHOULD accept valid OKIX-compliant certifica
 
 An RDAP response from an OME MUST contain {{rdap-cddl}} under the key of `ome`. The `rdapConformance` array of the response MUST include `ome_v0`. The OME MAY also include the standard expected response of {{Section 5.4 of RFC9083}} if applicable.
 
-~~~ ascii-art
+~~~ ascii-text
 {::include figures/ome-rdap-response.txt}
 ~~~
-{:fig title="OME RDAP Response"}
+{: title="OME RDAP Response"}
 
 ## Querant Post-Response {#client-resp}
 
