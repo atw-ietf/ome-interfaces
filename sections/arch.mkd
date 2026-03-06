@@ -63,7 +63,7 @@ All OMEs have the following general requirements.
 In addition to the general requirements, the following applies to an OME acting in the role of an Apex.
 
 - MUST allocate RAA values to prospective entities that satisfy policy and/or technical requirements
-- MUST maintain the reverse zones of the IPv6 prefix that contain delegations of the associated RAA values and RRTypes of registered entities
+- MUST maintain the zones of the IPv6 prefix that contain delegations of the allocated RAA values and RRTypes for registered entities
 - MAY have at least one Authorization HHIT endorsed by itself
 - MAY have at least one Issuing HHIT endorsed by an Apex Authorization HHIT
 - MAY endorse non-Operational entities in their scope using an Authorization HHIT
@@ -77,7 +77,7 @@ In addition to the general requirements, the following applies to an OME acting 
 - MAY have at least one Issuing HHIT endorsed by an RAA Authorization HHIT
 - MUST allocate HDA values to prospective entities that satisfy policy and/or technical requirements
   - Allocation methods of HDA values are at the discretion of the RAA and their policies
-- MUST maintain the reverse zones of the RAA that contain delegations of the associated HDA values and RRTypes of registered entities
+- MUST maintain the zones of the RAA that contain delegations of the allocated HDA values and RRTypes for registered entities
 - MUST endorse non-Operational entities in their scope using an Authorization HHIT
 - MAY endorse Operational entities in their scope using an Issuing HHIT
 - MAY mutually cross-certify with other RAAs
@@ -90,7 +90,7 @@ In addition to the general requirements, the following applies to an OME acting 
 - SHOULD have at least one Issuing HHIT endorsed by an HDA Authorization HHIT
 - MUST NOT endorse non-Operational entities in their scope
 - MUST endorse Operational entities in their scope using an Issuing HHIT
-- MUST maintain the reverse zones of the HDA that contain RRTypes of registered entities
+- MUST maintain the zones of the HDA that contain RRTypes for registered entities
 
 ### ORCHID Key Infrastructure X.509 (OKIX) {#okix}
 
