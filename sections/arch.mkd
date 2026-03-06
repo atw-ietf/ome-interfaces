@@ -38,11 +38,11 @@ Each hierarchy level SHOULD have at least one Authorization HHIT. These are used
 
 This document allocates two new HHIT Entity Types in each level of hierarchy for this purpose, one for Authorization and one for Issuing ({{iana-entity-types}}).
 
-Specific policies for these hierarchy levels are out of scope for this document and are expected to be developed into OKI policy guidance or added to existing PKI policy guidance for each use-case.
-
 ### Hierarchy Responsibilities 
 
 An OME has a number of responsibilities depending on its place in the hierarchy. This section covers the technical responsibilities of each level of an HHIT's hierarchy as defined in {{RFC9374}}.
+
+Specific non-technical policies for hierarchy levels are out of scope for this document and are expected to be developed into OKI policy guidance or added to existing PKI policy guidance for each use-case.
 
 #### General
 
