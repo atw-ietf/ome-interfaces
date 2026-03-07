@@ -62,19 +62,41 @@ Intended Usage:
 
 ## HHIT Entity Types {#iana-entity-types}
 
-IANA is requested to register the following values in the "HHIT Entity Types" registry {{IANA.DRIP}}.
+IANA is requested to make the following changes to the "HHIT Entity Types" registry {{IANA.DRIP}} to align with {{tbl-het}}.
 
-| Value | HHIT Type | Reference |
-| ----- | --------- | --------- |
-| 2     | DIME Authorization | This RFC  |
-| 3     | DIME Issuing       | This RFC  |
-| 6     | Apex Authorization | This RFC  |
-| 7     | Apex Issuing       | This RFC  |
-| 10    | RAA Authorization  | This RFC  |
-| 11    | RAA Issuing        | This RFC  |
-| 14    | HDA Authorization  | This RFC  |
-| 15    | HDA Issuing        | This RFC  |
-{: #entity-type-table title="Authorization & Issuing HHIT Entity Types"}
+| Value | HHIT Entity Type | Abbreviation | Operational (Y/N) | Reference |
+| ----- | ---------------- | ------------ | ----------------- | --------- |
+| 0 | Undefined | UKN | N | {{RFC9886}} |
+| 1 | ORCHID Management Entity | OME | N | This RFC |
+| 2 | ORCHID Management Entity: Authorization | OME-A | N | This RFC |
+| 3 | ORCHID Management Entity: Issuing | OME-I | N | This RFC |
+| 4 | HHIT Apex | APEX | N | {{RFC9886}} |
+| 5 | HHIT Apex: Authorization | APEX-A | N | This RFC |
+| 6 | HHIT Apex: Issuing | APEX-I | N | This RFC |
+| 7 | DRIP Identity Management Entity | DIME | N | {{RFC9886}} |
+| 8 | DRIP Identity Management Entity: Authorization | DIME-A | N | This RFC |
+| 9 | DRIP Identity Management Entity: Issuing | DIME-I | N | This RFC |
+| 10 | Registered Assigning Authority | RAA | N | {{RFC9886}} |
+| 11 | Registered Assigning Authority: Authorization | RAA-A | N | This RFC |
+| 12 | Registered Assigning Authority: Issuing | RAA-I | N | This RFC |
+| 13 | HHIT Domain Authority | HDA | N | {{RFC9886}} |
+| 14 | HHIT Domain Authority: Authorization | HDA-A | This RFC |
+| 15 | HHIT Domain Authority: Issuing | HDA-I | This RFC |
+| 16 | Unmanned Aircraft | UA | Y | {{RFC9886}} |
+| 17 | Ground Control Station | GCS | Y | {{RFC9886}} |
+| 18 | Unmanned Aircraft System | UAS | Y | {{RFC9886}} |
+| 19 | Remote Identification Module | RID | Y | {{RFC9886}} |
+| 20 | UAS Pilot | PILOT | Y | {{RFC9886}} |
+| 21 | UAS Operator | OP | Y | {{RFC9886}} |
+| 22 | Discovery & Synchronization Service | DSS | Y | {{RFC9886}} |
+| 23 | UAS Service Supplier (USS) | USS | Y | {{RFC9886}} |
+| 24 | Network RID Service Provider (SP) | DP | Y | {{RFC9886}} |
+| 25 | Network RID Display Provider (DP) | SP | Y | {{RFC9886}} |
+| 26 | Supplemental Data Service Provider (SDSP) | SDSP | Y | {{RFC9886}} |
+| 27 | Crowd Sourced RID Finder | FINDER | Y | {{RFC9886}} |
+{: #tbl-het title="Authorization & Issuing HHIT Entity Types"}
+
+The above changes include two new fields for "Abbreviation" and "Operational (Y/N)", re-arrangement of the first 15 values and addition of entries for Authorization and Issuing for applicable entity types.
 
 ## Aviation Keys {#iana-ak}
 
