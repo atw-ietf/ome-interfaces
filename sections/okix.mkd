@@ -1,0 +1,245 @@
+# ORCHID Key Infrastructure (OKI) {#oki}
+
+ORCHID Key Infrastructure (OKI) follows a pattern of hierarchy starting at the IPv6 address prefix as the apex and traverses down the levels of the HHITs Hierarchy ID field. For DETs this maps `2001:30/28` as the apex then RAA and HDA respectively as is shown in {{oki-fig}}.
+
+~~~~ ascii-art
+{::include figures/oki.txt}
+~~~~
+{: #oki-fig title="ORCHID Key Infrastructure (OKI) Hierarchy"  artwork-align="center"}
+
+Each hierarchy level SHOULD have at least one Authorization HHIT. These are used to endorse the next level downwards in the hierarchy (Apex > RAA, RAA > HDA). Additionally each level MAY have as many Issuing HHITs as desired and are endorsed by the local-level Authorization HHIT. Issuing HHITs are used to endorse Operational HHITs within the scope of authority. 
+
+This document allocates two new HHIT Entity Types in each level of hierarchy for this purpose, one for Authorization and one for Issuing ({{iana-entity-types}}).
+
+## Hierarchy Responsibilities 
+
+An OME has a number of responsibilities depending on its place in the hierarchy. This section covers the technical responsibilities of each level of an HHIT's hierarchy as defined in {{RFC9374}}.
+
+Specific non-technical policies for hierarchy levels are out of scope for this document and are expected to be developed into OKI policy guidance or added to existing PKI policy guidance for each use-case.
+
+### General
+
+OMEs have the following general requirements.
+
+- MAY register Operational entities that share Hierarchy ID value that are endorsed using an Issuing HHIT
+- all endorsements MUST result in OKIX-compliant certificates
+- MUST provide to prospective *Registrants* any requirements, policy and/or guidance for registration
+  - This information SHOULD be publicly accessible
+- MUST maintain HHIT entity registrations with relevant Personally Identifiable Information (PII) as required by their jurisdiction
+- MUST fulfill any jurisdiction requirements that are not defined and are out of scope for this document
+- SHOULD implement the HTTP interfaces of {{registration-process}} and {{query-process}}
+  - MAY have Not Implemented responses if the service is not provided
+- All non-Operational entities MUST provide NS RRType(s) as needed to support DNS delegation to parent entities during registration
+
+### Apex
+
+In addition to the general requirements, the following applies to an OME acting in the role of an Apex.
+
+- MUST allocate RAA values to prospective entities that satisfy policy and/or technical requirements
+- MUST maintain the zones of the IPv6 prefix that contain delegations of the allocated RAA values and RRTypes for registered entities
+- MAY have at least one Authorization HHIT endorsed by itself
+- MAY have at least one Issuing HHIT endorsed by an Apex Authorization HHIT
+- MAY endorse non-Operational entities in their scope using an Authorization HHIT
+- MAY endorse Operational entities in their scope using an Issuing HHIT
+
+### RAA
+
+In addition to the general requirements, the following applies to an OME acting in the role of an RAA.
+
+- MUST have at least one Authorization HHIT endorsed by an Apex Authorization HHIT or itself
+- MAY have at least one Issuing HHIT endorsed by an RAA Authorization HHIT
+- MUST allocate HDA values to prospective entities that satisfy policy and/or technical requirements
+  - Allocation methods of HDA values are at the discretion of the RAA and their policies
+- MUST maintain the zones of the RAA that contain delegations of the allocated HDA values and RRTypes for registered entities
+- MUST endorse non-Operational entities in their scope using an Authorization HHIT
+- MAY endorse Operational entities in their scope using an Issuing HHIT
+- MAY mutually cross-certify with other RAAs
+
+### HDA
+
+In addition to the general requirements, the following applies to an OME acting in the role of an HDA.
+
+- MUST have at least one Authorization HHIT endorsed by an RAA Authorization HHIT
+- SHOULD have at least one Issuing HHIT endorsed by an HDA Authorization HHIT
+- MUST NOT endorse non-Operational entities in their scope
+- MUST endorse Operational entities in their scope using an Issuing HHIT
+- MUST maintain the zones of the HDA that contain RRTypes for registered entities
+
+## ORCHID Key Infrastructure X.509 (OKIX) {#okix}
+
+Existing Public Key Infrastructure X.509 (PKIX) certificate profiles can be augmented to support HHITs creating a ORCHID Key Infrastructure X.509 (OKIX) profile.
+
+Other X.509 fields and OIDs MAY be required in a given jurisdiction. This is up to the original PKI(X) policy if applicable and is out of scope for this document.
+
+### Signing Request {#okix-csr}
+
+The Certificate Signing Request is mandatory for all HHIT registrations. Depending on the entity being registered, there is specific content rules.
+
+~~~~
+Certificate Request:
+    Data:
+        Version: 1 (0x0)
+        Subject:
+        Subject Public Key Info:
+            Public Key Algorithm: ED25519
+                ED25519 Public-Key:
+                pub:
+        Attributes:
+        Requested Extensions:
+            X509v3 Subject Alternative Name: critical
+                IP Address:
+    Signature Algorithm: ED25519
+~~~~
+
+*Subject*:
+: As defined in {{Section 4.1.2.6 of RFC5280}}. This field is filled in based on the HHIT Entity Type being registered and subject to policy of the Certificate Authority.
+
+*Subject Alternative Name IP6*:
+: When the registrant knows which HID and/or Suite ID they want the CSR SHOULD contain the Subject Alternate Name extension as defined in {{Section 4.2.1.6 of RFC5280}} using ipAddress containing the fully formed HHIT and MUST mark the extension as `critical`. The OME MUST check to ensure that the HHIT located in the extension is properly generated with the included public key of this CSR. If the registrant does not know or care the value of their HID and/or Suite ID, the Extensions field MUST NOT appear and the OME will use its HID for HHIT generation using the public key provided by this CSR.
+
+The use of other Extension fields are out of scope for this document.
+
+### Certificate: Lite Profile {#okix-lite}
+
+OKIX-Lite is designed to fully encapsulate an OKI in the smallest reasonable X.509 certificates (e.g. 240 bytes for DER), but still adhere to {{RFC5280}} MUST field usage. The profile can be found in {{okix-lite-profile}} and a field matrix found in {{okix-lite-matrix}}.
+
+~~~~
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+        Signature Algorithm: ED25519
+        Issuer: CN =
+        Validity
+            Not Before:
+            Not After :
+        Subject:
+        Subject Public Key Info:
+            Public Key Algorithm: ED25519
+                ED25519 Public-Key:
+                pub:
+        X509v3 extensions:
+            X509v3 Subject Alternative Name: critical
+                IP Address:
+    Signature Algorithm: ED25519
+    Signature Value:
+~~~~
+{: #okix-lite-profile title="OKIX-Lite Profile"}
+
+| Field | Authorization | Issuing | Operational | Comments |
+| ----- | ------------- | ------- | ----------- | -------- |
+| Serial Number | MUST | MUST | MUST | {{lite-serial}} |
+| Subject | MUST | MUST | MUST NOT | {{ca-subject}} |
+| Issuer | MUST | MUST | MUST | {{issuer}} |
+| Subject Alternative Name IP6 | MUST | MUST | MUST | {{san-ip6}} |
+| Subject Alternative Name URI | MAY | MAY | MAY | {{san-uri}}
+| Basic Constraints | MUST | MUST | MUST NOT | CA=True, flagged as Critical | 
+| Subject Key Identifier | MUST NOT | MUST NOT | MUST NOT | - |
+| Authority Key Identifier | MUST NOT | MUST NOT | MUST NOT | - |
+| Key Usage | MAY | MAY | MAY | - |
+| *Certificate Authority* Policy OIDs | MAY | MAY | MAY | - | 
+{: #okix-lite-matrix title="OKIX-Lite Field Matrix"}
+
+### Certificate: Full Profile {#okix-full}
+
+The X.509 certificates are minimalistic (less than 400 bytes for DER). The profile can be found in {{okix-full-profile}} and a field matrix found in {{okix-full-matrix}}.
+
+~~~~
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+        Signature Algorithm: ED25519
+        Issuer: CN =
+        Validity
+            Not Before:
+            Not After :
+        Subject:
+        Subject Public Key Info:
+            Public Key Algorithm: ED25519
+                ED25519 Public-Key:
+                pub:
+        X509v3 extensions:
+            X509v3 Subject Alternative Name: critical 
+                IP Address:
+                URI:
+            X509v3 Subject Key Identifier:
+            X509v3 Authority Key Identifier:
+            X509v3 Basic Constraints: critical
+            X509v3 Key Usage: critical
+    Signature Algorithm: ED25519
+    Signature Value:
+~~~~
+{: #okix-full-profile title="OKIX-Full Profile"}
+
+| Field | Authorization | Issuing | Operational | Comments |
+| ----- | ------------- | ------- | ----------- | -------- |
+| Serial Number | MUST | MUST | MUST | {{full-serial}} |
+| Subject | MUST | MUST | MUST NOT | {{ca-subject}} |
+| Issuer | MUST | MUST | MUST | {{issuer}} |
+| Subject Alternative Name IP6 | MUST | MUST | MUST | {{san-ip6}} |
+| Subject Alternative Name URI | MAY | MAY | MAY | {{san-uri}} |
+| Basic Constraints | MUST | MUST | MUST NOT | CA=True, flagged as Critical | 
+| Subject Key Identifier | MUST | MUST | MUST NOT | {{ski}} |
+| Authority Key Identifier | MUST | MUST | MUST | {{aki}} |
+| Key Usage | SHOULD | SHOULD | SHOULD | - |
+| *Certificate Authority* Policy OIDs | RECOMMENDED | RECOMMENDED | RECOMMENDED | - |
+{: #okix-full-matrix title="OKIX-Full Field Matrix"}
+
+### Certificate Fields
+
+The following sections contain clarifications on the usage of fields in the OKIX when they deviate from "standard" X.509 {{RFC5280}} practice.
+
+#### Serial Number
+
+##### Lite {#lite-serial}
+
+The Serial Number is a MUST field, but it has no usage in this DRIP-Lite. It is 1-byte in size and thus duplicates are guaranteed. To drop this field could make many X.509 parsing libraries fail. 
+
+However, *Certificate Authority* certificate's Serial Number MAY be the common 20 bytes. This is to avoid possible issues with general software expecting this size Serial Numbers for *Certificate Authority*s. 
+
+If Serial Numbers are incrementally assigned, 31 bits are sufficient for an Issuing *Certificate Authority* with 2 billion HHITs active. A *Certificate Authority* should determine its best-used Serial Number field size to limit the impact of this field on the certificate size.
+
+##### Full {#full-serial}
+
+The certificates will contain a 20-byte randomly generated Serial Number, compliant with CABForum recommendations. Serial Numbers are included for CRL functionality.
+
+#### Subject {#ca-subject}
+
+The Subject field is only used in Authorization and Issuing certificates. For Operational certificates, the Subject is empty and the HHIT will be in Subject Alternative Name ({{san-ip6}}). In the SAN, the HHIT can be properly encoded as an IPv6 address. The contents of the Subject when used are determined by policy and is out of scope for this document.
+
+#### Issuer
+
+The Issuer MUST be the higher level's HHIT. 
+
+The Issuer for the Apex Authorization certificate MUST be its HHIT (indicating self-signed). If the RAA Authorization certificate is self-signed (i.e., no Apex), its Issuer is its HHIT.
+
+The Issuer content of its HHIT assists in finding this specific Issuer in the `ip6.arpa.` DNS tree and any additional information. The exact information that is provide is out of scope for this document.
+
+#### Subject Alternative Name IP6 {#san-ip6}
+
+Subject Alternative Name is only used in Operational certificates. It is used to provide the HHIT as an IP address with an Empty Subject (Subject Alternative Name MUST be flagged as Critical).
+
+#### Subject Alternative Name URI {#san-uri}
+
+This field contains a pointer in the form of a URI where additional information on the *Certificate Authority* and certificates under its control can be found. The contents MUST be a base URL containing at least the fields scheme, host and port to query for additional information of a HHIT.
+
+Authorization certificates MAY have a Subject Alternative Name URI and MUST when it is self-signed. Issuing certificates SHOULD have a Subject Alternative Name URI. Operational certificates MAY have a Subject Alternative Name URI.
+
+The RECOMMENDED configuration with respect to Issuing and Operational certificates for a *Certificate Authority* is to place the Subject Alternative Name URI in the Issuing certificate and exclude them in Operational certificates. 
+
+When multiple providers are used by the *Certificate Authority* to handle additional information there SHOULD be a unique Issuing certificate with Subject Alternative Name URI for each provider, and Operational certificates MUST NOT contain a Subject Alternative Name URI. 
+
+Otherwise a *Certificate Authority* with multiple providers MUST NOT have a Subject Alternative Name URI in the Issuing certificate and MUST set the Subject Alternative Name URI to the specific provider for each Operational certificate.
+
+#### Subject Key Identifier {#ski}
+
+The Subject Key Identifier MUST be the HHIT. This is a major deviation from "standard" X.509 certificates that hash (normally with SHA2) the Public Key to fill the Subject Key Identifier. 
+
+The Subject Key Identifier is NOT included in Operational certificates. If needed by some application, it is identical with {{san-ip6}}.
+
+#### Authority Key Identifier {#aki}
+
+The Authority Key Identifier MUST be the higher level's Subject Key Identifier (i.e. HHIT). This partially follows standard practice to chain up the Authority Key Identifier from the Subject Key Identifier, except for how the Subject Key Identifiers are populated. 
+
+The Authority Key Identifier for the Apex Authorization (or self-signed RAA Authorization) certificate MUST be the Subject Key Identifier (indicating self-signed).

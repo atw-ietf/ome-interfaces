@@ -22,6 +22,8 @@ This document standardizes the interfaces of an ORCHID Management Entity (OME) t
 
 {::include-nested sections/query.mkd}
 
+{::include-nested sections/okix.mkd}
+
 {::include-nested sections/ietf/iana.mkd}
 
 {::include-nested sections/ietf/security.mkd}
