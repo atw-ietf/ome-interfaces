@@ -7,13 +7,13 @@ ORCHID Key Infrastructure (OKI) follows a pattern of hierarchy starting at the I
 ~~~~
 {: #oki-fig title="ORCHID Key Infrastructure (OKI) Hierarchy"  artwork-align="center"}
 
-Each hierarchy level SHOULD have at least one Authorization HHIT. These are used to endorse the next level downwards in the hierarchy (Apex > RAA, RAA > HDA). Additionally each level MAY have as many Issuing HHITs as desired and are endorsed by the local-level Authorization HHIT. Issuing HHITs are used to endorse Operational HHITs within the scope of authority. 
+Each hierarchy level SHOULD have at least one Authorization HHIT. These are used to endorse the next level downwards in the hierarchy (Apex > RAA, RAA > HDA). Additionally each level MAY have as many Issuing HHITs as desired and are endorsed by the local-level Authorization HHIT. Issuing HHITs are used to endorse Operational HHITs within the scope of authority.
 
 This document allocates two new HHIT Entity Types in each level of hierarchy for this purpose, one for Authorization and one for Issuing ({{iana-entity-types}}).
 
 ## Hierarchy Responsibilities 
 
-An OME has a number of responsibilities depending on its place in the hierarchy. This section covers the technical responsibilities of each level of an HHIT's hierarchy as defined in {{RFC9374}}.
+An OME has a number of responsibilities depending on its place in the hierarchy. This section covers the technical responsibilities of each level of an HHIT's hierarchy using standard tree terminology. It should be noted that an leaf node here is in reference to the lowest hierarchy level as part of the Hierarchy ID. Such nodes are classically inodes as they endorse end-entity (called Operational) clients but all their descendants have a degree of zero.
 
 Specific non-technical policies for hierarchy levels are out of scope for this document and are expected to be developed into OKI policy guidance or added to existing PKI policy guidance for each use-case.
 
@@ -21,53 +21,61 @@ Specific non-technical policies for hierarchy levels are out of scope for this d
 
 OMEs have the following general requirements.
 
-- MAY register Operational entities that share Hierarchy ID value that are endorsed using an Issuing HHIT
-- all endorsements MUST result in OKIX-compliant certificates
-- MUST provide to prospective *Registrants* any requirements, policy and/or guidance for registration
-  - This information SHOULD be publicly accessible
-- MUST maintain HHIT entity registrations with relevant Personally Identifiable Information (PII) as required by their jurisdiction
-- MUST fulfill any jurisdiction requirements that are not defined and are out of scope for this document
-- SHOULD implement the HTTP interfaces of {{registration-process}} and {{query-process}}
-  - MAY have Not Implemented responses if the service is not provided
-- All non-Operational entities MUST provide NS RRType(s) as needed to support DNS delegation to parent entities during registration
+- MUST use OKIX-compatible certificates when performing registration and endorsement
+- MAY endorse siblings and MUST use an Authorization HHIT
+- MUST maintain their delegated reverse zone
+- MUST provide using public methods any requirements, policy and/or guidance to prospective descendants of Operational membership and/or hierarchy membership
+- SHOULD verify prospective descendants of hierarchy membership before allocation/delegation
+- MUST allocate values in the next portion of Hierarchy ID
+  - MUST delegate corresponding reverse zones to descendants
+- MAY support {{RFC7401}}
+  - MAY support services {{RFC8003}} such as {{RFC8004}}
+- SHOULD implement {{registration-process}} and {{query-process}}, otherwise respond with Not Implemented
+- MUST maintain registrations with relevant Personally Identifiable Information (PII) as required by their jurisdiction
+- MUST fulfill any jurisdiction requirements that are out of scope for this document
 
 ### Apex
 
-In addition to the general requirements, the following applies to an OME acting in the role of an Apex.
+The apex is a special node that is outside of the Hierarchy ID and consist solely of the IPv6 prefix for an ORCHID. This level MAY choose to not perform endorsement of root nodes of the Hierarchy ID and does not require to follow the requirements in {{general}}. If endorsement is being provided then {{general}} applies and the Apex takes a Hierarchy ID value of zero for all levels. Regardless the following requirements are to be met.
 
-- MUST allocate RAA values to prospective entities that satisfy policy and/or technical requirements
-- MUST maintain the zones of the IPv6 prefix that contain delegations of the allocated RAA values and RRTypes for registered entities
-- MAY have at least one Authorization HHIT endorsed by itself
-- MAY have at least one Issuing HHIT endorsed by an Apex Authorization HHIT
-- MAY endorse non-Operational entities in their scope using an Authorization HHIT
-- MAY endorse Operational entities in their scope using an Issuing HHIT
+- MAY have at least one Authorization HHIT that is self-signed
+  - MAY register and endorse non-Operational descendants using an Authorization HHIT
+- MAY have at least one Issuing HHIT endorsed by a self-owned Authorization HHIT
+  - MAY register and endorse Operational descendants using an Issuing HHIT
 
-### RAA
+### Root
 
-In addition to the general requirements, the following applies to an OME acting in the role of an RAA.
+In addition to the general requirements, the following applies to an OME this is a root node in the Hierarchy ID.
 
-- MUST have at least one Authorization HHIT endorsed by an Apex Authorization HHIT or itself
-- MAY have at least one Issuing HHIT endorsed by an RAA Authorization HHIT
-- MUST allocate HDA values to prospective entities that satisfy policy and/or technical requirements
-  - Allocation methods of HDA values are at the discretion of the RAA and their policies
-- MUST maintain the zones of the RAA that contain delegations of the allocated HDA values and RRTypes for registered entities
-- MUST endorse non-Operational entities in their scope using an Authorization HHIT
-- MAY endorse Operational entities in their scope using an Issuing HHIT
-- MAY mutually cross-certify with other RAAs
+- MUST have at least one Authorization HHIT
+  - SHOULD register with Apex using an Authorization HHIT using provided Hierarchy ID, otherwise Authorization HHIT is self-signed
+- MAY have at least one Issuing HHIT endorsed by a self-owned Authorization HHIT
+  - MAY register and endorse Operational descendants using an Issuing HHIT
+- MUST register and endorse non-Operational descendants using an Authorization HHIT
 
-### HDA
+### Inode
 
-In addition to the general requirements, the following applies to an OME acting in the role of an HDA.
+In addition to the general requirements, the following applies to an OME that is a inner node in the Hierarchy ID (such as an RAA).
 
-- MUST have at least one Authorization HHIT endorsed by an RAA Authorization HHIT
-- SHOULD have at least one Issuing HHIT endorsed by an HDA Authorization HHIT
-- MUST NOT endorse non-Operational entities in their scope
-- MUST endorse Operational entities in their scope using an Issuing HHIT
-- MUST maintain the zones of the HDA that contain RRTypes for registered entities
+- MUST have at least one Authorization HHIT
+  - MUST register with parent using an Authorization HHIT using parent provided Hierarchy ID
+- MAY have at least one Issuing HHIT endorsed by a self-owned Authorization HHIT
+  - MAY register and endorse Operational descendants using an Issuing HHIT
+- MUST register and endorse non-Operational descendants using an Authorization HHIT
+
+### Leaf
+
+In addition to the general requirements, the following applies to an OME that is a leaf in the Hierarchy ID (such as an HDA). All descendents MUST have a degree of zero.
+
+- MUST have at least one Authorization HHIT
+  - MUST register with parent using an Authorization HHIT using parent provided Hierarchy ID
+- SHOULD have at least one Issuing HHIT endorsed by a self-owned Authorization HHIT
+  - SHOULD register and endorse Operational descendants using an Issuing HHIT
+- MUST NOT register and endorse non-Operational descendants
 
 ## ORCHID Key Infrastructure X.509 (OKIX) {#okix}
 
-Existing Public Key Infrastructure X.509 (PKIX) certificate profiles can be augmented to support HHITs creating a ORCHID Key Infrastructure X.509 (OKIX) profile.
+Existing Public Key Infrastructure X.509 (PKIX) certificate profiles can be augmented to support HHITs creating ORCHID Key Infrastructure X.509 (OKIX) profiles.
 
 Other X.509 fields and OIDs MAY be required in a given jurisdiction. This is up to the original PKI(X) policy if applicable and is out of scope for this document.
 
@@ -75,21 +83,19 @@ Other X.509 fields and OIDs MAY be required in a given jurisdiction. This is up 
 
 The Certificate Signing Request is mandatory for all HHIT registrations. Depending on the entity being registered, there is specific content rules.
 
-~~~~
+~~~~ ascii-text
 Certificate Request:
     Data:
         Version: 1 (0x0)
-        Subject:
-        Subject Public Key Info:
-            Public Key Algorithm: ED25519
-                ED25519 Public-Key:
-                pub:
+        Subject: <subject to policy>
+        Subject Public Key Info: <subject to policy>
         Attributes:
         Requested Extensions:
             X509v3 Subject Alternative Name: critical
-                IP Address:
-    Signature Algorithm: ED25519
+                IP Address: <subject HHIT>
+    Signature Algorithm: <subject to policy>
 ~~~~
+{: #fig-csr title="Certificate Signing Request Profile"}
 
 *Subject*:
 : As defined in {{Section 4.1.2.6 of RFC5280}}. This field is filled in based on the HHIT Entity Type being registered and subject to policy of the Certificate Authority.
@@ -103,26 +109,22 @@ The use of other Extension fields are out of scope for this document.
 
 OKIX-Lite is designed to fully encapsulate an OKI in the smallest reasonable X.509 certificates (e.g. 240 bytes for DER), but still adhere to {{RFC5280}} MUST field usage. The profile can be found in {{okix-lite-profile}} and a field matrix found in {{okix-lite-matrix}}.
 
-~~~~
+~~~~ ascii-text
 Certificate:
     Data:
         Version: 3 (0x2)
-        Serial Number:
-        Signature Algorithm: ED25519
-        Issuer: CN =
+        Serial Number: <1 byte in size>
+        Signature Algorithm: <subject to policy>
+        Issuer: CN = <issuer HHIT>
         Validity
-            Not Before:
-            Not After :
-        Subject:
-        Subject Public Key Info:
-            Public Key Algorithm: ED25519
-                ED25519 Public-Key:
-                pub:
+            Not Before: <subject to policy>
+            Not After : <subject to policy>
+        Subject: <subject to policy>
+        Subject Public Key Info: <subject to policy>
         X509v3 extensions:
             X509v3 Subject Alternative Name: critical
-                IP Address:
-    Signature Algorithm: ED25519
-    Signature Value:
+                IP Address: <subject HHIT>
+    Signature Algorithm: <subject to policy>
 ~~~~
 {: #okix-lite-profile title="OKIX-Lite Profile"}
 
@@ -144,31 +146,27 @@ Certificate:
 
 The X.509 certificates are minimalistic (less than 400 bytes for DER). The profile can be found in {{okix-full-profile}} and a field matrix found in {{okix-full-matrix}}.
 
-~~~~
+~~~~ ascii-text
 Certificate:
     Data:
         Version: 3 (0x2)
-        Serial Number:
-        Signature Algorithm: ED25519
-        Issuer: CN =
+        Serial Number: <20 bytes in size>
+        Signature Algorithm: <subject to policy>
+        Issuer: CN = <issuer HHIT>
         Validity
-            Not Before:
-            Not After :
-        Subject:
-        Subject Public Key Info:
-            Public Key Algorithm: ED25519
-                ED25519 Public-Key:
-                pub:
+            Not Before: <subject to policy>
+            Not After : <subject to policy>
+        Subject: <subject to policy>
+        Subject Public Key Info: <subject to policy>
         X509v3 extensions:
             X509v3 Subject Alternative Name: critical 
-                IP Address:
-                URI:
-            X509v3 Subject Key Identifier:
-            X509v3 Authority Key Identifier:
+                IP Address: <subject HHIT>
+                URI: <subject to policy>
+            X509v3 Subject Key Identifier: <subject HHIT>
+            X509v3 Authority Key Identifier: <issuer HHIT>
             X509v3 Basic Constraints: critical
             X509v3 Key Usage: critical
-    Signature Algorithm: ED25519
-    Signature Value:
+    Signature Algorithm: <subject to policy>
 ~~~~
 {: #okix-full-profile title="OKIX-Full Profile"}
 
@@ -194,7 +192,7 @@ The following sections contain clarifications on the usage of fields in the OKIX
 
 ##### Lite {#lite-serial}
 
-The Serial Number is a MUST field, but it has no usage in this DRIP-Lite. It is 1-byte in size and thus duplicates are guaranteed. To drop this field could make many X.509 parsing libraries fail. 
+The Serial Number is a MUST field, but it has no usage in the Lite profile. It is 1-byte in size and thus duplicates are guaranteed. To drop this field could make many X.509 parsing libraries fail. 
 
 However, *Certificate Authority* certificate's Serial Number MAY be the common 20 bytes. This is to avoid possible issues with general software expecting this size Serial Numbers for *Certificate Authority*s. 
 
@@ -202,7 +200,7 @@ If Serial Numbers are incrementally assigned, 31 bits are sufficient for an Issu
 
 ##### Full {#full-serial}
 
-The certificates will contain a 20-byte randomly generated Serial Number, compliant with CABForum recommendations. Serial Numbers are included for CRL functionality.
+The certificates MUST contain a 20-byte randomly generated Serial Number, compliant with CABForum recommendations. Serial Numbers are included for CRL functionality.
 
 #### Subject {#ca-subject}
 

@@ -2,7 +2,10 @@ informative:
     RFC4291: # ip6 addr arch
     RFC5280: # pkix
     RFC7343: # orchid-v2
+    RFC7401: # hipv2
     RFC7519: # jwt claims
+    RFC8003: # hip-reg-ext
+    RFC8004: # hip-rvs-ext
     RFC8126: # iana-considerations
     RFC8392: # cwt claims
     RFC8610: # cddl
