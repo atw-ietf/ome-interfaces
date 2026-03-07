@@ -1,6 +1,6 @@
 # Differential Access Query Process {#query-process}
 
-This sections details the process of query for additional private information following the Z-diagram of {{query-z}} and the associated table of contents in {{query-z-tbl}}. It is the lower right link of {{arch-fig}} labeled with "RDAP" between *Querant* and *Registry*.
+This section details the process of query for additional private information following the Z-diagram of {{query-z}} and the associated table of contents in {{query-z-tbl}}. It is the lower right link of {{arch-fig}} labeled with "RDAP" between *Querant* and *Registry*.
 
 ~~~ ascii-art
 {::include figures/query-z.txt}
@@ -53,8 +53,6 @@ For international and/or global harmonization, this document standardizes the fo
 - SHOULD use Mutual TLS but MAY do any RDAP compatible AAA for domestic queries
 
 An OME, when supporting Mutual TLS, SHOULD accept valid OKIX-compliant certificates and MAY accept other {{RFC5280}} (PKIX) compliant certificates. Standard TLS rejection methods MUST be followed to signal to the *Querant* the rejection of the certificate and authentication.
-
-> Author Note: the selection of Mutual TLS is an initial down selection from OpenID Connect for RDAP ({{RFC9560}}), or Mutual TLS ({{Section 7.4.6 of RFC5246}}) or eXtensible Access Control Markup Language (XACML) with Security Assertion Markup Language (SAML). This is still a discussion point.
 
 ### OME Data Structure {#rdap-model}
 

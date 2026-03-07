@@ -11,7 +11,7 @@
 : A key infrastructure consisting of policies around entities using HHITs in a domain space. An example of an OKI is the DRIP Key Infrastructure (DKI) for UAS/aviation.
 
 **ORCHID Key Infrastructure X.509 (OKIX)**:
-: A set of X.509 certificate profiles in compliance of Public Key Infrastructure X.509 (PKIX, {{RFC5280}}) that support an OKI. An example is of DRIP Key Infrastructure X.509 (DKIX) for UAS/aviation.
+: A set of X.509 certificate profiles in compliance of Public Key Infrastructure X.509 (PKIX, {{RFC5280}}) that support an OKI. An example of an OKIX is the DRIP Key Infrastructure X.509 (DKIX) for UAS/aviation.
 
 **OME Token**:
 

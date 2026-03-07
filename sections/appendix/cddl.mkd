@@ -1,4 +1,4 @@
-# CDDL & Encoding Rules
+# CDDL & Encoding Rules {#cddl}
 
 This appendix is normative.
 

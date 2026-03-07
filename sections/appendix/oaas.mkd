@@ -27,6 +27,4 @@ The "oracle" MUST validate the OME Token signature before processing any of the 
 
 If an "oracle" accepts the data presented it MUST respond with a valid X.509 certificate, RECOMMENDED to be OKIX compliant, with the Subject set to the same contents as the *Registrant* CSR. When a "oracle" denies any data presented it MUST respond with an appropriate HTTP Response code and MUST NOT include a reason. This is to avoid clients data mining information to forge malicious requests. Once the "oracle" has completed its validations on fields it has authority over and responded accordingly the OME Token MUST be deleted from the "oracle".
 
-> Author Note: "oracle" MAY countersign the OME Token if possible. This is only really defined in COSE, not JOSE.
-
 The policy and other inner mechanics of the "oracle" are out of scope for this document.
