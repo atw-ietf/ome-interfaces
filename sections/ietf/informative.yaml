@@ -8,7 +8,6 @@ informative:
     RFC8610: # cddl
     RFC9063: # hip-arch
     RFC9334: # rats-arch
-    RFC9560: # openid connect rdap
 
     STD69: # epp
     STD90: # json
