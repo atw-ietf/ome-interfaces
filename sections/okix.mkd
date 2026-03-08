@@ -144,7 +144,7 @@ Certificate:
 
 ### Certificate: Full Profile {#okix-full}
 
-The X.509 certificates are minimalistic (less than 400 bytes for DER). The profile can be found in {{okix-full-profile}} and a field matrix found in {{okix-full-matrix}}.
+The X.509 certificates are minimalistic (less than 400 bytes for DER). The profile can be found in {{okix-full-profile}} and a field matrix found in {{okix-full-matrix}}. This profile MUST be used as the Canonical Registration Certificate in the DNS.
 
 ~~~~ ascii-text
 Certificate:
@@ -204,7 +204,7 @@ The certificates MUST contain a 20-byte randomly generated Serial Number, compli
 
 #### Subject {#ca-subject}
 
-The Subject field is only used in Authorization and Issuing certificates. For Operational certificates, the Subject is empty and the HHIT will be in Subject Alternative Name ({{san-ip6}}). In the SAN, the HHIT can be properly encoded as an IPv6 address. The contents of the Subject when used are determined by policy and is out of scope for this document.
+The Subject field is only used in Authorization and Issuing certificates. For Operational certificates, the Subject MUST be empty and the HHIT will be in Subject Alternative Name ({{san-ip6}}). In the Subject Alternative Name, the HHIT can be properly encoded as an IPv6 address. The contents of the Subject when used are determined by policy and is out of scope for this document.
 
 #### Issuer
 
