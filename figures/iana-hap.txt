@@ -1,0 +1,55 @@
+Key: UAS Type 
+Description: ASTM F3411 UAS Type Enumeration
+Name: uas_type
+Label: 0
+Value Type: uint
+Change Controller: IETF
+Reference: Section 5.2 of RFC9886
+
+Key: UAS Identifiers
+Description: UAS ID Type & Value Pairs
+Name: uas_ids
+Label: 1
+Value Type: array
+Change Controller: IETF
+Reference: Section 5.2 of RFC9886
+
+Key: Authentication Data
+Description: Authentication Type & Data Pairs
+Name: auths
+Label: 2
+Value Type: array
+Change Controller: IETF
+Reference: Section 5.2 of RFC9886
+
+Key: Self ID
+Description: Self Description Type & Value
+Name: self_id
+Label: 3
+Value Type: array
+Change Controller: IETF
+Reference: Section 5.2 of RFC9886
+
+Key: UAS Classification
+Description: UAS Category & Class
+Name: classification
+Label: 4
+Value Type: array
+Change Controller: IETF
+Reference: Section 5.2 of RFC9886
+
+Key: Area
+Description: Count, Radius, Floor & Ceiling 
+Name: area
+Label: 5
+Value Type: array
+Change Controller: IETF
+Reference: Section 5.2 of RFC9886
+
+Key: Operator ID
+Description: UAS Pilot Operator ID
+Name: operator_id
+Label: 6
+Value Type: array
+Change Controller: IETF
+Reference: Section 5.2 of RFC9886

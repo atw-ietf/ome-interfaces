@@ -58,4 +58,21 @@ informative:
           org: IANA
       target: https://www.iana.org/assignments/cbor-tags/cbor-tags/
       date: November 2025
-    
+    IANA.MediaTypes:
+      title: Media Types
+      author:
+        -
+          org: IANA
+      target: https://www.iana.org/assignments/media-types
+      date: July 2025
+    IANA.CORE:
+      title: CoAP Content-Formats
+      author:
+        -
+          org: IANA
+      target: https://www.iana.org/assignments/core-parameters
+      date: July 2025
+
+
+
+      

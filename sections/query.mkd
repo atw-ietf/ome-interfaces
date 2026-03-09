@@ -15,36 +15,36 @@ This section details the process of query for additional private information fol
 | {{client-resp}} | (T) ACT |
 {: #query-z-tbl title="Query Process Table of Contents"}
 
-For OME's the differential access mechanism known as Registration Data Access Protocol (RDAP, {{STD95}}) is selected as the interface for the *Registry* and specified in the following sections. Public information is hosted by the *Authoritative Name Server* and accessed using DNS methods as defined in {{RFC9886}}. Authentication of the OME and *Querant* is done through Mutual TLS using X.509 certificates.
+For HOME's the differential access mechanism known as Registration Data Access Protocol (RDAP, {{STD95}}) is selected as the interface for the *Registry* and specified in the following sections. Public information is hosted by the *Authoritative Name Server* and accessed using DNS methods as defined in {{RFC9886}}. Authentication of the HOME and *Querant* is done through Mutual TLS using X.509 certificates.
 
-As part of RDAP, the OME MAY follow {{RFC9224}} to be part of the RDAP bootstrap mechanism for discovery. This is not hard requirement as the same information can be obtained through the HHIT RRType from the *Authoritative Name Server*. 
+As part of RDAP, the HOME MAY follow {{RFC9224}} to be part of the RDAP bootstrap mechanism for discovery. This is not hard requirement as the same information can be obtained through the HHIT RRType from the *Authoritative Name Server*. 
 
 It is RECOMMENDED that eXtensible Access Control Markup Language (XACML) with Security Assertion Markup Language (SAML) is used to exchange policy information.
 
 ## Querant Query {#client-query}
 
-A *Querent* with an HHIT looking for private information is RECOMMENDED to perform a series of DNS queries to build a URI that is then used for an HTTPS GET query. The same URI MAY be obtained using the RDAP bootstrap process if the OME followed {{RFC9224}}, but *Querants* MUST NOT expect this.
+A *Querent* with an HHIT looking for private information is RECOMMENDED to perform a series of DNS queries to build a URI that is then used for an HTTPS GET query. The same URI MAY be obtained using the RDAP bootstrap process if the HOME followed {{RFC9224}}, but *Querants* MUST NOT expect this.
 
-The base URI needed is part of Subject Alternative Name extension of a Canonical Registration Certificate found in HHIT RRTypes defined in {{Section 5.1 of RFC9886}} and accessed one or more reverse IPv6 DNS lookups. The exact certificate with the base URI for an OME and its clients is determined by policy and where the URI is minimally duplicated across many certificates.
+The base URI needed is part of Subject Alternative Name extension of a Canonical Registration Certificate found in HHIT RRTypes defined in {{Section 5.1 of RFC9886}} and accessed one or more reverse IPv6 DNS lookups. The exact certificate with the base URI for an HOME and its clients is determined by policy and where the URI is minimally duplicated across many certificates.
 
-Once the base URI is found the *Querant* concatenates the `/.well-known/ome/query/` string then the nibble-reversed HHIT to form the full query string.
+Once the base URI is found the *Querant* concatenates the `/.well-known/home/query/` string then the nibble-reversed HHIT to form the full query string.
 
 The HTTPS GET method MUST be authenticated using one of the methods defined in {{mutual-tls}}.
 
 ~~~ ascii-text
-{::include figures/ome-rdap-query.txt}
+{::include figures/rdap-query.txt}
 ~~~
 {: title="Example HHIT HTTP RDAP Query"}
 
-## OME RDAP Processing & Response {#rdap-process}
+## HOME RDAP Processing & Response {#rdap-process}
 
-The `/.well-known/ome/query/<IP address>` endpoint SHOULD be redirected to the locally hosted path conforming with {{Section 3.1.1 of RFC9082}} (i.e. `ip/<IP address>`). All other RDAP endpoints SHOULD NOT be implemented as specified in {{RFC9082}}. Other methods MAY be provided to enable differential access controlled queries of information pertaining to an HHIT but are out of scope for this document.
+The `/.well-known/home/query/<IP address>` endpoint SHOULD be redirected to the locally hosted path conforming with {{Section 3.1.1 of RFC9082}} (i.e. `ip/<IP address>`). All other RDAP endpoints SHOULD NOT be implemented as specified in {{RFC9082}}. Other methods MAY be provided to enable differential access controlled queries of information pertaining to an HHIT but are out of scope for this document.
 
-Once cleared through {{mutual-tls}}, data redaction is handled before {{rdap-pass}} using policy methods of the OME and is out of scope for this document. 
+Once cleared through {{mutual-tls}}, data redaction is handled before {{rdap-pass}} using policy methods of the HOME and is out of scope for this document. 
 
 ### Differential Access Control {#mutual-tls}
 
-Per REG-2 and REG-4 of {{Section 4.4.1 of RFC9153}}, RDAP queries to an OME MUST be protected using fine-grained AAA policies in a both human- & machine-readable form for automated enforcement. RDAP supports only HTTP-based mechanisms for authentication as defined in {{Section 3.2 of RFC7481}}. A federated authentication mechanism, such as the examples in {{Section 3.2.1 of RFC7481}}, is RECOMMENDED.
+Per REG-2 and REG-4 of {{Section 4.4.1 of RFC9153}}, RDAP queries to an HOME MUST be protected using fine-grained AAA policies in a both human- & machine-readable form for automated enforcement. RDAP supports only HTTP-based mechanisms for authentication as defined in {{Section 3.2 of RFC7481}}. A federated authentication mechanism, such as the examples in {{Section 3.2.1 of RFC7481}}, is RECOMMENDED.
 
 For international and/or global harmonization, this document standardizes the following RDAP behavior for authentication of clients and servers:
 
@@ -52,32 +52,32 @@ For international and/or global harmonization, this document standardizes the fo
 - MUST support Mutual TLS per {{Section 7.4.6 of RFC5246}} for global and/or international queries **AND**
 - SHOULD use Mutual TLS but MAY do any RDAP compatible AAA for domestic queries
 
-An OME, when supporting Mutual TLS, SHOULD accept valid OKIX-compliant certificates and MAY accept other {{RFC5280}} (PKIX) compliant certificates. Standard TLS rejection methods MUST be followed to signal to the *Querant* the rejection of the certificate and authentication.
+An HOME, when supporting Mutual TLS, SHOULD accept valid OKIX-compliant certificates and MAY accept other {{RFC5280}} (PKIX) compliant certificates. Standard TLS rejection methods MUST be followed to signal to the *Querant* the rejection of the certificate and authentication.
 
-### OME Data Structure {#rdap-model}
+### HOME Data Structure {#rdap-model}
 
 ~~~ ascii-text
 {::include cddl/rdap.cddl}
 ~~~
-{: #rdap-cddl title="OME RDAP Extension CDDL"}
+{: #rdap-cddl title="HOME RDAP Extension CDDL"}
 
 *hhit*:
 : Array structure contain the HHIT Entity Type and the IPv6 address string per {{ip6-handling}}.
 
 *canon_x*:
-: DER encoded, base64url, OKIX-compliant certificate signed by the OME endorsing the submitted HHIT and public key of the *Registrant*.
+: DER encoded, base64url, OKIX-compliant certificate signed by the HOME endorsing the submitted HHIT and public key of the *Registrant*.
 
 *metadata*:
-: Map that contains elements of information for the registration. Elements included are based on access policy and registration requirements of the OME.
+: Map that contains elements of information for the registration. Elements included are based on access policy and registration requirements of the HOME.
 
 ### RDAP Response {#rdap-pass}
 
-An RDAP response from an OME MUST contain {{rdap-cddl}} under the key of `ome`. The `rdapConformance` array of the response MUST include `ome_v0`. The OME MAY also include the standard expected response of {{Section 5.4 of RFC9083}} if applicable.
+An RDAP response from an HOME MUST contain {{rdap-cddl}} under the key of `home`. The `rdapConformance` array of the response MUST include `ome_v0`. The HOME MAY also include the standard expected response of {{Section 5.4 of RFC9083}} if applicable.
 
 ~~~ ascii-text
-{::include figures/ome-rdap-response.txt}
+{::include figures/rdap-response.txt}
 ~~~
-{: title="OME RDAP Response"}
+{: title="HOME RDAP Response"}
 
 ## Querant Post-Response {#client-resp}
 

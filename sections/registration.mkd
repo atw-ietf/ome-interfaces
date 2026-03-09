@@ -1,6 +1,6 @@
 # Registration Process
 
-This sections details the process of registration following the Z-diagram of {{reg-z}} and the associated table of contents in {{reg-z-tbl}}. It is the upper link of {{arch-fig}} labeled with "OME Token/HTTPS" between *Registrant* and *Registrar*.
+This sections details the process of registration following the Z-diagram of {{reg-z}} and the associated table of contents in {{reg-z-tbl}}. It is the upper link of {{arch-fig}} labeled with "HOME Token/HTTPS" between *Registrant* and *Registrar*.
 
 ~~~ ascii-art
 {::include figures/registration-z.txt}
@@ -17,11 +17,11 @@ This sections details the process of registration following the Z-diagram of {{r
 | {{req-resp}} | (K) ONBOARD |
 {: #reg-z-tbl title="Registration Process Table of Contents"}
 
-The mechanism for registration is the use of COSE or JOSE over HTTPS. COSE MUST be supported and JOSE is RECOMMENDED to be supported for flexibility for non-constrained *Registrants*. The rest of this section specifies exact behavior for this interface of an OME.
+The mechanism for registration is the use of COSE or JOSE over HTTPS. COSE MUST be supported and JOSE is RECOMMENDED to be supported for flexibility for non-constrained *Registrants*. The rest of this section specifies exact behavior for this interface of an HOME.
 
 ## Registrant Inquiry
 
-Registration inquiries are made around a set of keys and metadata for an entity. A single inquiry can have multiple entities, each of which can request multiple keys. The data model ({{model-req}}) is flexible to enable the *Registrant* to tailor their inquiries accordingly.
+Registration inquiries are made around a set of keys and metadata for an entity. A single inquiry can have multiple entities, each of which can request multiple keys. The data model ({{hri-model}}) is flexible to enable the *Registrant* to tailor their inquiries accordingly.
 
 ### Keys & Certificate Signing Request {#key-csr}
 
@@ -36,7 +36,7 @@ If the *Registrant* knows the HID of the *Registar* it wishes to be endorsed by,
 ~~~ ascii-text
 {::include cddl/request.cddl}
 ~~~
-{: #model-req title="Request Model CDDL"}
+{: #hri-model title="Request Model CDDL"}
 
 *entities*:
 : A map of the entities being registered in the inquiry.
@@ -57,15 +57,17 @@ If the *Registrant* knows the HID of the *Registar* it wishes to be endorsed by,
 : An OKIX-compliant CSR, {{key-csr}}, DER encoded.
 
 *metadata*:
-: A map containing elements (key, value pairs) and their associated values related to keys/entities in the inquiry. An initial key set is registered in {{iana-ak}}.
+: A map containing elements (key, value pairs) and their associated values related to keys/entities in the inquiry. An initial key set is registered in {{iana-hp}}.
 
-Each nesting in {{model-req}} contains its own *metadata*. This allows a *Registrant* to set elements at a higher nesting in the model to be shared among nested sections. When combining the maps from each nesting level, elements found closer to the *key* level are given priority.
+Each nesting in {{hri-model}} contains its own *metadata*. This allows a *Registrant* to set elements at a higher nesting in the model to be shared among nested sections. When combining the maps from each nesting level, elements found closer to the *key* level are given priority.
 
-The contents of *metadata* are subject to policy of an OME and MUST be provided to their *Registrant*s. The specific key set to be used MAY be indicated using a registered Media Type in the HTTP Content-Type header.
+The contents of *metadata* are subject to policy of an HOME and MUST be provided to their *Registrant*s. The specific key set to be used MAY be indicated using the optional parameter of the registered Media Type ({{iana-mt}}).
 
 ### Inquiry Token {#req-wt}
 
-The OME Token is made of two layers in either COSE or JOSE formatted. The inner-most layer is the formats respective signature object and the outer-layer is an encryption object. {{api-request}} shows an example of a COSE encoded OME Token from a *Registrant*.
+The HOME Token is made of two layers that are either COSE or JOSE formatted. The inner-most layer is the formats respective signature object and the outer-layer is an encryption object. {{api-request}} shows an example of a COSE encoded HOME Token from a *Registrant*.
+
+When using COSE the appropriate CBOR Tag for the COSE object MUST be used. Likewise the use of JOSE MUST use the General or Flattened JWS/JWE JSON Serialization syntax.
 
 > Author Note: swap to JOSE for illustrative purposes?
 
@@ -76,11 +78,11 @@ The OME Token is made of two layers in either COSE or JOSE formatted. The inner-
 
 #### Signature
 
-The signatures payload is a CBOR/JSON Claims Set that MUST include the Claim Key for the `hri` with the value containing the {{req-model}} model. Claim Keys of `nbf`, `iat`, and `exp` are RECOMMENDED. The `aud` Claim Key can is OPTIONAL and used to signal the exact HHIT Issuing entity to process the OME Token contents when it contains the value of the HHIT as an IPv6 address string as defined in {{RFC4291, Section 2.2}}.
+The signatures payload is a CBOR/JSON Claims Set that MUST include the Claim Key for the `hri` with the value containing the {{req-model}} model. Claim Keys of `nbf`, `iat`, and `exp` are RECOMMENDED. The `aud` Claim Key can is OPTIONAL and used to signal the exact HHIT Issuing entity to process the HOME Token contents when it contains the value of the HHIT as an IPv6 address string as defined in {{RFC4291, Section 2.2}}.
 
 ##### Self-Signed
 
-When a key is encapsulated in the OME Token's inner payload the public key to verify the signature MUST be included in the protected header in the `jwk` for JOSE or `kccs` for COSE parameter. This same logic applies when a multi-signature object is used in either COSE/JOSE. This case only applies when a *Registrant* has no prior relationship with the OME and is starting from nothing.
+When a key is encapsulated in the HOME Token's inner payload the public key to verify the signature MUST be included in the protected header in the `jwk` for JOSE or `kccs` for COSE parameter. This same logic applies when a multi-signature object is used in either COSE/JOSE. This case only applies when a *Registrant* has no prior relationship with the HOME and is starting from nothing.
 
 ##### Proxy-Signed
 
@@ -88,47 +90,47 @@ If the key used to sign the COSE/JOSE object is already registered and has an HH
 
 #### Encryption
 
-An OME Token from a *Registrant* MUST be encrypted as it may contain Personally Identifiable Information (PII). The encryption algorithm selection and policies are left for OME policy and MUST be provided to *Registrant*s. It is strongly RECOMMENDED that asymmetric keys are used for encryption. The encryption payload is the COSE/JOSE signature object of {{signature}}. *Registrants* SHOULD set the `content type` parameter in the header of the encryption object to signal the content type of the encrypted payload.
+An HOME Token from a *Registrant* MUST be encrypted as it may contain Personally Identifiable Information (PII). The encryption algorithm selection and policies are left for HOME policy and MUST be provided to *Registrant*s. It is strongly RECOMMENDED that asymmetric keys are used for encryption. The encryption payload is the COSE/JOSE signature object of {{signature}}. *Registrants* SHOULD set the `content type` parameter in the header of the encryption object to signal the content type of the encrypted payload.
 
-Encryption is done with Elliptic Curve Diffie-Hellman (ECDH) using Ephemeral-Static (ES) keying. The static key is provided by the OME while the a unique ephemeral key is provided by the *Registrant* for each OME Token and/or recipient. The OME MUST provide static keys through public methods such as the DNS or an HTTPS GET endpoint. Refer to relevant COSE or JOSE specifications for using ECDH with COSE/JOSE encryption objects.
+Encryption is done with Elliptic Curve Diffie-Hellman (ECDH) using Ephemeral-Static (ES) keying. The static key is provided by the HOME while the a unique ephemeral key is provided by the *Registrant* for each HOME Token and/or recipient. The HOME MUST provide static keys through public methods such as the DNS or an HTTPS GET endpoint. Refer to relevant COSE or JOSE specifications for using ECDH with COSE/JOSE encryption objects.
 
-## OME Processing & Response
+## HOME Processing & Response
 
 ### Request Validation & Processing {#req-valid}
 
 All requests MUST pass the following checks before following {{req-approve}}:
 
-1. The OME Token signature validates with an acceptable public key
+1. The HOME Token signature validates with an acceptable public key
 2. The CSR signature passes with embedded public key
-3. The public key in CSR is unique to the OME's scope
-4. OME constructs using their HID and the CSR's public key an HHIT and;
+3. The public key in CSR is unique to the HOME's scope
+4. HOME constructs using their HID and the CSR's public key an HHIT and;
     * If an HHIT is provided by *Registrant* in CSR ensure they are equivalent
-    * Confirm the HHIT is unique in the OME's authority of the hierarchy
-5. Additional data, if any, in the OME Token is acceptable; see {{oaas}}
+    * Confirm the HHIT is unique in the HOME's authority of the hierarchy
+5. Additional data, if any, in the HOME Token is acceptable; see {{oaas}}
 
-If any of the above checks fail, the OME follows {{req-deny}}.
+If any of the above checks fail, the HOME follows {{req-deny}}.
 
 #### Inquiry Approval {#req-approve}
 
-Once processed as a "pass" the OME MUST generate at least OKIX-compliant certificates and based on the use case MAY generate other artifacts. The OME MUST store these certificates and other artifacts in their *Registry* and also update the relative *Authoritative Name Server* accordingly.
+Once processed as a "pass" the HOME MUST generate at least OKIX-compliant certificates and based on the use case MAY generate other artifacts. The HOME MUST store these certificates and other artifacts in their *Registry* and also update the relative *Authoritative Name Server* accordingly.
 
 The response models `entity-id`'s and `key-id`'s MUST match those provided by the *Registrant*.
 
 #### Inquiry Rejection {#req-deny}
 
-A section of the response model ({{model-resp}}) is set aside to carry errors and is OPTIONAL. A non-exhaustive list of examples of rejection reasons are:
+A section of the response model ({{hrr-model}}) is set aside to carry errors and is OPTIONAL. A non-exhaustive list of examples of rejection reasons are:
 
-- OME Token not encrypted
+- HOME Token not encrypted
 - Public key not found/provided
 - Invalid/missing model element(s)
-- Non-conformance with OME policy/policies
+- Non-conformance with HOME policy/policies
 
 ### Response Model {#resp-model}
 
 ~~~ ascii-text
 {::include cddl/response.cddl}
 ~~~
-{: #model-resp title="Response Model CDDL"}
+{: #hrr-model title="Response Model CDDL"}
 
 *success*:
 : A map of the entities successfully registered from an inquiry.
@@ -145,9 +147,9 @@ A section of the response model ({{model-resp}}) is set aside to carry errors an
 *failure*:
 : List of registration failures, each denoting the entity and/or key by their respective IDs. When `eid` or `kid` is `null` it implies that all of that type are denoting the same failure.
 
-### Response OME Token {#resp-wt}
+### Response HOME Token {#resp-wt}
 
-The OME Response Token follows the same encoding as {{req-wt}} but instead of using a Claim Key of `hri` it is `hrr` and is signed by the OME following {{proxy-signed}}. The OME Token MAY be encrypted using the same shared secret generated during {{encryption}}. {{api-response}} shows a typical OME Token being returned to a *Registrant*.
+The HOME Response Token follows the same encoding as {{req-wt}} but instead of using a Claim Key of `hri` it is `hrr` and is signed by the HOME following {{proxy-signed}}. The HOME Token MAY be encrypted using the same shared secret generated during {{encryption}}. {{api-response}} shows a typical HOME Token being returned to a *Registrant*.
 
 ~~~ ascii-text
 {::include figures/hrr-http.txt}
@@ -156,6 +158,6 @@ The OME Response Token follows the same encoding as {{req-wt}} but instead of us
 
 ## Registrant Post-Response {#req-resp}
 
-The *Registrant* MUST validate the signature of the OME Token returned by the OME and SHOULD validate all signatures found in the response claim.
+The *Registrant* MUST validate the signature of the HOME Token returned by the HOME and SHOULD validate all signatures found in the response claim.
 
 If satisfied then the *Registrant* may proceed to provision/onboard the now registered keys and related artifacts for use.

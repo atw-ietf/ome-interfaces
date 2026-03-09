@@ -6,40 +6,40 @@ IANA is requested to add the following entries in the "Well-Known URIs" registry
 
 | URI Suffix | Change Controller | Reference | Status | Related Information |
 | ---------- | ----------------- | --------- | ------ | ------------------- |
-| ome/register | IETF | This RFC | permanent | N/A |
-| ome/query | IETF | This RFC | permanent | N/A |
-| ome/oaas | IETF | This RFC | permanent | N/A |
+| home/register | IETF | This RFC | permanent | N/A |
+| home/query | IETF | This RFC | permanent | N/A |
+| home/oaas | IETF | This RFC | permanent | N/A |
 {: title="Additions to Well-Known URIs Registry"}
 
 > Author Note: should we also add Well-Known URIs for update and delete methods? This would then cover all parts of CRUD.
 
 ## CWT & JWT Claims {#iana-claims}
 
-OME Tokens contain a Claim Set compatible with those of CWT and JWT, so the CWT and JWT Claims registries, {{IANA.CWT.Claims}} and {{IANA.JWT.Claims}}, are reused. No new IANA registry is created.
+HOME Tokens contain a Claim Set compatible with those of CWT and JWT, so the CWT and JWT Claims registries, {{IANA.CWT.Claims}} and {{IANA.JWT.Claims}}, are reused. No new IANA registry is created.
 
 Per this specification, the following values are requested to be added to the "JSON Web Token Claims" registry established by {{RFC7519}} and the "CBOR Web Token (CWT) Claims" registry established by {{RFC8392}}. Each entry is requested to be added to both registries. The "Claim Description", "Change Controller", and "Reference" fields are common and equivalent for the JWT and CWT registries. The "Claim Key" and "Claim Value Type" fields are for the CWT registry only. The "Claim Name" field is as defined for the CWT registry, not the JWT registry. The "JWT Claim Name" field is equivalent to the "Claim Name" field in the JWT registry.
 
 ~~~ ascii-text
-Claim Name: HHIT Registration Inquiry
-Claim Description: HHIT Registration Inquiry
+Claim Name: HOME Registration Inquiry
+Claim Description: HOME Registration Inquiry
 JWT Claim Name: hri
 Claim Key: TBD1
 Claim Value Type: array
 Change Controller: IETF
 Reference: This RFC
 ~~~
-{: title="HHIT Registration Inquiry Claim: Registration Form"}
+{: title="HOME Registration Inquiry Claim: Registration Form"}
 
 ~~~ ascii-text
-Claim Name: HHIT Registration Response
-Claim Description: HHIT Registration Response
+Claim Name: HOME Registration Response
+Claim Description: HOME Registration Response
 JWT Claim Name: hrr
 Claim Key: TBD2
 Claim Value Type: array
 Change Controller: IETF
 Reference: This RFC
 ~~~
-{: title="HHIT Registration Response Claim: Registration Form"}
+{: title="HOME Registration Response Claim: Registration Form"}
 
 ## RDAP Extensions Registry {#iana-rdap-ext}
 
@@ -47,7 +47,7 @@ IANA is requested to register the following value in the "RDAP Extensions" regis
 
 ~~~ ascii-text
 Extension Identifier: 
-  ome_v0
+  home_v0
 Registry Operator:
   Any
 Specification:
@@ -56,23 +56,23 @@ Contact:
   IETF <iesg@ietf.org>
 Intended Usage:
   This extension is used to convey private information 
-  under an HHIT registration.
+  stored under a HOME registration.
 ~~~
 {: title="RDAP Extensions: Registration Form"}
 
-## HHIT Entity Types {#iana-entity-types}
+## HHIT Entity Types {#iana-het}
 
-IANA is requested to make the following changes to the "HHIT Entity Types" registry {{IANA.DRIP}} to align with {{tbl-het}}.
+IANA is requested to make the following changes to the "HHIT Entity Types" registry under {{IANA.DRIP}} to align with {{tbl-het}}.
 
 | Value | HHIT Entity Type | Abbreviation | Operational (Y/N) | Reference |
 | ----- | ---------------- | ------------ | ----------------- | --------- |
 | 0 | Undefined | UKN | N | {{RFC9886}} |
-| 1 | ORCHID Management Entity | OME | N | This RFC |
-| 2 | ORCHID Management Entity: Authorization | OME-A | N | This RFC |
-| 3 | ORCHID Management Entity: Issuing | OME-I | N | This RFC |
-| 4 | HHIT Apex | APEX | N | {{RFC9886}} |
-| 5 | HHIT Apex: Authorization | APEX-A | N | This RFC |
-| 6 | HHIT Apex: Issuing | APEX-I | N | This RFC |
+| 1 | Hierarchial ORCHID Management Entity | HOME | N | This RFC |
+| 2 | Hierarchial ORCHID Management Entity: Authorization | HOME-A | N | This RFC |
+| 3 | Hierarchial ORCHID Management Entity: Issuing | HOME-I | N | This RFC |
+| 4 | HOME Apex | APEX | N | {{RFC9886}} |
+| 5 | HOME Apex: Authorization | APEX-A | N | This RFC |
+| 6 | HOME Apex: Issuing | APEX-I | N | This RFC |
 | 7 | DRIP Identity Management Entity | DIME | N | {{RFC9886}} |
 | 8 | DRIP Identity Management Entity: Authorization | DIME-A | N | This RFC |
 | 9 | DRIP Identity Management Entity: Issuing | DIME-I | N | This RFC |
@@ -80,8 +80,8 @@ IANA is requested to make the following changes to the "HHIT Entity Types" regis
 | 11 | Registered Assigning Authority: Authorization | RAA-A | N | This RFC |
 | 12 | Registered Assigning Authority: Issuing | RAA-I | N | This RFC |
 | 13 | HHIT Domain Authority | HDA | N | {{RFC9886}} |
-| 14 | HHIT Domain Authority: Authorization | HDA-A | This RFC |
-| 15 | HHIT Domain Authority: Issuing | HDA-I | This RFC |
+| 14 | HHIT Domain Authority: Authorization | HDA-A | N |This RFC |
+| 15 | HHIT Domain Authority: Issuing | HDA-I | N | This RFC |
 | 16 | Unmanned Aircraft | UA | Y | {{RFC9886}} |
 | 17 | Ground Control Station | GCS | Y | {{RFC9886}} |
 | 18 | Unmanned Aircraft System | UAS | Y | {{RFC9886}} |
@@ -89,26 +89,26 @@ IANA is requested to make the following changes to the "HHIT Entity Types" regis
 | 20 | UAS Pilot | PILOT | Y | {{RFC9886}} |
 | 21 | UAS Operator | OP | Y | {{RFC9886}} |
 | 22 | Discovery & Synchronization Service | DSS | Y | {{RFC9886}} |
-| 23 | UAS Service Supplier (USS) | USS | Y | {{RFC9886}} |
-| 24 | Network RID Service Provider (SP) | DP | Y | {{RFC9886}} |
-| 25 | Network RID Display Provider (DP) | SP | Y | {{RFC9886}} |
-| 26 | Supplemental Data Service Provider (SDSP) | SDSP | Y | {{RFC9886}} |
+| 23 | UAS Service Supplier | USS | Y | {{RFC9886}} |
+| 24 | Network RID Service Provider | DP | Y | {{RFC9886}} |
+| 25 | Network RID Display Provider | SP | Y | {{RFC9886}} |
+| 26 | Supplemental Data Service Provider | SDSP | Y | {{RFC9886}} |
 | 27 | Crowd Sourced RID Finder | FINDER | Y | {{RFC9886}} |
-{: #tbl-het title="Authorization & Issuing HHIT Entity Types"}
+{: #tbl-het title="Updated HHIT Entity Type Registry"}
 
 The above changes include two new fields for "Abbreviation" and "Operational (Y/N)", re-arrangement of the first 15 values and addition of entries for Authorization and Issuing for applicable entity types.
 
-## Aviation Keys {#iana-ak}
+## HOME Parameters {#iana-hp}
 
-This document requests IANA create a new registry under {{IANA.DRIP}} called "Aviation Keys" with registry policies described in {{key-table}}. Initial keys are provided in {{initial-keys}}. This is to support the initial use-case of HHITs in aviation contexts.
+This document requests IANA create a new registry under {{IANA.DRIP}} called "HOME Parameters" with registry policies described in {{tbl-hp-registry}}.
 
 | Range | Registration Policy |
 | ----- | ------------------- |
-| -2^64 to -257 | Private Use ({{Section 4.2 of RFC8126}}) |
-| -256 to -1 | Standard Action ({{Section 4.9 of RFC8126}}) |
-| 0 to (2^16)-1 | Specification Required ({{Section 4.7 of RFC8126}}) |
-| 2^16 to (2^64)-1 | First Come First Served ({{Section 4.3 of RFC8126}}) |
-{: #key-table title="Aviation Keys: Registry Policies"}
+| Integers less than 0 | delegated to HOME Common Parameters registry |
+| Integers greater than -1 | Reserved |
+{: #tbl-hp-registry title="HOME Parameters: Registry Policies"}
+
+The positive integer values (including zero) MUST NOT be directly allocated. Instead new registries for specific use-case parameters/keys are created, inherit the HOME Common Parameter registry ({{iana-hcp}}) for negative values, and setup new allocation schemes for the positive integers in their scope. See {{iana-hap}} for an example. Such a new registry SHOULD have an associated Media Type to allow participants a mechanism to explicitly provide context for the parameter set in use.
 
 ### Registry Fields
 
@@ -122,7 +122,7 @@ This document requests IANA create a new registry under {{IANA.DRIP}} called "Av
 : A string value, to be used as a `key` in the `key: value` pair of a JSON object. No specific rules apply for syntax beyond being a valid JSON string for a object key, but it is recommended to use all lower-case and snake-case with underscores. Care should be given to the length of a Name to reduce wire size of JSON encodings for constrained environments.
 
 *Label*:
-: A integer value to be used as a key in a CBOR map. Different ranges of values use different registration policies, see {{key-table}}.
+: A integer value to be used as a key in a CBOR map.
 
 *Value Type*:
 : CBOR/JSON typing for value under the Key.
@@ -133,7 +133,7 @@ This document requests IANA create a new registry under {{IANA.DRIP}} called "Av
 *Reference*:
 : A link to a permanent and readily available specification defining the value syntax and semantics to be used for this key.
 
-### Registration Form {#ak-form}
+### Registration Form {#hp-form}
 
 ~~~ ascii-text
 Key:
@@ -144,7 +144,7 @@ Value Type:
 Change Controller:
 Reference:
 ~~~
-{: #key-form title="Aviation Keys: Registration Form"}
+{: #txt-hp-form title="HOME Parameters: Registration Form"}
 
 #### Review Criteria
 
@@ -152,12 +152,70 @@ For a Key the specified value of a new registration should not duplicate the syn
 
 Value Type MUST be a valid CBOR type or from {{IANA.CBOR.Tags}}. Their typing in JSON is assumed to follow the translation from CBOR to JSON following {{Section 6 of RFC8949}}.
 
-### Initial Values {#initial-keys}
+## HOME Common Parameters {#iana-hcp}
 
-The following keys of {{ome-keys}} are defined in this document for use during registration and query.
+This document requests IANA create a new registry under {{IANA.DRIP}} called "HOME Common Parameters" with registry policies described in {{tbl-hcp-registry}}. Initial entries for this registry are in {{txt-hcp}} and uses the registration form of {{hp-form}}.
+
+| Range | Registration Policy |
+| ----- | ------------------- |
+| Integers less than -65536 | Private Use ({{Section 4.2 of RFC8126}}) |
+| Integers in the range -257 to -65536 | Specification Required ({{Section 4.7 of RFC8126}}) |
+| Integers in the range -1 to -256 | Standard Action ({{Section 4.9 of RFC8126}}) |
+{: #tbl-hcp-registry title="HOME Common Parameters: Registry Policies"}
 
 ~~~ ascii-text
-{::include figures/ome-iana.txt}
+{::include figures/iana-hcp.txt}
 ~~~
-{: #ome-keys title="Aviation Keys: General Aviation Keys"}
+{: #txt-hcp title="Initial HOME Common Parameters"}
 
+## HOME Aviation Parameters {#iana-hap}
+
+This document requests IANA create a new registry under {{IANA.DRIP}} called "HOME Aviation Parameters" with registry policies described in {{tbl-hap-registry}}. Initial entries for this registry are in {{txt-hap}} and uses the registration form of {{hp-form}}.
+
+When using this registry the "ctx" parameter of {{iana-mt}} is set to "aviation".
+
+| Range | Registration Policy |
+| ----- | ------------------- |
+| Integers less than 0 | delegated to HOME Common Parameters registry |
+| Integers in the range 0 to 65535 | Specification Required ({{Section 4.7 of RFC8126}}) |
+| Integers greater than 65535 | First Come First Served ({{Section 4.3 of RFC8126}}) |
+{: #tbl-hap-registry title="HOME Aviation Parameters: Registry Policies"}
+
+~~~ ascii-text
+{::include figures/iana-hap.txt}
+~~~
+{: #txt-hap title="Initial HOME Aviation Parameters"}
+
+## Media Types {#iana-mt}
+
+IANA is requested to add the entries of {{tbl-home-mt}} to the "Media Types" registry {{IANA.MediaTypes}}.
+
+| Name | Template | Reference |
+| ---- | -------- | --------- |
+| home+cose | application/home+cose | This RFC, {{home-cose}} |
+| home+json | application/home+json | This RFC, {{home-json}} |
+{: #tbl-home-mt title="New Media Types"}
+
+### application/home+cose {#home-cose}
+
+~~~ ascii-text
+{::include figures/cose-mt.txt}
+~~~
+{: #txt-cose-mt title="home+cose Media  Registration"}
+
+### application/home+json {#home-json}
+
+~~~ ascii-text
+{::include figures/json-mt.txt}
+~~~
+{: #txt-json-mt title="home+json Media Type Registration"}
+
+## CoAP Content-Format {#iana-coap}
+
+IANA is requested to add the entries of {{tbl-coap-mt}} to the "CoAP Content-Formats" registry within the "Constrained RESTful Environments (CoRE) Parameters" registry group {{IANA.CORE}}.
+
+| Content Type | Content Coding | ID | Reference |
+| ------------ | -------------- | -- | --------- |
+| application/home+cose; ctx=aviation | - | TBD | This RFC |
+| application/home+json; ctx=aviation | - | TBD | This RFC |
+{: #tbl-coap-mt title="New CoAP Content-Formats"}

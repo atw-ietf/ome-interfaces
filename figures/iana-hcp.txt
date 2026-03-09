@@ -2,7 +2,7 @@ Key: HHIT
 Description: Hierarchial Host Identity Tag & Entity Type
 Name: hhit
 Label: -1
-Value Type: array of #6.54(bytes) and uint
+Value Type: array
 Change Controller: IETF
 Reference: This RFC
 
@@ -10,7 +10,7 @@ Key: VNB
 Description: Valid Not Before
 Name: vnb
 Label: -2
-Value Type: tdate or time
+Value Type: tdate / time
 Change Controller: IETF
 Reference: This RFC
 
@@ -18,7 +18,7 @@ Key: VNA
 Description: Valid Not After
 Name: vna
 Label: -3
-Value Type: tdate, time or number
+Value Type: tdate / time / number
 Change Controller: IETF
 Reference: This RFC
 
@@ -58,7 +58,7 @@ Key: Canonical Certificate Chain
 Description: List of DER Encoded X.509 Certificates
 Name: canon_chain
 Label: -8
-Value Type: array of bytes
+Value Type: array
 Change Controller: IETF
 Reference: This RFC
 

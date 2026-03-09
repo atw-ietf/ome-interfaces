@@ -9,11 +9,11 @@ ORCHID Key Infrastructure (OKI) follows a pattern of hierarchy starting at the I
 
 Each hierarchy level SHOULD have at least one Authorization HHIT. These are used to endorse the next level downwards in the hierarchy (Apex > RAA, RAA > HDA). Additionally each level MAY have as many Issuing HHITs as desired and are endorsed by the local-level Authorization HHIT. Issuing HHITs are used to endorse Operational HHITs within the scope of authority.
 
-This document allocates two new HHIT Entity Types in each level of hierarchy for this purpose, one for Authorization and one for Issuing ({{iana-entity-types}}).
+This document allocates two new HHIT Entity Types in each level of hierarchy for this purpose, one for Authorization and one for Issuing ({{iana-het}}).
 
 ## Hierarchy Responsibilities 
 
-An OME has a number of responsibilities depending on its place in the hierarchy. This section covers the technical responsibilities of each level of an HHIT's hierarchy using standard tree terminology. It should be noted that an leaf node here is in reference to the lowest hierarchy level as part of the Hierarchy ID. Such nodes are classically inodes as they endorse end-entity (called Operational) clients but all their descendants have a degree of zero.
+An HOME has a number of responsibilities depending on its place in the hierarchy. This section covers the technical responsibilities of each level of an HHIT's hierarchy using standard tree terminology. It should be noted that an leaf node here is in reference to the lowest hierarchy level as part of the Hierarchy ID. Such nodes are classically inodes as they endorse end-entity (called Operational) clients but all their descendants have a degree of zero.
 
 Specific non-technical policies for hierarchy levels are out of scope for this document and are expected to be developed into OKI policy guidance or added to existing PKI policy guidance for each use-case.
 
@@ -36,16 +36,26 @@ OMEs have the following general requirements.
 
 ### Apex
 
-The apex is a special node that is outside of the Hierarchy ID and consist solely of the IPv6 prefix for an ORCHID. This level MAY choose to not perform endorsement of root nodes of the Hierarchy ID and does not require to follow the requirements in {{general}}. If endorsement is being provided then {{general}} applies and the Apex takes a Hierarchy ID value of zero for all levels. Regardless the following requirements are to be met.
+The apex is a special node that is outside of the Hierarchy ID and consist solely of the IPv6 prefix for an ORCHID. 
 
+This level MAY choose to perform endorsement of root nodes of the Hierarchy ID and if so MUST follow {{general}} requirements. Otherwise {{general}} does not apply.
+
+Regardless the following requirements are to be met.
+
+- MUST maintain the IPv6 prefix delegated reverse zone
+- MUST provide using public methods any requirements, policy and/or guidance to prospective root descendants of Operational membership and/or root hierarchy membership
+- SHOULD verify prospective descendants of root hierarchy membership before allocation/delegation
+- MUST allocate values in the root portion of Hierarchy ID
+  - MUST delegate corresponding reverse zones to descendants
 - MAY have at least one Authorization HHIT that is self-signed
+  - MUST take the Hierarchy ID of all zeros
   - MAY register and endorse non-Operational descendants using an Authorization HHIT
 - MAY have at least one Issuing HHIT endorsed by a self-owned Authorization HHIT
   - MAY register and endorse Operational descendants using an Issuing HHIT
 
 ### Root
 
-In addition to the general requirements, the following applies to an OME this is a root node in the Hierarchy ID.
+In addition to {{general}} requirements, the following applies to an HOME that is a root node in the Hierarchy ID (such as an RAA).
 
 - MUST have at least one Authorization HHIT
   - SHOULD register with Apex using an Authorization HHIT using provided Hierarchy ID, otherwise Authorization HHIT is self-signed
@@ -55,7 +65,7 @@ In addition to the general requirements, the following applies to an OME this is
 
 ### Inode
 
-In addition to the general requirements, the following applies to an OME that is a inner node in the Hierarchy ID (such as an RAA).
+In addition to {{general}} requirements, the following applies to an HOME that is a inner node in the Hierarchy ID.
 
 - MUST have at least one Authorization HHIT
   - MUST register with parent using an Authorization HHIT using parent provided Hierarchy ID
@@ -65,7 +75,7 @@ In addition to the general requirements, the following applies to an OME that is
 
 ### Leaf
 
-In addition to the general requirements, the following applies to an OME that is a leaf in the Hierarchy ID (such as an HDA). All descendents MUST have a degree of zero.
+In addition to {{general}} requirements, the following applies to an HOME that is a leaf in the Hierarchy ID (such as an HDA). All descendants of this node from the hierarchy MUST have a degree of zero.
 
 - MUST have at least one Authorization HHIT
   - MUST register with parent using an Authorization HHIT using parent provided Hierarchy ID
@@ -101,7 +111,7 @@ Certificate Request:
 : As defined in {{Section 4.1.2.6 of RFC5280}}. This field is filled in based on the HHIT Entity Type being registered and subject to policy of the Certificate Authority.
 
 *Subject Alternative Name IP6*:
-: When the registrant knows which HID and/or Suite ID they want the CSR SHOULD contain the Subject Alternate Name extension as defined in {{Section 4.2.1.6 of RFC5280}} using ipAddress containing the fully formed HHIT and MUST mark the extension as `critical`. The OME MUST check to ensure that the HHIT located in the extension is properly generated with the included public key of this CSR. If the registrant does not know or care the value of their HID and/or Suite ID, the Extensions field MUST NOT appear and the OME will use its HID for HHIT generation using the public key provided by this CSR.
+: When the registrant knows which HID and/or Suite ID they want the CSR SHOULD contain the Subject Alternate Name extension as defined in {{Section 4.2.1.6 of RFC5280}} using ipAddress containing the fully formed HHIT and MUST mark the extension as `critical`. The HOME MUST check to ensure that the HHIT located in the extension is properly generated with the included public key of this CSR. If the registrant does not know or care the value of their HID and/or Suite ID, the Extensions field MUST NOT appear and the HOME will use its HID for HHIT generation using the public key provided by this CSR.
 
 The use of other Extension fields are out of scope for this document.
 

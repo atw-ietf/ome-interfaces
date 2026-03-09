@@ -4,34 +4,88 @@ This appendix is normative.
 
 ## Prelude
 
-The OME CDDL Prelude of {{cddl-prelude}} is built upon the prelude defined in {{Appendix E of RFC8610}} to allow interoperability with JSON encodings. The conversion of fields to/from CBOR and JSON MUST use the advice in {{Section 6 of RFC8949}}. The full CDDL of models defined in this document are in {{cddl-full}}.
+The HOME CDDL Prelude of {{cddl-prelude}} is built upon the prelude defined in {{Appendix E of RFC8610}} to allow interoperability with JSON encodings. The conversion of fields to/from CBOR and JSON MUST use the advice in {{Section 6 of RFC8949}}.
 
 ~~~ ascii-text
 {::include cddl/prelude.cddl}
 ~~~
-{: #cddl-prelude title="OME CDDL Prelude"}
+{: #cddl-prelude title="CDDL: HOME Prelude"}
+
+## HRI & HRR Claims
+
+The full claim set for HRI and HRR, including prelude, are shown in {{cddl-claims}}.
 
 ~~~ ascii-text
-{::include cddl/full.cddl}
+{::include cddl/claims.cddl}
 ~~~
-{: #cddl-full title="Full OME CDDL"}
+{: #cddl-claims title="CDDL: HRI & HRR Claims"}
 
 ## IPv6 Handling {#ip6-handling}
 
 IPv6 addresses MUST be tagged using {{RFC9164}} when encoded in CBOR. For JSON, IPv6 addresses MUST be an address string as defined in {{RFC4291, Section 2.2}}.
 
+## HOME Common Parameters
+
 ~~~ ascii-text
 hhit = [
-  ip6: #6.54(bytes) / text,
+  ip6: #6.54(bytes .size(16)) / text, ; ip6 addr tstr
   hhit_entity_type: uint
 ]
+vnb = tdate / time
+vna = tdate / time / number
+publish = bool
+csr = bytes / text .b64u bytes ; DER encoded
+oracle_x = bytes / text .b64u bytes ; DER encoded
+canon_x = bytes / text .b64u bytes ; DER encoded
+canon_chain = [ bytes / text .b64u bytes ] ; DER encoded
+contact = text ; b64 encoded jCard object
 ~~~
-{: #hhit-cddl title="HHIT Aviation Key CDDL"}
+{: #cddl-hcp title="CDDL: HOME Common Parameters"}
 
-## VNB & VNA Handling
+### VNB & VNA Handling
 
-The *Registrant* can select from a number of options to encode the values of valid not before (`vnb`) and valid not after (`vna`) for time of applicability of an individual CSR (`csr`) as part of inquiry `metadata`. The use of the `time` or `tdate` types allow for absolute time references. The use of the `number` type for `vna` specifies a positive offset in seconds from an absolute time. When `null` is used the *Registrant* is informing the OME that for `vnb` the OME MUST use the current time as `vnb` during registration and for `vna` the OME MUST set `vna` to a time such that the default OME policy for maximum delta between `vnb` and `vna` is not exceeded.
+The inclusion of the valid not before (VNB) and valid not after (VNA) parameters to the `metadata` map of {{hri-model}} allows a *Registrant* to set very specific validity times for their registration.
 
-> Implementation Note: due to not differentiating between integers and floats in its number type, implementations using JSON as the encoded format MUST check the value of `vna` to determine if its being used as an offset or absolute time.
+VNB when present is always an absolute time reference per its typing. VNA is either an absolute time reference (like VNB) or a positive offset in seconds (to be added to the VNB absolute time). Negative values of VNA MUST be considered an encoding error.
 
-As an example of the use of `vnb` and `vna`, a *Registrant* may set `vnb=null` and `vna=3600`. The OME in this instance would use the current absolute time at receipt of the registration request for `vnb` and then apply the offset specified by `vna` to obtain an absolute time for `vna` that is 3600 seconds after `vnb`. These absolute times of `vnb` and `vna` are then used in an X.509 certificate being created by the OME to endorse the registration.
+> Implementation Note: due to not differentiating between integers and floats in its number type, implementations using JSON as the encoded format MUST check the value of VNA to determine if its being used as an offset or absolute time.
+
+When VNB is not present in the `metadata` map the HOME MUST use the current absolute date/time as VNB. The absence of VNA is a signal for the HOME to use a default offset, determined by policy and out of scope for this document, to add to VNB.
+
+As an example of the use of VNB and VNA, a *Registrant* may set VNB to `null` and VNA to `3600`. The HOME in this instance would use the current absolute time at receipt of the registration request for VNB and then apply the offset specified by VNA to obtain an absolute time for VNA that is `3600` seconds after VNB.
+
+## HOME Aviation Parameters
+
+These parameters are carried over from {{Section 5.2 of RFC9886}}. The content in {{cddl-hap}} carries the same semantics from {{RFC9886}} but is more well-defined in syntax of CDDL.
+
+~~~ ascii-text
+uas_type = (uint .le 15) .default 0
+uas_ids = [ + [
+  id_type: uint .le 15,
+  uas_id: bytes .size(20)  
+] ]
+auth = [ + [
+  type: uint .le 15,
+  data: bytes .size(1..362)
+] ]
+self_id = [
+  type: uint .size(1),
+  description: text .size(23)
+]
+area = [
+  count: (uint .size(1)) .default 1,
+  radius: number,
+  floor: number,
+  ceiling: number
+]
+classification = [
+  type: (uint .le 8) .default 0,
+  class: (uint .le 15) .default 0,
+  category: (uint .le 15) .default 0
+]
+operator_id = [
+  type: uint .size(1),
+  id: bytes .size(20)
+]
+~~~
+{: #cddl-hap title="CDDL: HOME Aviation Parameters"}

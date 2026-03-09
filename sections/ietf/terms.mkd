@@ -4,8 +4,8 @@
 
 ## Additional Definitions & Abbreviations
 
-**ORCHID Management Entity (OME)**:
-: A term to describe an entity providing various identity management functions (such as registration, query, etc.) to clients at a specific point in the hierarchy. OME's have four major functional components that can be co-located or distributed as a system of systems: Registrar, Registry, Authoritative Name Server and Certificate Authority. The DRIP Identity Management Entity (DIME) is a specialization of OME in support of the UAS/aviation ecosystem.
+**Hierarchial ORCHID Management Entity (HOME)**:
+: A term to describe an entity providing various identity management functions (such as registration, query, etc.) to clients at a specific point in the hierarchy. HOME's have four major functional components that can be co-located or distributed as a system of systems: Registrar, Registry, Authoritative Name Server and Certificate Authority. The DRIP Identity Management Entity (DIME) is a specialization of HOME in support of the UAS/aviation ecosystem.
 
 **ORCHID Key Infrastructure (OKI)**:
 : A key infrastructure consisting of policies around entities using HHITs in a domain space. An example of an OKI is the DRIP Key Infrastructure (DKI) for UAS/aviation.
@@ -13,6 +13,6 @@
 **ORCHID Key Infrastructure X.509 (OKIX)**:
 : A set of X.509 certificate profiles in compliance of Public Key Infrastructure X.509 (PKIX, {{RFC5280}}) that support an OKI. An example of an OKIX is the DRIP Key Infrastructure X.509 (DKIX) for UAS/aviation.
 
-**OME Token**:
+**HOME Token**:
 
-: In the context of this specification; a OME Token can be any of the Concise Binary Object Representation (CBOR; {{STD94}}) Object Signing & Encryption (COSE; {{STD96}}) or JavaScript Object Notation (JSON; {{STD90}}) Object Signing & Encryption (JOSE; {{RFC7515}}, {{RFC7516}}) structure.
+: In the context of this specification; a HOME Token can be any of the Concise Binary Object Representation (CBOR; {{STD94}}) Object Signing & Encryption (COSE; {{STD96}}) or JavaScript Object Notation (JSON; {{STD90}}) Object Signing & Encryption (JOSE; {{RFC7515}}, {{RFC7516}}) structure.

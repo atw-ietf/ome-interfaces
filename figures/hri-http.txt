@@ -1,7 +1,7 @@
 POST /.well-known/register-hhit HTTP/1.1
 Host: uss.example.com
-Accept: application/cose, application/jose
-Content-Type: application/cose
+Accept: application/home+cose, application/home+json
+Content-Type: application/home+cose
 Content-Length: <COSE length>
 
 [ Encrypted COSE from registrant ]
