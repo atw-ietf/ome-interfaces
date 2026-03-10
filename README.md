@@ -6,7 +6,7 @@ This is the working area for the IETF Internet-Draft, "Hierarchial ORCHID Manage
 
 ```sh
 apt install python3 python3-pip
-pip3 install --user rfc2xml
+pip3 install --user xml2rfc
 apt install ruby-full
 gem install kramdown-rfc2629
 ```
