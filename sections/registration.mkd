@@ -146,7 +146,7 @@ HOME Tokens with multiple entities/keys can be trivially mapped as well only whe
 For the above reasoning the following guidance is to HOMEs for management of HTTP Response Codes and using the HRR `failure` array and `error-data` structure. Unless otherwise noted a responding HOME Token MUST use both encryption and signature layers.
 
 **422 Unprocessable Content**:
-: When a HOME Token fails to decrypt a this response code MUST be sent with a signature only layer HOME Token signaling in the HRR the decryption issue(s) experienced. The *eid*, *kid* and *cat* fields MUST be set to `null`. The *msg* SHOULD contains specific details about the failed decryption. More than one `error-data` MAY be present for different decryption issues.
+: When a HOME Token fails to decrypt this response code MUST be sent with a signature only layer HOME Token signaling in the HRR the decryption issue(s) experienced. The *eid*, *kid* and *cat* fields MUST be set to `null`. The *msg* SHOULD contains specific details about the failed decryption. More than one `error-data` MAY be present for different decryption issues.
 
 **401 Unauthorized**:
 : Failed signature(s) of a HOME Token MUST use this response code with a HOME Token signaling in the HRR the signature validation issue(s) experienced. The *eid*, *kid* and *cat* fields MUST be set to `null`. *msg* SHOULD contains specific details about what signature failed to verify. More than one `error-data` MAY be present to separate signature(s) processed.
