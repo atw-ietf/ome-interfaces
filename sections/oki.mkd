@@ -30,7 +30,7 @@ OMEs have the following general requirements.
   - MUST delegate corresponding reverse zones to descendants
 - MAY support {{RFC7401}}
   - MAY support services {{RFC8003}} such as {{RFC8004}}
-- SHOULD implement {{registration-process}} and {{query-process}}, otherwise respond with Not Implemented
+- SHOULD implement {{home-registration}} and {{query-process}}, otherwise respond with Not Implemented
 - MUST maintain registrations with relevant Personally Identifiable Information (PII) as required by their jurisdiction
 - MUST fulfill any jurisdiction requirements that are out of scope for this document
 

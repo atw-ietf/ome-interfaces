@@ -1,0 +1,18 @@
+          Registrant             HOME
+              |                   |
+ GEN_HHIT/HI  |                   |
+     GEN_CSR  |                   |
+              |--------HRI------->|
+              |                   | VALID_REG?
+              |<-------FAIL-------|
+              |                   | DUPE_HI?
+              |<-------FAIL-------|
+              |                   | DUPE_HHIT?
+              |<-------FAIL-------|
+              |                   | GEN_CERTS
+              |                   | UPDATE_DATABASE
+              |                   | UPDATE_NS
+              |<------ HRR--------|
+     ONBOARD  |                   |
+              |                   |
+

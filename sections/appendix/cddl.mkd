@@ -44,7 +44,7 @@ contact = text ; b64 encoded jCard object
 
 ### VNB & VNA Handling
 
-The inclusion of the valid not before (VNB) and valid not after (VNA) parameters to the `metadata` map of {{hri-model}} allows a *Registrant* to set very specific validity times for their registration.
+The inclusion of the valid not before (VNB) and valid not after (VNA) parameters to the `metadata` map of {{hri}} allows a *Registrant* to set very specific validity times for their registration.
 
 VNB when present is always an absolute time reference per its typing. VNA is either an absolute time reference (like VNB) or a positive offset in seconds (to be added to the VNB absolute time). Negative values of VNA MUST be considered an encoding error.
 

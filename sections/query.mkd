@@ -1,19 +1,11 @@
-# Differential Access Query Process {#query-process}
+# Differential Access Query {#query-process}
 
-This section details the process of query for additional private information following the Z-diagram of {{query-z}} and the associated table of contents in {{query-z-tbl}}. It is the lower right link of {{arch-fig}} labeled with "RDAP" between *Querant* and *Registry*.
+This section details the process of query for additional private information following the Z-diagram of {{fig-z-query}}. It is the lower right link of {{arch-fig}} labeled with "RDAP" between *Querant* and *Registry*.
 
 ~~~ ascii-art
-{::include figures/query-z.txt}
+{::include figures/z-query.txt}
 ~~~
-{: #query-z title="Query Z-Diagram" artwork-align="center"}
-
-| Section | Applicable Z-Diagram Reference(s) |
-| ------- | --------------------------------- |
-| {{client-query}} | (L) RX_HHIT, (M) DNS, (N) RDAP_URI, (O) RDAP_Q |
-| {{rdap-process}} | (P) VALID_X509?, (Q) POLICY_CHECK?, (R) REDACTION |
-| {{rdap-pass}} | (S) RDAP_R |
-| {{client-resp}} | (T) ACT |
-{: #query-z-tbl title="Query Process Table of Contents"}
+{: #fig-z-query title="Query Z-Diagram" artwork-align="center"}
 
 For HOME's the differential access mechanism known as Registration Data Access Protocol (RDAP, {{STD95}}) is selected as the interface for the *Registry* and specified in the following sections. Public information is hosted by the *Authoritative Name Server* and accessed using DNS methods as defined in {{RFC9886}}. Authentication of the HOME and *Querant* is done through Mutual TLS using X.509 certificates.
 
@@ -21,28 +13,21 @@ As part of RDAP, the HOME MAY follow {{RFC9224}} to be part of the RDAP bootstra
 
 It is RECOMMENDED that eXtensible Access Control Markup Language (XACML) with Security Assertion Markup Language (SAML) is used to exchange policy information.
 
-## Querant Query {#client-query}
+## RDAP Query {#client-query}
 
 A *Querent* with an HHIT looking for private information is RECOMMENDED to perform a series of DNS queries to build a URI that is then used for an HTTPS GET query. The same URI MAY be obtained using the RDAP bootstrap process if the HOME followed {{RFC9224}}, but *Querants* MUST NOT expect this.
 
-The base URI needed is part of Subject Alternative Name extension of a Canonical Registration Certificate found in HHIT RRTypes defined in {{Section 5.1 of RFC9886}} and accessed one or more reverse IPv6 DNS lookups. The exact certificate with the base URI for an HOME and its clients is determined by policy and where the URI is minimally duplicated across many certificates.
+The base URI needed is part of Subject Alternative Name extension of a Canonical Registration Certificate found in HHIT RRType defined in {{Section 5.1 of RFC9886}} and accessed by one or more reverse IPv6 DNS lookups. The exact certificate with the base URI for an HOME and its clients is determined by policy and where the URI is minimally duplicated across many certificates.
 
 Once the base URI is found the *Querant* concatenates the `/.well-known/home/query/` string then the nibble-reversed HHIT to form the full query string.
 
 The HTTPS GET method MUST be authenticated using one of the methods defined in {{mutual-tls}}.
 
-~~~ ascii-text
-{::include figures/rdap-query.txt}
-~~~
-{: title="Example HHIT HTTP RDAP Query"}
+### Query Endpoint
 
-## HOME RDAP Processing & Response {#rdap-process}
+The `/.well-known/home/query/<IP address>` endpoint SHOULD be redirected to the full qualified hosted path conforming with {{Section 3.1.1 of RFC9082}} (i.e. `ip/<IP address>`) by the HOME. All other RDAP endpoints SHOULD NOT be implemented as specified in {{RFC9082}}. Other methods MAY be provided to enable differential access controlled queries of information pertaining to an HHIT but are out of scope for this document.
 
-The `/.well-known/home/query/<IP address>` endpoint SHOULD be redirected to the locally hosted path conforming with {{Section 3.1.1 of RFC9082}} (i.e. `ip/<IP address>`). All other RDAP endpoints SHOULD NOT be implemented as specified in {{RFC9082}}. Other methods MAY be provided to enable differential access controlled queries of information pertaining to an HHIT but are out of scope for this document.
-
-Once cleared through {{mutual-tls}}, data redaction is handled before {{rdap-pass}} using policy methods of the HOME and is out of scope for this document. 
-
-### Differential Access Control {#mutual-tls}
+## Differential Access Control {#mutual-tls}
 
 Per REG-2 and REG-4 of {{Section 4.4.1 of RFC9153}}, RDAP queries to an HOME MUST be protected using fine-grained AAA policies in a both human- & machine-readable form for automated enforcement. RDAP supports only HTTP-based mechanisms for authentication as defined in {{Section 3.2 of RFC7481}}. A federated authentication mechanism, such as the examples in {{Section 3.2.1 of RFC7481}}, is RECOMMENDED.
 
@@ -54,31 +39,22 @@ For international and/or global harmonization, this document standardizes the fo
 
 An HOME, when supporting Mutual TLS, SHOULD accept valid OKIX-compliant certificates and MAY accept other {{RFC5280}} (PKIX) compliant certificates. Standard TLS rejection methods MUST be followed to signal to the *Querant* the rejection of the certificate and authentication.
 
-### HOME Data Structure {#rdap-model}
+The use of other RDAP compatible authentication mechanisms are out of scope for this document.
+
+## RDAP Extension & Response
+
+A HOME MUST respond to a successful query using {{RFC9083}}. The HOME RDAP Extension shown in {{cddl-rdap}} is placed under the key `home` as part of the main JSON map. The `rdapConformance` array MUST include the string literal of "home_v0" to signal conformance with this specification. Other RDAP specifications MAY be part of the response such as {{Section 5.4 of RFC9083}}.
 
 ~~~ ascii-text
 {::include cddl/rdap.cddl}
 ~~~
-{: #rdap-cddl title="HOME RDAP Extension CDDL"}
+{: #cddl-rdap title="CDDL: HOME RDAP Extension"}
 
 *hhit*:
 : Array structure contain the HHIT Entity Type and the IPv6 address string per {{ip6-handling}}.
 
 *canon_x*:
-: DER encoded, base64url, OKIX-compliant certificate signed by the HOME endorsing the submitted HHIT and public key of the *Registrant*.
+: Canonical Registration Certificate encoded in base64url.
 
 *metadata*:
-: Map that contains elements of information for the registration. Elements included are based on access policy and registration requirements of the HOME.
-
-### RDAP Response {#rdap-pass}
-
-An RDAP response from an HOME MUST contain {{rdap-cddl}} under the key of `home`. The `rdapConformance` array of the response MUST include `ome_v0`. The HOME MAY also include the standard expected response of {{Section 5.4 of RFC9083}} if applicable.
-
-~~~ ascii-text
-{::include figures/rdap-response.txt}
-~~~
-{: title="HOME RDAP Response"}
-
-## Querant Post-Response {#client-resp}
-
-Depending on the context of the query and response the *Querant* uses the data accordingly.
+: Map that contains private elements of information for the registration. Elements included are based on access policy and registration requirements of the HOME. Elements are redacted or removed using policy methods of the HOME and is out of scope for this document.

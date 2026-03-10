@@ -1,0 +1,15 @@
+         Querant               HOME
+            |                   |
+    RX_HHIT |                   |
+            |<-------DNS------->|
+   RDAP_URI |                   |
+            |------RDAP_Q------>|
+            |                   | ACCEPT_X509?
+            |<------DENY--------| 
+            |                   | POLICY_CHECK?
+            |<------DENY--------|
+            |                   | REDACTION
+            |<-----RDAP_R-------|
+        ACT |                   |
+            |                   |
+
