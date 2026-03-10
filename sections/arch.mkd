@@ -1,4 +1,4 @@
-# HOME Functions & Supporting Infrastructure
+# HOME Component Architecture & Functions
 
 To properly provide the necessary services identified in both {{RFC9153}} and {{RFC9434}} a DIME, or more generally an HOME, requires four critical functions: *Registrar*, *Registry*, *Authoritative Name Server* and *Certificate Authority* as detailed below for this document and in {{arch-fig}}.
 
@@ -17,7 +17,7 @@ To properly provide the necessary services identified in both {{RFC9153}} and {{
 ~~~ ascii-art
 {::include figures/arch.txt}
 ~~~
-{: #arch-fig title="Simplified Diagram of Registration/Query Components & Interactions" artwork-align="center"}
+{: #arch-fig title="Simplified Diagram of HOME Registration/Query Components & Interactions" artwork-align="center"}
 
 The specific interaction models and transports between all of these functions when not co-located (i.e. as a distributed system of systems) is out of scope for this document and are represented by dotted lines (`.` and `:` between `x`'s) in {{arch-fig}}. Note that of the duplicate links feeding *Authoritative Name Server* and *Registry* one set is chosen for implementation for each. A number of these functions/interactions are lifted from the DNS and the existing relationships and protocols between such entities in that domain also can apply here. For example, between *Registrar* and *Registry* is the Extensible Provisioning Protocol (EPP, {{STD69}}) or equivalents such as RESTful Provisioning Protocol (RPP).
 
