@@ -1,6 +1,6 @@
-# ORCHID Management Entity Interfaces for Registration & Differential Access Query
+# Hierarchial ORCHID Management Entity (HOME) Interfaces for Registration & Differential Access Query
 
-This is the working area for the IETF Internet-Draft, "ORCHID Management Entity Interfaces for Registration & Differential Access Query".
+This is the working area for the IETF Internet-Draft, "Hierarchial ORCHID Management Entity (HOME) Interfaces for Registration & Differential Access Query".
 
 ## Dependencies & Software
 

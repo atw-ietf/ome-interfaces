@@ -7,33 +7,33 @@ This sections details the process of registration following {{art-z-registration
 ~~~
 {: #art-z-registration title="Registration Z-Diagram" artwork-align="center"}
 
-The mechanism for registration is the use of COSE or JOSE over HTTPS. COSE MUST be supported and JOSE is RECOMMENDED to be supported for flexibility for non-constrained *Registrants*. The rest of this section specifies exact behavior for this interface of an HOME.
+The mechanism for registration is the use of COSE or JOSE over HTTPS. COSE MUST be supported and JOSE is RECOMMENDED for flexibility for non-constrained *Registrants*. The rest of this section specifies exact behavior for this interface of an HOME.
 
 ## HOME Token
 
-A HOME Token is a two-layer structure in either COSE or JOSE format. The outer layer is encryption while the inner layer is signature.
+A HOME Token is a one or two-layer structure in either COSE or JOSE format. When two layers are present the outer layer MUST be {{encryption-layer}} while the inner layer MUST be {{signature-layer}}. When only one layer is used it MUST be a {{signature-layer}}.
 
 ### Signature Layer
 
-The payload segment of the signature layer contains a claim set that is encoded in either CBOR or JSON and MUST include registered HOME claim(s) ({{hri}} and/or {{hrr}}). The claim set SHOULD also contain the claims of `nbf`, `exp`, and `iat`. The set MAY contain the `aud` claim with a targeted HHIT, encoded per {{ip6-handling}}, if known.
+The payload segment of the signature layer contains a claim set that is encoded in either CBOR or JSON and MUST include registered HOME claim(s) ({{hri}} and/or {{hrr}}). The claim set SHOULD also contain the claims of `nbf`, `exp`, and `iat`. The set MAY contain the `aud` claim with a targeted HHIT, encoded per {{ip6-handling}}, if known. Additional claims are out of scope for this document.
 
-Respective header parameters MUST be used to indicate the verification key. When the key is part of the payload a protected header parameter MUST be used (`jwk` for JOSE and `kccs` for COSE) to carry the verification key to avoid needing to parse the payload segment of the structure. For all other cases the `kid` header parameter is used and contains an HHIT, encoded per {{ip6-handling}}, and placed in a unprotected header.
+Respective header parameters MUST be used to indicate the verification key. When the key is part of the payload a protected header parameter MUST be used (`jwk` for JOSE and `kccs` for COSE) to carry the verification key to avoid needing to parse the payload segment of the structure. For all other cases the *kid* header parameter is used and contains an HHIT, encoded per {{ip6-handling}}, and placed in a unprotected header.
 
-A Content-Type parameter, as part of the unprotected header, is RECOMMENDED to be set to `application/home+cose` or `application/home+json` and SHOULD include the `ctx` parameter to indicate the set of keys/parameters being used for any maps in the payload structure as they are application specific.
+A Content-Type parameter, as part of the unprotected header, is RECOMMENDED to be set to `application/home+cose` or `application/home+json` and SHOULD include the `ctx` parameter to indicate the set of keys/parameters being used for any maps in the payload structure as they are application specific. For `application/home+cose`, the inclusion of the `cose-type` parameter is OPTIONAL to indicate either `"cose-sign"` or `"cose-sign1"`. Additional header parameters are out of scope for this document.
 
 ### Encryption Layer
 
-HOME Tokens MUST be encrypted as it may contain Personally Identifiable Information (PII). The encryption algorithm selection and policies are left for HOME policy and MUST be provided to clients. It is strongly RECOMMENDED that asymmetric keys are used for encryption.
+HOME Tokens SHOULD be encrypted as it may contain Personally Identifiable Information (PII). The encryption layer is not used for example when an HOME Token fails to decrypt and an reason needs to be returned to the client. The encryption algorithm selection and policies are left for HOME policy and MUST be provided to clients. It is strongly RECOMMENDED that asymmetric keys are used for encryption.
 
 Encryption is done with Elliptic Curve Diffie-Hellman (ECDH) using Ephemeral-Static (ES) keying. The static key is provided by the HOME while the a unique ephemeral key is provided by the client for each HOME Token and/or recipient. The transfer of this ephemeral key is covered by the relevant COSE/JOSE specifications for using ECDH with encryption objects. The HOME MUST provide its static keys through public methods such as the DNS or an HTTPS GET endpoint.
 
-The Content-Type header parameter of COSE/JOSE MUST be used to indicate the type of data that has been encrypted. This MUST be `application/cose; cose-type="cose-sign"`, `application/cose; cose-type="cose-sign1"` or `application/jose+json`.
+The Content-Type header parameter of COSE/JOSE MUST be used to indicate the type of data that has been encrypted. This MUST be `application/cose; cose-type="cose-sign"`, `application/cose; cose-type="cose-sign1"` or `application/jose+json`. Additional header parameters are out of scope for this document.
 
 ## Registration Claims
 
 ### HOME Registration Inquiry (HRI) {#hri}
 
-The structure of an HRI claim is around registration of a set of entities, each uniquely identified by the *Registrant* that contains keys (also each uniquely identifier) and metadata for each.
+The structure of an HRI claim is around registration of a set of entities, each uniquely identified by the *Registrant* that contains keys (also each uniquely identified) and metadata for each.
 
 ~~~ ascii-text
 {::include cddl/request.cddl}
@@ -46,11 +46,11 @@ The structure of an HRI claim is around registration of a set of entities, each 
 *entity-id*:
 : A string or integer key, as part of the *entities* map, set by the *Registrant*. Unique in scope to only the inquiry it is present in.
 
-*entity_type*:
-: An HHIT Entity Type as defined in {{Section 5.1.2 of RFC9886}}.
+*hhit_entity_type*:
+: An HHIT Entity Type as defined in the registry found at {{IANA.DRIP}}.
 
 *keys*:
-: A map of the keys being registered for an entity in the inquiry. Each element pointed by a *key-id* contains an array of two objects: *csr* and *metadata*
+: A map of the keys being registered for an entity in the inquiry. Each element pointed by a *key-id* contains an array (*key*) containing two objects: *csr* and *metadata*.
 
 *key-id*:
 : A string or integer key, as part of the *keys* map for each *entity*, set by the *Registrant*. Unique in scope of the *entity* and relevant *keys* map.
@@ -59,15 +59,13 @@ The structure of an HRI claim is around registration of a set of entities, each 
 : OKI(X)-compliant Certificate Signing Request (CSR) that is DER encoded. See {{key-csr}} for considerations the CSR.
 
 *metadata*:
-: A map containing elements (key, value pairs) and their associated values related to keys/entities in the inquiry. An initial key set is registered in {{iana-hp}}.
+: A map containing elements (key, value pairs) and their associated values related to keys/entities in the inquiry. The contents are subject to policy of an HOME and MUST be provided to their clients. The specific key set to be used SHOULD be indicated using the optional parameter of the registered Media Type ({{iana-mt}}) as part of the signature layers Content-Type parameter. An initial key set is registered in {{iana-hp}}.
 
 Each nesting in {{cddl-hri}} contains its own *metadata*. This allows a *Registrant* to set elements at a higher nesting in the model to be shared among nested sections. When combining the maps from each nesting level, elements found closer to the *key* level are given priority.
 
-The contents of *metadata* are subject to policy of an HOME and MUST be provided to their *Registrant*s. The specific key set to be used SHOULD be indicated using the optional parameter of the registered Media Type ({{iana-mt}}) as part of the signature layers Content-Type parameter.
-
 ### HOME Registration Response (HRR) {#hrr}
 
-This claim is structured to use the provided *entity-id*s and *key-id*s by from an HRI. It also can contain a list of failures, organized by those same identifiers.
+This claim is structured to use the provided *entity-id*s and *key-id*s from an HRI. It also can contain a list of failures, organized by those same identifiers.
 
 ~~~ ascii-text
 {::include cddl/response.cddl}
@@ -87,19 +85,16 @@ This claim is structured to use the provided *entity-id*s and *key-id*s by from 
 : A string or integer key, as part of the *keys* map for each *entity*, set by the *Registrant* in the inquiry.
 
 *failure*:
-: List of registration failures, each denoting the entity and/or key by their respective IDs. When `eid` or `kid` is `null` it implies that all of that type are denoting the same failure.
+: List of registration failures, each using the *entity-id* in *eid* and *key-id* in *kid* as part of *error-data*.
 
-## Transport Considerations
+*error-data*:
+: A structure to hold information pertaining to validation or processing errors of an HRI. When *eid* or *kid* are `null` it implies that all of that type are denoting the same failure explained via *cat* and/or *msg*. When both *eid* and *kid* are `null` it indicates the processing of the HRI token itself or all keys across the HRI entities shared the same failure indicated by *cat* and/or *msg*. See {{response-codes}} for more details.
 
-If the transport carrying a HOME Token provides a mechanism to identify the media type of the payload it SHOULD be used. For example HTTP headers allow the use of "Content-Type" which can be set to `application/cose; cose-type="cose-encrypt"`, `application/cose; cose-type="cose-encrypt0"` or `application/jose+json` when transporting HOME Tokens.
-
-For COSE, the resulting CBOR MUST use a proper CBOR Tag to indicate what encryption object is encoded (COSE_Encrypt; `#6.96` or COSE_Encrypt0; `#6.16`). For JOSE the General or Flattened JWE JSON Serialization syntax MUST be used.
-
-## Processing Considerations
+## Considerations
 
 ### Keys & Certificate Signing Request {#key-csr}
 
-*Registrant*s obtains one or more Certificate Signing Request (CSR) that is OKI(X)-compliant by either generating their own key-pair(s), RECOMMENDED asymmetric, or obtaining them from a related party they are acting as a proxy for.
+*Registrant*s obtains one or more Certificate Signing Requests (CSRs) that are OKI(X)-compliant by either generating their own key-pair(s), RECOMMENDED asymmetric, or obtaining them from a related party they are acting as a proxy for.
 
 Cryptographic materials SHOULD be on the device intending to use said material in operation. If the *Registrant* is acting as a proxy the methods of the generation and/or transfer of cryptographic materials to and from the device being proxied to is out of scope for this document.
 
@@ -107,22 +102,61 @@ If the *Registrant* knows the HID of the *Registar* and/or *Certificate Authorit
 
 ### Registration Endpoint
 
-The `/.well-known/home/registry` endpoint SHOULD be redirected to the locally hosted path of the HOME accordingly.
+The `/.well-known/home/registry` endpoint SHOULD be redirected to a fully qualified path by the HOME and MUST use `308 Permanent Redirect`.
 
 ### HRI Validation & Processing {#req-valid}
 
-All requests MUST pass the following checks before following {{req-approve}}:
+HRI validation is processing is done across two functional components, which can be co-located or distributed, the *Registrar* and *Certificate Authority*. The following text is based on a co-located processing a HOME Token with these two entities sharing access to the same HHIT.
 
-1. The HOME Token signature validates with an acceptable public key
-2. The CSR signature passes with embedded public key
-3. The public key in CSR is unique to the HOME's scope
-4. HOME constructs using their HID and the CSR's public key an HHIT and;
-    * If an HHIT is provided by *Registrant* in CSR ensure they are equivalent
-    * Confirm the HHIT is unique in the HOME's authority of the hierarchy
-5. Additional data, if any, in the HOME Token is acceptable; see {{oaas}}
+The HOME starts with an HRI and first decrypts the payload using ECDH. Once decrypted, the HOME Token signature(s), the payload of the encryption layer of the HOME Token, are validated with acceptable public key(s). This SHOULD involve DNS lookups to obtains public keys but MAY uses a cache or a key as part of the signature layer of the HOME Token. If decryption or signature verification fails the HOME MUST respond using a single layer HOME Token using the `failure` array to provide error context.
 
-If any of the above checks fail, the HOME fills in the the `failure` array of {{cddl-hrr}} accordingly for each entity/key.
+Next the payload at the signature layer is extracted, the `nbf`, `ext`, `iat` and `aud` claims are validated, and then `hri` claim is processed recursively starting from the outside of the structure. Each entity merges their `metadata` with the inquiry `metadata` with entity elements taking precedence. Next each key merges its `metadata` with the entity `metadata` with key elements taking precedence. The HOME performs validation of the final combined `metadata` structure for each key using local validation and/or consultation of an "oracle" (see {{oaas}}).
 
-#### Inquiry Approval {#req-approve}
+Next each key CSR has its signature validated then the public key confirmed to be unique to the HOME's scope. The HOME then constructs, using its Hierarchy HID and the CSR public key, a prospective HHIT for the key. If the CSR contains an HHIT as part of the Subject Alternative Name the two HHITs are checked for equivalence. The HOME finally checks that the HHIT is unique in its scope.
 
-Once processed as a "pass" the HOME MUST generate at least OKIX-compliant certificates and based on the use case MAY generate other artifacts. The HOME MUST store these certificates and other artifacts in their *Registry* and also update the relative *Authoritative Name Server* accordingly.
+If everything validates above the HOME endorses the new HHIT by generating and signing an OKI(x)-compliant Canonical Registration Certificate along with any other artifacts required for the entity registration. The data is then placed within the HRR `success` map using the same *entity-id* and *key-id* from the HRI. All artifacts of this endorsement are placed in the *Registry* and artifacts that are considered public, such as those needed for {{RFC9886}}, are placed into the *Authoritative Name Server*.
+
+When a failure occurs at any point in the validation and/or processing of a entity/key the HRR `failure` array is appended using the *entity-id*, *key-id* and other elements to provide context for the issue. The HOME MAY compress the `failure` array after processing. For example if all the keys for an *entity-id* share the same failure the individual structures can be compressed to a single `[<eid>, null, <cat>, <msg>]` instead of one for each *key-id*.
+
+The HOME upon handling all entities and keys then constructs an two-layer (encryption and signature) HOME Token and responds to the *Registrant* with it. This HOME Token MAY contain both the original HRI claim and the associated HRR claim. 
+
+## Transport
+
+This document defines the use of HTTPS as the transport for the HOME Tokens. The use of other transports are out of scope for this document.
+
+For COSE, the resulting CBOR content MUST use a proper CBOR Tag to indicate what object is encoded. For JOSE content, the General or Flattened JWE JSON Serialization syntax MUST be used. 
+
+The "Content-Type" header of HTTPS SHOULD be used to indicate the content typing. {{tbl-content-types}} are the expected Content-Type options for HOME interactions with HTTPS requests/responses.
+
+| HTTPS Request/Response | Content-Type |
+| ---------------------- | ------------ |
+| Response | application/cose; cose-type="cose-sign" | 
+| Response | application/cose; cose-type="cose-sign1" | 
+| Request or Response | application/cose; cose-type="cose-encrypt" | 
+| Request or Response | application/cose; cose-type="cose-encrypt0" |
+| Request or Response | application/jose+json | 
+{: #tbl-content-types title="Expected HOME Content-Types"}
+
+### Response Codes
+
+For HOME Tokens with a single entity/key object the HTTP Response Codes can be easily mapped. For example a key that fails processing due to a duplicate public key or HHIT can have the HOME Token returned using `409 Conflict`. It is also simple for the first stages of an HOME Token carrying an HRI since it needs to successfully be decrypted and signature(s) before processing resulting in earlier failure conditions to respond to.
+
+HOME Tokens with multiple entities/keys can be trivially mapped as well only when all entities/keys either pass or fail. Difficultly arises when a HOME Token has multiple entities/keys and not all of them fail or they all fail in different ways that can be attributed to either a 4xx or 5xx code.
+
+For the above reasoning the following guidance is to HOMEs for management of HTTP Response Codes and using the HRR `failure` array and `error-data` structure. Unless otherwise noted a responding HOME Token MUST use both encryption and signature layers.
+
+**422 Unprocessable Content**:
+: When a HOME Token fails to decrypt a this response code MUST be sent with a signature only layer HOME Token signaling in the HRR the decryption issue(s) experienced. The *eid*, *kid* and *cat* fields MUST be set to `null`. The *msg* SHOULD contains specific details about the failed decryption. More than one `error-data` MAY be present for different decryption issues.
+
+**401 Unauthorized**:
+: Failed signature(s) of a HOME Token MUST use this response code with a HOME Token signaling in the HRR the signature validation issue(s) experienced. The *eid*, *kid* and *cat* fields MUST be set to `null`. *msg* SHOULD contains specific details about what signature failed to verify. More than one `error-data` MAY be present to separate signature(s) processed.
+
+**200 OK**:
+: This response code MUST be used to indicate the overall inquiry has been processed but that some entities and/or keys failed to be registered. The *cat* field SHOULD be used to carry the respective 4xx or 5xx HTTP Response Code exhibited for the entities/keys to fail validation or processing. If *cat* is not used, then clients MUST check contents of both the `success` and `failure` fields of the HRR.
+
+**201 Created**:
+: A response with this code MUST be used when all entities and keys in the original HRI were registered successfully and the `failure` in HRR MUST be set to `null`.
+
+**4xx or 5xx**:
+: If all entities/keys fail with the same *cat*, if the field is used as in *200 OK*, then the HOME Token is sent using that HTTP Response Code. The `failure` array in the HRR MUST be filled with `error-data`'s setting *eid* and *kid* as needed, *cat* to `null` and *msg* to any specific details for the given *eid*/*kid* pair.
+

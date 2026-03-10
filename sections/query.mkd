@@ -25,7 +25,7 @@ The HTTPS GET method MUST be authenticated using one of the methods defined in {
 
 ### Query Endpoint
 
-The `/.well-known/home/query/<IP address>` endpoint SHOULD be redirected to the full qualified hosted path conforming with {{Section 3.1.1 of RFC9082}} (i.e. `ip/<IP address>`) by the HOME. All other RDAP endpoints SHOULD NOT be implemented as specified in {{RFC9082}}. Other methods MAY be provided to enable differential access controlled queries of information pertaining to an HHIT but are out of scope for this document.
+The `/.well-known/home/query/<IP address>` endpoint SHOULD be redirected to a full qualified path conforming with {{Section 3.1.1 of RFC9082}} (i.e. `ip/<IP address>`) by the HOME. All other RDAP endpoints SHOULD NOT be implemented as specified in {{RFC9082}}. Other methods MAY be provided to enable differential access controlled queries of information pertaining to an HHIT but are out of scope for this document.
 
 ## Differential Access Control {#mutual-tls}
 
@@ -51,7 +51,7 @@ A HOME MUST respond to a successful query using {{RFC9083}}. The HOME RDAP Exten
 {: #cddl-rdap title="CDDL: HOME RDAP Extension"}
 
 *hhit*:
-: Array structure contain the HHIT Entity Type and the IPv6 address string per {{ip6-handling}}.
+: Array structure contain the HHIT Entity Type and the HHIT encoded per {{ip6-handling}}.
 
 *canon_x*:
 : Canonical Registration Certificate encoded in base64url.
