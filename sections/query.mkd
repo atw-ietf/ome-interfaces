@@ -3,7 +3,7 @@
 This section details the process of query for additional private information following the Z-diagram of {{fig-z-query}}. It is the lower right link of {{arch-fig}} labeled with "RDAP" between *Querant* and *Registry*.
 
 ~~~ ascii-art
-{::include figures/z-query.txt}
+{::include includes/ascii-art/z-query.txt}
 ~~~
 {: #fig-z-query title="Query Z-Diagram" artwork-align="center"}
 
@@ -57,4 +57,4 @@ A HOME MUST respond to a successful query using {{RFC9083}}. The HOME RDAP Exten
 : Canonical Registration Certificate encoded in base64url.
 
 *metadata*:
-: Map that contains private elements of information for the registration. Elements included are based on access policy and registration requirements of the HOME. Elements are redacted or removed using policy methods of the HOME and is out of scope for this document.
+: Map that contains private information elements associated with the registration. Elements included are based on access policy and registration requirements of the HOME. Elements are redacted or removed using policy methods of the HOME and is out of scope for this document.

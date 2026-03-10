@@ -14,13 +14,13 @@ To properly provide the necessary services identified in both {{RFC9153}} and {{
 *Certificate Authority*:
 : This document does not cover specific details of this function of an HOME. However, it is expected to provide at least ORCHID Key Infrastructure X.509 (OKIX) certificates used in other parts of the HOME. These are {{RFC5280}} compliant certificates that support HHITs, see {{oki}}. Explicit policy for Certificate Authorities are left for more specific implementation and documents, such as a Concept of Operations.
 
-~~~ ascii-art
-{::include figures/arch.txt}
+~~~ aasvg
+{::include includes/ascii-art/arch.txt}
 ~~~
 {: #arch-fig title="Simplified Diagram of HOME Registration/Query Components & Interactions" artwork-align="center"}
 
-The specific interaction models and transports between all of these functions when not co-located (i.e. as a distributed system of systems) is out of scope for this document and are represented by dotted lines (`.` and `:` between `x`'s) in {{arch-fig}}. Note that of the duplicate links feeding *Authoritative Name Server* and *Registry* one set is chosen for implementation for each. A number of these functions/interactions are lifted from the DNS and the existing relationships and protocols between such entities in that domain also can apply here. For example, between *Registrar* and *Registry* is the Extensible Provisioning Protocol (EPP, {{STD69}}) or equivalents such as RESTful Provisioning Protocol (RPP).
+The specific interaction models and transports between the *Registrar*, *Certificate Authority*, *Registry* and *Authoritative Name Server* when not co-located (i.e. as a distributed system of systems) is out of scope for this document. Note that of the duplicate links feeding *Authoritative Name Server* and *Registry* one set is chosen in an implementation for each. A number of these functions/interactions are lifted from the DNS and the existing relationships and protocols between such entities in that domain also can apply here. For example, between *Registrar* and *Registry* is the Extensible Provisioning Protocol (EPP, {{STD69}}) or equivalents such as RESTful Provisioning Protocol (RPP).
 
-This document only details the interaction between a registering client (known as *Registrant*) and the *Registrar* through an HTTPS interface as described in {{home-registration}} and the RDAP interaction by *Querants* (such as *Observers*) and a *Registry* as described in {{query-process}}. These interactions are denoted by the solid lines (`-` and `|` between `o`'s) of {{arch-fig}}. These interfaces can be either used by machines as an API or provided with a UI for humans to interact with such as on a web browser. 
+This document details the interactions between a registering client (known as *Registrant*) and the *Registrar* through an HTTPS interface as described in {{home-registration}} and the RDAP interaction by *Querants* (such as *Observers*) and a *Registry* as described in {{query-process}}. These interfaces can be either used by machines as an API or provided with a UI for humans to interact with such as on a web browser. 
 
 The elements of any maps found in CDDL for this specification MUST be declared by an ecosystem. An initial key set for elements in aviation use cases are registered in {{iana-hp}}. Context MAY be provided in-band in HTTP using a registered Media Type as part of the Content-Type header for what key set to use to avoid processing ambiguity.

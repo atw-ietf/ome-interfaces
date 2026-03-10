@@ -3,7 +3,7 @@
 This sections details the process of registration following {{art-z-registration}}. This Z-diagram is the upper link of {{arch-fig}} labeled with "HOME Token/HTTPS" between *Registrant* and *Registrar*.
 
 ~~~ ascii-art
-{::include figures/z-registration.txt}
+{::include includes/ascii-art/z-registration.txt}
 ~~~
 {: #art-z-registration title="Registration Z-Diagram" artwork-align="center"}
 

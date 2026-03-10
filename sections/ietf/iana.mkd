@@ -164,7 +164,7 @@ This document requests IANA create a new registry under {{IANA.DRIP}} called "HO
 {: #tbl-hcp-registry title="HOME Common Parameters: Registry Policies"}
 
 ~~~ ascii-text
-{::include figures/iana-hcp.txt}
+{::include includes/ascii-text/iana-hcp.txt}
 ~~~
 {: #txt-hcp title="Initial HOME Common Parameters"}
 
@@ -182,7 +182,7 @@ When using this registry the "ctx" parameter of {{iana-mt}} is set to "aviation"
 {: #tbl-hap-registry title="HOME Aviation Parameters: Registry Policies"}
 
 ~~~ ascii-text
-{::include figures/iana-hap.txt}
+{::include includes/ascii-text/iana-hap.txt}
 ~~~
 {: #txt-hap title="Initial HOME Aviation Parameters"}
 
@@ -199,14 +199,14 @@ IANA is requested to add the entries of {{tbl-home-mt}} to the "Media Types" reg
 ### application/home+cose {#home-cose}
 
 ~~~ ascii-text
-{::include figures/cose-mt.txt}
+{::include includes/ascii-text/cose-mt.txt}
 ~~~
 {: #txt-cose-mt title="home+cose Media  Registration"}
 
 ### application/home+json {#home-json}
 
 ~~~ ascii-text
-{::include figures/json-mt.txt}
+{::include includes/ascii-text/json-mt.txt}
 ~~~
 {: #txt-json-mt title="home+json Media Type Registration"}
 
