@@ -27,7 +27,7 @@ Encryption is done with Elliptic Curve Diffie-Hellman (ECDH) using Ephemeral-Sta
 
 ## Claims Set
 
-A HOME Token is at its core a set of claims using a CWT or JWT claim set. The claims defined in this section are registered in the respective registries in {{iana-claims}} and either or both MUST be included in the claim set for HOME Tokens.
+A HOME Token is at its core a set of claims using a CWT or JWT claim set. The claims defined in this section are registered in the respective registries in {{iana-claims}} and either or both MUST be included in the claim set for HOME Tokens. A HOME Token carrying either of these claims is considered as an HRI Token or HRR Token respectively.
 
 The claim set SHOULD also contain the claims of `nbf`, `exp`, and `iat`. The set MAY contain the `aud` or `iss` claim with a targeted HHIT, encoded per {{ip6-handling}}, if known. Additional claims are out of scope for this document.
 
@@ -123,19 +123,19 @@ The `/.well-known/home/registry` endpoint SHOULD be redirected to a fully qualif
 
 ### HRI Validation & Processing {#req-valid}
 
-HRI validation is processing is done across two functional components, which can be co-located or distributed, the *Registrar* and *Certificate Authority*. The following text is based on a co-located processing a HOME Token with these two entities sharing access to the same HHIT.
+HRI validation and processing is done across two functional components, which can be co-located or distributed, the *Registrar* and *Certificate Authority*. The following text is based on the processing of an HRI Token. The HOME in question uses a single HHIT for both its *Registrar* and *Certificate Authority* roles. 
 
-The HOME starts with an HRI and first decrypts the payload using ECDH. Once decrypted, the HOME Token signature(s), the payload of the encryption layer of the HOME Token, are validated with acceptable public key(s). This SHOULD involve DNS lookups to obtains public keys but MAY uses a cache or a key as part of the signature layer of the HOME Token. If decryption or signature verification fails the HOME MUST respond using a single layer HOME Token using the `failure` array to provide error context.
+The initial steps of decryption and signature validation are skipped as they are straightforward. Failure of either of these steps results in sending a response following {{response-codes}}. Assuming success the claim set is extracted from the HRI Token to be processed.
 
-Next the payload at the signature layer is extracted, the `nbf`, `ext`, `iat`, `iss` and `aud` claims are validated, and then `hri` claim is processed recursively starting from the outside of the structure. Each entity merges their `metadata` with the inquiry `metadata` with entity elements taking precedence. Next each key merges its `metadata` with the entity `metadata` with key elements taking precedence. The HOME performs validation of the final combined `metadata` structure for each key using local validation and/or consultation of an "oracle" (see {{oaas}}).
+The `nbf`, `ext`, `iat`, `iss` and `aud` claims are validated, and then `hri` claim is processed recursively starting from the outside of the structure. Each entity merges their `metadata` with the inquiry `metadata` with entity elements taking precedence. Next each key merges its `metadata` with the entity `metadata` with key elements taking precedence. The HOME performs validation of the final combined `metadata` structure for each key using local validation and/or consultation of an "oracle" (see {{oaas}}).
 
 Next each key CSR has its signature validated then the public key confirmed to be unique to the HOME's scope. The HOME then constructs, using its Hierarchy HID and the CSR public key, a prospective HHIT for the key. If the CSR contains an HHIT as part of the Subject Alternative Name the two HHITs are checked for equivalence. The HOME finally checks that the HHIT is unique in its scope.
 
-If everything validates above the HOME endorses the new HHIT by generating and signing an OKI(x)-compliant Canonical Registration Certificate along with any other artifacts required for the entity registration. The data is then placed within the HRR `success.entities` map using the same *entity-id* and *key-id* from the HRI. All artifacts of this endorsement are placed in the *Registry* and artifacts that are considered public, such as those needed for {{RFC9886}}, are placed into the *Authoritative Name Server*.
+If everything above validates, the HOME endorses the new HHIT by generating and signing an OKI(x)-compliant Canonical Registration Certificate along with any other artifacts required for the entity registration. Any data for the *Registrant* is then placed within the HRR `success.entities[entity-id][0].keys[key-id]` map using the same *entity-id* and *key-id* from the HRI. All artifacts of this endorsement are placed in the *Registry* and artifacts that are considered public, such as those needed for {{RFC9886}}, are placed into the *Authoritative Name Server*.
 
 When a failure occurs at any point in the validation and/or processing of a entity/key the HRR `failure` array is appended using the *entity-id*, *key-id* and other elements to provide context for the issue. The HOME MAY compress the `failure` array after processing. For example if all the keys for an *entity-id* share the same failure the individual structures can be compressed to a single `[<eid>, null, <cat>, <msg>]` instead of one for each *key-id*.
 
-The HOME upon handling all entities and keys then constructs an two-layer (encryption and signature) HOME Token and responds to the *Registrant* with it. This HOME Token MAY contain both the original HRI claim and the associated HRR claim. 
+The HOME upon handling all entities and keys a HOME constructs an HRR Token and responds to the *Registrant* with it. The token SHOULD replicate the same layering as the original HRI Token. It MAY contain both the original HRI claim and the associated HRR claim. 
 
 ## Transport
 
@@ -143,30 +143,21 @@ This document defines the use of HTTPS as the transport for the HOME Tokens. The
 
 For COSE, the resulting CBOR content MUST use a proper CBOR Tag to indicate what object is encoded. For JOSE content, the General or Flattened JWE JSON Serialization syntax MUST be used. 
 
-The "Content-Type" header of HTTPS SHOULD be used to indicate the content typing. {{tbl-content-types}} are the expected Content-Type options for HOME interactions with HTTPS requests/responses.
-
-| HTTPS Request/Response | Content-Type |
-| ---------------------- | ------------ |
-| Response | application/cose; cose-type="cose-sign" | 
-| Response | application/cose; cose-type="cose-sign1" | 
-| Request or Response | application/cose; cose-type="cose-encrypt" | 
-| Request or Response | application/cose; cose-type="cose-encrypt0" |
-| Request or Response | application/jose+json | 
-{: #tbl-content-types title="Expected HOME Content-Types"}
+The "Content-Type" header of HTTPS SHOULD be used to indicate the content typing. For JOSE this is `application/jose+json` and for COSE is one of the following: `application/cose; cose-type="cose-sign`, `application/cose; cose-type="cose-sign1`, `application/cose; cose-type="cose-encrypt`, `application/cose; cose-type="cose-encrypt0`.
 
 ### Response Codes
 
 For HOME Tokens with a single entity/key object the HTTP Response Codes can be easily mapped. For example a key that fails processing due to a duplicate public key or HHIT can have the HOME Token returned using `409 Conflict`. It is also simple for the first stages of an HOME Token carrying an HRI since it needs to successfully be decrypted and signature(s) before processing resulting in earlier failure conditions to respond to.
 
-HOME Tokens with multiple entities/keys can be trivially mapped as well only when all entities/keys either pass or fail. Difficultly arises when a HOME Token has multiple entities/keys and not all of them fail or they all fail in different ways that can be attributed to either a 4xx or 5xx code.
+HOME Tokens with multiple entities/keys can be trivially mapped as well only when all entities/keys either pass or fail. Difficulty arises when a HOME Token has multiple entities/keys and not all of them fail or they all fail in different ways that can be attributed to either a 4xx or 5xx code.
 
-For the above reasoning the following guidance is to HOMEs for management of HTTP Response Codes and using the HRR `failure` array and `error-data` structure. Unless otherwise noted a responding HOME Token MUST use both encryption and signature layers.
+For the above reasoning and to maintain interoperability HOMEs MUST follow the below guidelines for management of HTTP Response Codes and using the HRR claim's `failure` array and `error-data` structure. Unless otherwise noted a responding HOME Token MUST use both encryption and signature layers.
 
 **422 Unprocessable Content**:
-: When a HOME Token fails to decrypt this response code MUST be sent with a signature only layer HOME Token signaling in the HRR the decryption issue(s) experienced. The *eid*, *kid* and *cat* fields MUST be set to `null`. The *msg* SHOULD contains specific details about the failed decryption. More than one `error-data` MAY be present for different decryption issues.
+: When a HOME Token fails to decrypt this response code MUST be sent with only a signature layer ({{signature-layer}}) signaling in the HRR claim the decryption issue(s) experienced. The *eid*, *kid* and *cat* fields MUST be set to `null`. The *msg* SHOULD contains specific details about the failed decryption. More than one `error-data` MAY be present for different decryption issues.
 
 **401 Unauthorized**:
-: Failed signature(s) of a HOME Token MUST use this response code with a HOME Token signaling in the HRR the signature validation issue(s) experienced. The *eid*, *kid* and *cat* fields MUST be set to `null`. *msg* SHOULD contains specific details about what signature failed to verify. More than one `error-data` MAY be present to separate signature(s) processed.
+: Failed signature(s) of a HOME Token MUST use this response code with the HRR claim indicating the signature validation issue(s) experienced. The *eid*, *kid* and *cat* fields MUST be set to `null`. *msg* SHOULD contains specific details about what signature failed to verify. More than one `error-data` MAY be present to separate signature(s) processed.
 
 **200 OK**:
 : This response code MUST be used to indicate the overall inquiry has been processed but that some entities and/or keys failed to be registered. The *cat* field SHOULD be used to carry the respective 4xx or 5xx HTTP Response Code exhibited for the entities/keys to fail validation or processing. If *cat* is not used, then clients MUST check contents of both the `success` and `failure` fields of the HRR.
