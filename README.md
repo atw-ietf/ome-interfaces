@@ -9,7 +9,7 @@ apt install python3 python3-pip
 apt install ruby-full
 apt install node-js npm
 
-pip3 install --user xml2rfc
+pip3 install --user xml2rfc svgcheck
 npm install -g aasvg
 gem install kramdown-rfc2629
 ```
