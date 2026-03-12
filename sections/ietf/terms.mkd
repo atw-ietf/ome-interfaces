@@ -15,4 +15,4 @@
 
 **HOME Token**:
 
-: In the context of this specification; a HOME Token can be any of the Concise Binary Object Representation (CBOR; {{STD94}}) Object Signing & Encryption (COSE; {{STD96}}) or JavaScript Object Notation (JSON; {{STD90}}) Object Signing & Encryption (JOSE; {{RFC7515}}, {{RFC7516}}) structure.
+: In the context of this specification; a HOME Token can be any of the Concise Binary Object Representation (CBOR; {{STD94}}) Object Signing & Encryption (COSE; {{STD96}}) or JavaScript Object Notation (JSON; {{STD90}}) Object Signing & Encryption (JOSE; {{RFC7515}}, {{RFC7516}}) structure. See {{home-token}}.

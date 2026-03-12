@@ -9,7 +9,7 @@ This sections details the process of registration following {{art-z-registration
 
 The mechanism for registration is the use of COSE or JOSE over HTTPS. COSE MUST be supported and JOSE is RECOMMENDED for flexibility for non-constrained *Registrants*. The rest of this section specifies exact behavior for this interface of an HOME.
 
-## HOME Token
+## HOME Token {#home-token}
 
 A HOME Token is a one or two-layer structure in either COSE or JOSE format. When two layers are present the outer layer MUST be {{encryption-layer}} while the inner layer MUST be {{signature-layer}}. When only one layer is used it MUST be a {{signature-layer}}.
 
