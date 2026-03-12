@@ -11,15 +11,11 @@ The mechanism for registration is the use of COSE or JOSE over HTTPS. COSE MUST 
 
 ## HOME Token {#home-token}
 
-A HOME Token is a one or two-layer structure in either COSE or JOSE format. When two layers are present the outer layer MUST be {{encryption-layer}} while the inner layer MUST be {{signature-layer}}. When only one layer is used it MUST be a {{signature-layer}}.
+A HOME Token MUST be encoded in either COSE or JOSE. A token MAY contain multiple layers and SHOULD have the Content-Type parameter, as part of an unprotected header, set accordingly for each.
 
 ### Signature Layer
 
-The payload segment of the signature layer contains a claim set that is encoded in either CBOR or JSON and MUST include registered HOME claim(s) ({{hri}} and/or {{hrr}}). The claim set SHOULD also contain the claims of `nbf`, `exp`, and `iat`. The set MAY contain the `aud` claim with a targeted HHIT, encoded per {{ip6-handling}}, if known. Additional claims are out of scope for this document.
-
-Respective header parameters MUST be used to indicate the verification key. When the key is part of the payload a protected header parameter MUST be used (`jwk` for JOSE and `kccs` for COSE) to carry the verification key to avoid needing to parse the payload segment of the structure. For all other cases the *kid* header parameter is used and contains an HHIT, encoded per {{ip6-handling}}, and placed in a unprotected header.
-
-A Content-Type parameter, as part of the unprotected header, is RECOMMENDED to be set to `application/home+cbor` or `application/home+json` and SHOULD include the `ctx` parameter to indicate the set of keys/parameters being used for any maps in the payload structure as they are application specific. Additional header parameters are out of scope for this document.
+Respective header parameters MUST be used to indicate the verification key. When the key is part of the payload (usually an HRI claim set, {{hri}}) a protected header parameter MUST be used (`jwk` for JOSE and `kccs` for COSE) to carry the verification key to avoid needing to parse the payload segment of the structure. For all other cases a KID parameter is used containing an HHIT, encoded per {{ip6-handling}}, and placed in a unprotected header.
 
 ### Encryption Layer
 
@@ -29,9 +25,13 @@ Asymmetric algorithms MUST be supported and symmetric MAY be supported. The prec
 
 Encryption is done with Elliptic Curve Diffie-Hellman (ECDH) using Ephemeral-Static (ES) keying. The static key is provided by the HOME while a unique ephemeral key is provided by the client for each HOME Token and/or recipient. The transfer of this ephemeral key is covered by the relevant COSE/JOSE specifications for using ECDH with encryption objects. The HOME MUST provide its static keys through public methods such as the DNS or an HTTPS GET endpoint.
 
-The Content-Type header parameter of COSE/JOSE MUST be used to indicate the type of data that has been encrypted. This MUST be `application/cose; cose-type="cose-sign"`, `application/cose; cose-type="cose-sign1"` or `application/jose+json`. Additional header parameters are out of scope for this document.
+## Claims Set
 
-## Registration Claims
+A HOME Token is at its core a set of claims using a CWT or JWT claim set. The claims defined in this section are registered in the respective registries in {{iana-claims}} and either or both MUST be included in the claim set for HOME Tokens.
+
+The claim set SHOULD also contain the claims of `nbf`, `exp`, and `iat`. The set MAY contain the `aud` or `iss` claim with a targeted HHIT, encoded per {{ip6-handling}}, if known. Additional claims are out of scope for this document.
+
+The layer ({{signature-layer}} or {{encryption-layer}}) carrying a claim set is RECOMMENDED to set the Content-Type parameter, as part of the unprotected header, to `application/home+cbor` or `application/home+json`. This SHOULD include the `ctx` parameter to indicate the set of keys/parameters being used for any maps in the payload structure as they are application specific.
 
 ### HOME Registration Inquiry (HRI) {#hri}
 
