@@ -23,9 +23,11 @@ A Content-Type parameter, as part of the unprotected header, is RECOMMENDED to b
 
 ### Encryption Layer
 
-HOME Tokens SHOULD be encrypted as it may contain Personally Identifiable Information (PII). The encryption layer is not used for example when an HOME Token fails to decrypt and an reason needs to be returned to the client. The encryption algorithm selection and policies are left for HOME policy and MUST be provided to clients. It is strongly RECOMMENDED that asymmetric keys are used for encryption.
+HOME Tokens SHOULD be encrypted when the payload may contain Personally Identifiable Information (PII). For example, a HOME would not encrypt their response token ({{hrr}}) containing relevant processing errors when the original request token ({{hri}}) failed to decrypt.
 
-Encryption is done with Elliptic Curve Diffie-Hellman (ECDH) using Ephemeral-Static (ES) keying. The static key is provided by the HOME while the a unique ephemeral key is provided by the client for each HOME Token and/or recipient. The transfer of this ephemeral key is covered by the relevant COSE/JOSE specifications for using ECDH with encryption objects. The HOME MUST provide its static keys through public methods such as the DNS or an HTTPS GET endpoint.
+Asymmetric algorithms MUST be supported and symmetric MAY be supported. The precise list of encryption algorithm selected and policies are left for the HOME to decide and MUST be provided to clients.
+
+Encryption is done with Elliptic Curve Diffie-Hellman (ECDH) using Ephemeral-Static (ES) keying. The static key is provided by the HOME while a unique ephemeral key is provided by the client for each HOME Token and/or recipient. The transfer of this ephemeral key is covered by the relevant COSE/JOSE specifications for using ECDH with encryption objects. The HOME MUST provide its static keys through public methods such as the DNS or an HTTPS GET endpoint.
 
 The Content-Type header parameter of COSE/JOSE MUST be used to indicate the type of data that has been encrypted. This MUST be `application/cose; cose-type="cose-sign"`, `application/cose; cose-type="cose-sign1"` or `application/jose+json`. Additional header parameters are out of scope for this document.
 
