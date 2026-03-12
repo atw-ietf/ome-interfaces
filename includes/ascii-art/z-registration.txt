@@ -3,7 +3,7 @@
  GEN_HHIT/HI  |                   |
      GEN_CSR  |                   |
               |--------HRI------->|
-              |                   | VALID_REG?
+              |                   | VALID_HRI?
               |<-------FAIL-------|
               |                   | DUPE_HI?
               |<-------FAIL-------|
