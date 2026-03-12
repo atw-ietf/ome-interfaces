@@ -2,7 +2,7 @@
 
 ## Purpose
 
-An ecosystem using Overlay Routable Cryptographic Hash IDentifiers (ORCHIDs, {{RFC7343}}) as its primary identifier can be a strong option for modern systems. The Hierarchial Host Identity Tags (HHITs, {{RFC9374}}) are used in the fast growing sector of Unmanned Aircraft Systems (UAS) to provide identity and authentication services using the Domain Name System (DNS).
+An ecosystem using Overlay Routable Cryptographic Hash IDentifiers (ORCHIDs, {{RFC7343}}) as its primary identifier can be a strong option for modern systems. The Hierarchical Host Identity Tags (HHITs, {{RFC9374}}) are used in the fast growing sector of Unmanned Aircraft Systems (UAS) to provide identity and authentication services using the Domain Name System (DNS).
 
 With standardization, identity ecosystems can be created around the use of ORCHIDs to serve various use-cases. This provides widespread interoperability of the functions of registration, public query and private query using a selection of existing standards and methods. Being backed by cryptographic keys allow existing key infrastructure, certificates and policy to be leveraged with minimal overhead, modification or redeployment.
 

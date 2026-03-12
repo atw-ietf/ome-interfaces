@@ -67,9 +67,9 @@ IANA is requested to make the following changes to the "HHIT Entity Types" regis
 | Value | HHIT Entity Type | Abbreviation | Operational (Y/N) | Reference |
 | ----- | ---------------- | ------------ | ----------------- | --------- |
 | 0 | Undefined | UKN | N | {{RFC9886}} |
-| 1 | Hierarchial ORCHID Management Entity | HOME | N | This RFC |
-| 2 | Hierarchial ORCHID Management Entity: Authorization | HOME-A | N | This RFC |
-| 3 | Hierarchial ORCHID Management Entity: Issuing | HOME-I | N | This RFC |
+| 1 | Hierarchical ORCHID Management Entity | HOME | N | This RFC |
+| 2 | Hierarchical ORCHID Management Entity: Authorization | HOME-A | N | This RFC |
+| 3 | Hierarchical ORCHID Management Entity: Issuing | HOME-I | N | This RFC |
 | 4 | HOME Apex | APEX | N | {{RFC9886}} |
 | 5 | HOME Apex: Authorization | APEX-A | N | This RFC |
 | 6 | HOME Apex: Issuing | APEX-I | N | This RFC |

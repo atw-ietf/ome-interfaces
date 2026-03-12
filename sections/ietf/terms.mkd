@@ -4,7 +4,7 @@
 
 ## Additional Definitions & Abbreviations
 
-**Hierarchial ORCHID Management Entity (HOME)**:
+**Hierarchical ORCHID Management Entity (HOME)**:
 : A term to describe an entity providing various identity management functions (such as registration, query, etc.) to clients at a specific point in the hierarchy. HOME's have four major functional components that can be co-located or distributed as a system of systems: Registrar, Registry, Authoritative Name Server and Certificate Authority. The DRIP Identity Management Entity (DIME) is a specialization of HOME in support of the UAS/aviation ecosystem.
 
 **ORCHID Key Infrastructure (OKI)**:
