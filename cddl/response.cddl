@@ -2,7 +2,7 @@ response = [
   success: [
     entities: { &(entity-id): success-data },
     shared: map
-  ] / null
+  ] / null,
   failure: [ + error-data ] / null
 ]
 success-data = [
