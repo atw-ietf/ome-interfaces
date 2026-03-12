@@ -19,7 +19,7 @@ The payload segment of the signature layer contains a claim set that is encoded 
 
 Respective header parameters MUST be used to indicate the verification key. When the key is part of the payload a protected header parameter MUST be used (`jwk` for JOSE and `kccs` for COSE) to carry the verification key to avoid needing to parse the payload segment of the structure. For all other cases the *kid* header parameter is used and contains an HHIT, encoded per {{ip6-handling}}, and placed in a unprotected header.
 
-A Content-Type parameter, as part of the unprotected header, is RECOMMENDED to be set to `application/home+cose` or `application/home+json` and SHOULD include the `ctx` parameter to indicate the set of keys/parameters being used for any maps in the payload structure as they are application specific. For `application/home+cose`, the inclusion of the `cose-type` parameter is OPTIONAL to indicate either `"cose-sign"` or `"cose-sign1"`. Additional header parameters are out of scope for this document.
+A Content-Type parameter, as part of the unprotected header, is RECOMMENDED to be set to `application/home+cbor` or `application/home+json` and SHOULD include the `ctx` parameter to indicate the set of keys/parameters being used for any maps in the payload structure as they are application specific. Additional header parameters are out of scope for this document.
 
 ### Encryption Layer
 
