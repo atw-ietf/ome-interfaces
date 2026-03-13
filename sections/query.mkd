@@ -3,7 +3,7 @@
 This section details the process of query for additional private information following the Z-diagram of {{fig-z-query}}. It is the lower right link of {{arch-fig}} labeled with "RDAP" between *Querant* and *Registry*.
 
 ~~~ ascii-art
-{::include includes/ascii-art/z-query.txt}
+{::include figures/ascii-art/z-query.txt}
 ~~~
 {: #fig-z-query title="Query Z-Diagram" artwork-align="center"}
 

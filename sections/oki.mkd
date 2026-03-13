@@ -5,7 +5,7 @@ The ORCHID Key Infrastructure (OKI) is focused on the delegation and management 
 There are two types of nodes in the hierarchy, Root and Inode, and relationships between nodes use tree terminology such as ancestor, descendant and degree. Additional, more administrative members, include the IPv6 Prefix and Apex. The relationship between these entities (and their Authorization and Issuing HHITs) are shown in {{fig-oki}}.
 
 ~~~~ aasvg
-{::include includes/ascii-art/oki.txt}
+{::include figures/ascii-art/oki.txt}
 ~~~~
 {: #fig-oki title="ORCHID Key Infrastructure (OKI) Hierarchy"  artwork-align="center"}
 
