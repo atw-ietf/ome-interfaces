@@ -32,75 +32,35 @@ This document allocates two new HHIT Entity Types in each level of hierarchy, on
 
 An HOME has a number of responsibilities depending on its place in the hierarchy. This section covers the technical responsibilities of each level of an HHIT's hierarchy. Specific non-technical policies for hierarchy levels are out of scope for this document and are expected to be developed into OKI policy guidance or added to existing PKI policy guidance for each use-case.
 
-All members of a hierarchy:
+| Responsibility | Apex | Root | Inode | Leaf |
+| -------------- | ---- | ---- | ----- | ---- |
+| provide using public methods any requirements, policy and/or guidance to prospective descendants | MUST | MUST | MUST | MUST |
+| provide OKIX-compatible certificate(s) as endorsement for registration of descendant(s) | MAY<br>*see **1+ Authorization HHIT*** | MUST | MUST | MUST |
+| maintain registrations with relevant Personally Identifiable Information (PII) as required by their jurisdiction | MUST | MUST | MUST | MUST |
+| fulfill any jurisdiction requirements that are out of scope for this document | MUST | MUST | MUST | MUST |
+| support {{RFC7401}}<br>*MAY support services using {{RFC8003}} such as {{RFC8004}}* | - | MAY | MAY | MAY |
+| 1+ Authorization HHIT<br>*see {{tbl-add-auth}}* | MAY | MUST | MUST | MUST |
+| 1+ Issuing HHIT<br>*MUST have same Hierarchy ID as an Authorization HHIT*<br>*MUST be locally registered using an Authorization HHIT* | MAY | MAY | SHOULD | MUST |
+| cross-endorse with siblings<br>*MUST use an Authorization HHIT* | - | MAY | MAY | MAY |
+| maintain reverse IPv6 zone(s) | SHOULD<br>*or delegate back to the IPv6 Prefix* | MUST | MUST | MUST |
+| assign/allocate values in the X level of hierarchy in the Hierarchy ID<br>*see {{tbl-add-assign}}* | MUST<br>*X=Root* | MUST<br>*X=Inode* | MUST<br>*X=Inode or Leaf* | - |
+| implement {{home-registration}} and {{query-process}} | MAY<br>*or 501 Not Implemented* | SHOULD<br>*or 501 Not Implemented* | SHOULD<br>*or 501 Not Implemented* | MUST |
+{: #tbl-responsibilities title="Hierarchy Responsibilities"}
 
-- MUST provide using public methods any requirements, policy and/or guidance to prospective descendants
-- MUST provide OKIX-compatible certificate(s) as endorsement for registration of descendant(s)
-- MUST maintain registrations with relevant Personally Identifiable Information (PII) as required by their jurisdiction
-- MUST fulfill any jurisdiction requirements that are out of scope for this document
-- MAY support {{RFC7401}} and MAY support services using {{RFC8003}} such as {{RFC8004}}
+| 1+ Authorization HHIT | Apex | Root | Inode | Leaf |
+| --------------------- | ---- | ---- | ----- | ---- |
+| set Hierarchy ID to all zeros | MUST | MUST NOT | MUST NOT | MUST NOT |
+| set Hierarchy ID to assignment/allocation from ancestor | MUST NOT | MUST | MUST | MUST |
+| self register | MUST | if **Apex** MUST then MUST NOT | MUST NOT | MUST NOT |
+| registered to direct ancestor | MUST NOT | if **Apex** MUST NOT then MUST | MUST | MUST |
+{: #tbl-add-auth title="Additional Responsibilities for 1+ Authorization HHIT"}
 
-### Apex
-
-- MAY have at least one Authorization HHIT
-  - MUST set Hierarchy ID to all zeros
-  - MUST be self registered
-- MAY have at least one Issuing HHIT
-  - MUST have same Hierarchy ID as an Authorization HHIT
-  - MUST be locally registered using an Authorization HHIT
-- MUST maintain reverse IPv6 zone(s) or delegate to IPv6 Prefix
-- MUST assign/allocate values in the first level of hierarchy in the Hierarchy ID
-  - SHOULD verify prospective descendant(s) for hierarchy membership
-  - MAY register descendant(s) hierarchy members using an Authorization HHIT
-  - MUST delegate corresponding reverse IPv6 zone(s) to descendant(s)
-- MAY implement {{home-registration}} and {{query-process}}, otherwise respond with Not Implemented
-
-### Root
-
-- MUST have at least one Authorization HHIT
-  - MUST set Hierarchy ID to assignment/allocation from ancestor
-  - MUST be registered to direct ancestor or self-signed
-- MAY have at least one Issuing HHIT
-  - MUST have same Hierarchy ID as an Authorization HHIT
-  - MUST be locally registered using an Authorization HHIT
-- MAY cross-endorse with siblings
-  - MUST use an Authorization HHIT
-- MUST maintain reverse IPv6 zone(s)
-- MUST assign/allocate values in the next level of hierarchy in the Hierarchy ID
-  - SHOULD verify prospective descendant(s) for hierarchy membership
-  - MUST register descendant(s) hierarchy members using an Authorization HHIT
-  - MUST delegate corresponding reverse IPv6 zone(s) to descendant(s)
-- SHOULD implement {{home-registration}} and {{query-process}}, otherwise respond with Not Implemented
-
-### Inode
-
-- MUST have at least one Authorization HHIT
-  - MUST set Hierarchy ID to assignment/allocation from ancestor
-  - MUST be registered to direct ancestor
-- SHOULD have at least one Issuing HHIT
-  - MUST have same Hierarchy ID as an Authorization HHIT
-  - MUST be locally registered using an Authorization HHIT
-- MAY cross-endorse with siblings
-  - MUST use an Authorization HHIT
-- MUST maintain reverse IPv6 zone(s)
-- MUST assign/allocate values in the next level of hierarchy in the Hierarchy ID
-  - SHOULD verify prospective descendant(s) for hierarchy membership
-  - MUST register descendant(s) hierarchy members using an Authorization HHIT
-  - MUST delegate corresponding reverse IPv6 zone(s) to descendant(s)
-- SHOULD implement {{home-registration}} and {{query-process}}, otherwise respond with Not Implemented
-
-### Leaf
-
-- MUST have at least one Authorization HHIT
-  - MUST set Hierarchy ID to assignment/allocation from ancestor
-  - MUST be registered to direct ancestor
-- MUST have at least one Issuing HHIT
-  - MUST have same Hierarchy ID as an Authorization HHIT
-  - MUST be locally registered using an Authorization HHIT
-- MAY cross-endorse with siblings
-  - MUST use an Authorization HHIT
-- MUST maintain reverse IPv6 zone(s)
-- MUST implement {{home-registration}} and {{query-process}}
+| Assign/allocate values in Hierarchy ID | Apex | Root | Inode | Leaf |
+| -------------------------------------- | ---- | ---- | ----- | ---- |
+| verify prospective descendant(s) for hierarchy membership | SHOULD | SHOULD | SHOULD | - |
+| register descendant(s) hierarchy members using an Authorization HHIT | MAY | MUST | MUST | - |
+| delegate corresponding reverse IPv6 zone(s) to descendant(s) | SHOULD<br>*see **maintain reverse IPv6 zone(s)*** | MUST | MUST | - |
+{: #tbl-add-assign title="Additional Responsibilities for Assign/allocate values in Hierarchy ID"}
 
 ## ORCHID Key Infrastructure X.509 (OKIX) {#okix}
 
