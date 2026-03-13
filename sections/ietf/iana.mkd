@@ -192,16 +192,16 @@ IANA is requested to add the entries of {{tbl-home-mt}} to the "Media Types" reg
 
 | Name | Template | Reference |
 | ---- | -------- | --------- |
-| home+cose | application/home+cose | This RFC, {{home-cose}} |
+| home+cbor | application/home+cbor | This RFC, {{home-cbor}} |
 | home+json | application/home+json | This RFC, {{home-json}} |
 {: #tbl-home-mt title="New Media Types"}
 
-### application/home+cose {#home-cose}
+### application/home+cbor {#home-cbor}
 
 ~~~ ascii-text
-{::include includes/ascii-text/cose-mt.txt}
+{::include includes/ascii-text/cbor-mt.txt}
 ~~~
-{: #txt-cose-mt title="home+cose Media  Registration"}
+{: #txt-cbor-mt title="home+cbor Media Type Registration"}
 
 ### application/home+json {#home-json}
 
@@ -216,6 +216,6 @@ IANA is requested to add the entries of {{tbl-coap-mt}} to the "CoAP Content-For
 
 | Content Type | Content Coding | ID | Reference |
 | ------------ | -------------- | -- | --------- |
-| application/home+cose; ctx=aviation | - | TBD | This RFC |
+| application/home+cbor; ctx=aviation | - | TBD | This RFC |
 | application/home+json; ctx=aviation | - | TBD | This RFC |
 {: #tbl-coap-mt title="New CoAP Content-Formats"}

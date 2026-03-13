@@ -1,11 +1,13 @@
 response = [
-  success: { &(entity-id): success-data } / null
+  success: [
+    entities: { &(entity-id): success-data },
+    shared: map
+  ] / null,
   failure: [ + error-data ] / null
-  shared: map / null
 ]
 success-data = [
   keys: { &(key-id): map },
-  shared: map / null
+  shared: map
 ]
 error-data = [
   eid: &(entity-id) / null,
