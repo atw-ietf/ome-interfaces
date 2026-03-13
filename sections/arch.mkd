@@ -5,14 +5,14 @@ To properly provide the necessary services identified in both {{RFC9153}} and {{
 *Registrar*:
 : This document covers the client facing interface of the Registrar function used by Registrants. Interactions done by the Registrar with other HOME functions are out of scope for this document.
 
-*Registry*:
-: This document covers the client facing interface of the Registry function used by Observers to query for additional details about the HHIT. Interactions done by the Registry with other HOME functions are out of scope for this document. It should be noted that artifacts generated during the registration process specified in this document MUST end up in the Registry for audit purposes. For this document the term Registry is short-hand for Private Information Registry as defined in {{Section 4.2 of RFC9434}}.
+*Certificate Authority*:
+: This document does not cover specific details of this function of an HOME. However, it is expected to provide at least ORCHID Key Infrastructure X.509 (OKIX) certificates used in other parts of the HOME. These are {{RFC5280}} compliant certificates that support HHITs, see {{oki}}. Explicit policy for Certificate Authorities are left for more specific implementation and documents, such as a Concept of Operations.
 
 *Authoritative Name Server*:
 : The specific details of records hosted by the Authoritative Name Server as part of DNS is specified in {{RFC9886}} and are out of scope for this document. Interactions done by other HOME functions to manage an Authoritative Name Server are out of scope for this document. It should be noted that some artifacts generated during the registration process specified in this document end up in RRTypes hosted in DNS. This function serves as the Public Information Registry as defined by {{Section 4.1 of RFC9434}}.
 
-*Certificate Authority*:
-: This document does not cover specific details of this function of an HOME. However, it is expected to provide at least ORCHID Key Infrastructure X.509 (OKIX) certificates used in other parts of the HOME. These are {{RFC5280}} compliant certificates that support HHITs, see {{oki}}. Explicit policy for Certificate Authorities are left for more specific implementation and documents, such as a Concept of Operations.
+*Registry*:
+: This document covers the client facing interface of the Registry function used by Observers to query for additional details about the HHIT. Interactions done by the Registry with other HOME functions are out of scope for this document. It should be noted that artifacts generated during the registration process specified in this document MUST end up in the Registry for audit purposes. For this document the term Registry is short-hand for Private Information Registry as defined in {{Section 4.2 of RFC9434}}.
 
 ~~~ aasvg
 {::include includes/ascii-art/arch.txt}
