@@ -15,7 +15,7 @@ To properly provide the necessary services identified in both {{RFC9153}} and {{
 : This document covers the client facing interface of the Registry function used by Observers to query for additional details about the HHIT. Interactions done by the Registry with other HOME functions are out of scope for this document. It should be noted that artifacts generated during the registration process specified in this document MUST end up in the Registry for audit purposes. For this document the term Registry is short-hand for Private Information Registry as defined in {{Section 4.2 of RFC9434}}.
 
 ~~~ aasvg
-{::include includes/ascii-art/arch.txt}
+{::include figures/ascii-art/arch.txt}
 ~~~
 {: #arch-fig title="Simplified Diagram of HOME Registration/Query Components & Interactions" artwork-align="center"}
 
