@@ -9,6 +9,8 @@ There are two types of nodes in the hierarchy, Root and Inode, and relationships
 ~~~~
 {: #fig-oki title="ORCHID Key Infrastructure (OKI) Hierarchy"  artwork-align="center"}
 
+In {{fig-oki}} the solid connections are REQUIRED and dotted connections are OPTIONAL. A two-level hierarchy will consist of only a Root and Leaf level with no Inodes, shown in {{fig-oki}} with a solid line but open connection point between its ancestor and descendant. Also note that {{fig-oki}} shows two distinct paths in the hierarchy, to illustrate OPTIONAL cross-endorsement, for simplicity.
+
 IPv6 Prefix:
 : This level is not directly part of the OKI but performs the primary function of delegating reverse IPv6 zone(s) associated with Root Hierarchy ID values to respective Apexes or performing DNS delegations on an Apex's behalf. 
 
@@ -16,10 +18,13 @@ Apex:
 : An administrative owner of a set of Root Hierarchy ID values. The Apex performs assignment and/or allocation of these values and either delegates management of the reverse IPv6 zone(s) back to the IPv6 Prefix or manages it themselves. The Apex MAY have an Authorization HHIT, with a self-signed endorsement, as part of the function to endorse membership into a hierarchy.
 
 Root:
-: The first level of a Hierarchy ID, with descendant levels set to 0. It MUST have at least one Authorization HHIT to be used to obtain membership into the hierarchy and is either self-signed or endorsed by an Apex. A Root is the administrative entity that assigns/allocates the next level in the hierarchy to a descendant and manages the applicable reverse IPv6 zone(s). The endorsement of a descendant membership into the hierarchy MUST be performed using an Authorization HHIT endorsed by the direct ancestor. To support the endorsement of additional nodes under the Root Hierarchy ID, the Root SHOULD use one or more Issuing HHITs that are endorsed by Root Authorization HHITs.
+: The first level of a Hierarchy ID, with descendant levels set to 0. It MUST have at least one Authorization HHIT to be used to obtain membership into the hierarchy and is either self-signed or endorsed by an Apex. A Root is the administrative entity that assigns/allocates the next level in the hierarchy to a descendant and manages the applicable reverse IPv6 zone(s). The endorsement of a descendant membership into the hierarchy MUST be performed using an Authorization HHIT endorsed by the direct ancestor. To support the endorsement of operational entities under the Root Hierarchy ID, the Root SHOULD use one or more Issuing HHITs that are endorsed by Root Authorization HHITs.
 
 Inode:
-: Subsequent levels in a Hierarchy ID, with descendant levels, if any, set to 0. It MUST have at least one Authorization HHIT to be used to obtain membership into the hierarchy and MUST be endorsed by a direct ancestor. An Inode is the administrative entity that assigns/allocates the next level in the hierarchy to a descendant, if there is one, and manages the applicable reverse IPv6 zone(s). To support the endorsement of additional nodes under the Inode Hierarchy ID, the Inode SHOULD use one or more Issuing HHITs that are endorsed by Inode Authorization HHITs. An Inode MUST use Issuing HHITs for all descendants when there is not a next level of hierarchy to administrate.
+: A middle level node that has both an ancestor and descendant in the Hierarchy ID. It MUST have at least one Authorization HHIT to be used to obtain membership into the hierarchy and MUST be endorsed by a direct ancestor. An Inode is the administrative entity that assigns/allocates the next level in the hierarchy to a descendant and manages the applicable reverse IPv6 zone(s). To support the endorsement of operational entities under the Inode Hierarchy ID, the Inode SHOULD use one or more Issuing HHITs that are endorsed by Inode Authorization HHITs. 
+
+Leaf:
+: The last level of a Hierarchy ID. It MUST have at least one Authorization HHIT to be used to obtain membership into the hierarchy and MUST be endorsed by a direct ancestor. A Leaf node is the administrative entity that registers operational entities and manages the applicable reverse IPv6 zone(s). To support the endorsement of operational entities under the Leaf Hierarchy ID, the Leaf MUST use one or more Issuing HHITs that are endorsed by Leaf Authorization HHITs.
 
 This document allocates two new HHIT Entity Types in each level of hierarchy, one for Authorization and one for Issuing ({{iana-het}}).
 
@@ -58,7 +63,7 @@ All members of a hierarchy:
 - MAY have at least one Issuing HHIT
   - MUST have same Hierarchy ID as an Authorization HHIT
   - MUST be locally registered using an Authorization HHIT
-- MAY cross-certify with siblings
+- MAY cross-endorse with siblings
   - MUST use an Authorization HHIT
 - MUST maintain reverse IPv6 zone(s)
 - MUST assign/allocate values in the next level of hierarchy in the Hierarchy ID
@@ -75,14 +80,27 @@ All members of a hierarchy:
 - SHOULD have at least one Issuing HHIT
   - MUST have same Hierarchy ID as an Authorization HHIT
   - MUST be locally registered using an Authorization HHIT
-- MAY cross-certify with siblings
+- MAY cross-endorse with siblings
   - MUST use an Authorization HHIT
 - MUST maintain reverse IPv6 zone(s)
-- MUST assign/allocate values in the next level of hierarchy, if present, in the Hierarchy ID
+- MUST assign/allocate values in the next level of hierarchy in the Hierarchy ID
   - SHOULD verify prospective descendant(s) for hierarchy membership
   - MUST register descendant(s) hierarchy members using an Authorization HHIT
-  - MYST delegate corresponding reverse IPv6 zone(s) to descendant(s)
-- MUST implement {{home-registration}} and {{query-process}}, otherwise respond with Not Implemented
+  - MUST delegate corresponding reverse IPv6 zone(s) to descendant(s)
+- SHOULD implement {{home-registration}} and {{query-process}}, otherwise respond with Not Implemented
+
+### Leaf
+
+- MUST have at least one Authorization HHIT
+  - MUST set Hierarchy ID to assignment/allocation from ancestor
+  - MUST be registered to direct ancestor
+- MUST have at least one Issuing HHIT
+  - MUST have same Hierarchy ID as an Authorization HHIT
+  - MUST be locally registered using an Authorization HHIT
+- MAY cross-endorse with siblings
+  - MUST use an Authorization HHIT
+- MUST maintain reverse IPv6 zone(s)
+- MUST implement {{home-registration}} and {{query-process}}
 
 ## ORCHID Key Infrastructure X.509 (OKIX) {#okix}
 
